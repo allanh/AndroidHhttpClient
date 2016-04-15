@@ -1,4 +1,4 @@
-iBusiness-Android.iml
+SmartHubTest.iml
 /app/app.iml
 
 /local.properties
@@ -8,7 +8,7 @@ iBusiness-Android.iml
 /build
 /captures
 /.idea
-/Mercurius.iml
+/SmartHubTest.iml
 /gradle
 /gradlew
 /gradlew.bat
