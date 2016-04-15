@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver receiver;
 
     private SpeechManager mSpeechManager;
-//    private MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,46 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
-        // Create a new MediaPlayer
-//        mMediaPlayer = new MediaPlayer();
-//        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//
-//        iv_play.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (mMediaPlayer.isPlaying()) {
-//                    mMediaPlayer.pause();
-//                    iv_play.setImageResource(R.drawable.play);
-//                } else {
-//                    playSong(R.raw.baby1);
-//                    iv_play.setImageResource(R.drawable.pause);
-//                }
-//
-//                return false;
-//            }
-//        });
     }
-//    private void playSong(int resId) {
-//        try {
-//            mMediaPlayer.reset();
-//            mMediaPlayer.setDataSource(this, Uri.parse(RESOURCE_URI_PATH + resId));
-//            mMediaPlayer.prepare();
-//            mMediaPlayer.setLooping(true);
-//            mMediaPlayer.start();
-//
-////            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-////
-////                public void onCompletion(MediaPlayer arg0) {
-////                    iv_play.setImageResource(R.drawable.play);
-////                }
-////
-////            });
-//
-//        } catch (IOException e) {
-//            Log.v(getString(R.string.app_name), e.getMessage());
-//        }
-//    }
 
     @Override
     protected void onResume() {
@@ -133,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
             mSpeechManager.shutdown();
         }
 
-//        if(mMediaPlayer != null) {
-//            mMediaPlayer.release();
-//            mMediaPlayer = null;
-//        }
         super.onDestroy();
     }
 }
