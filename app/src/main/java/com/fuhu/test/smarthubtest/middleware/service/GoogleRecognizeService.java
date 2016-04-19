@@ -1,6 +1,5 @@
-package com.fuhu.test.smarthubtest;
+package com.fuhu.test.smarthubtest.middleware.service;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,26 +9,25 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 
+import com.fuhu.test.smarthubtest.middleware.componet.ARecognizeService;
+import com.fuhu.test.smarthubtest.middleware.componet.CommandType;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class GoogleRecognizeService extends Service implements RecognitionListener {
+public class GoogleRecognizeService extends ARecognizeService implements RecognitionListener {
     private static final String TAG = GoogleRecognizeService.class.getSimpleName();
 
-    public static final String ACTION_RECEIVE_RESPONSE = "com.fuhu.test.smarthubtest.receiveResponse";
     // speech recognizer for callbacks
     private SpeechRecognizer recognizer;
 
     // intent for speech recogniztion
     private Intent intent;
 
-    //handler to post changes to TextView
-    private Handler mHandler = new Handler();
-
     private int readySpeechCount = 0;
 
-    // create a new command parser
-    private static ICommandParser mCommandParser = new MockCommandParser();
+    // handler to post changes to TextView
+    private static Handler mHandler = new Handler();
 
     @Override
     public void onCreate() {
@@ -49,6 +47,18 @@ public class GoogleRecognizeService extends Service implements RecognitionListen
         return null;
     }
 
+    @Override
+    public void sendResult(final String result) {
+        mHandler.post(new Runnable() {
+            public void run() {
+                Intent intent = new Intent(ACTION_RECEIVE_RESPONSE);
+                intent.putExtra("result", result);
+                sendBroadcast(intent);
+            }
+        });
+    }
+
+    @Override
     public void createRecognizer() {
         // create a new SpeechRecognizer
         recognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
@@ -57,6 +67,7 @@ public class GoogleRecognizeService extends Service implements RecognitionListen
         recognizer.startListening(intent);
     }
 
+    @Override
     public void startRecognizing() {
 //        if (isRecognizing) {
 //        recognizer.stopListening();
@@ -67,6 +78,7 @@ public class GoogleRecognizeService extends Service implements RecognitionListen
 //        }
     }
 
+    @Override
     public void stopRecognizing() {
         if (recognizer != null) {
             recognizer.destroy();
@@ -138,20 +150,15 @@ public class GoogleRecognizeService extends Service implements RecognitionListen
         String result = matches.get(0);
 
         // parse message
-        final String response = mCommandParser.parseCommand(result);
+        String response = recognize(result);
 
         if (CommandType.Exit.equals(response)) {
             // TODO exit
         } else {
-            mHandler.post(new Runnable() {
-                public void run() {
-                    Intent intent = new Intent(ACTION_RECEIVE_RESPONSE);
-                    intent.putExtra("response", response);
-                    sendBroadcast(intent);
-                    startRecognizing();
-                }
-            });
+            sendResult(response);
         }
+
+        startRecognizing();
     }
 
     /**
@@ -213,11 +220,5 @@ public class GoogleRecognizeService extends Service implements RecognitionListen
                 break;
         }
         return message;
-    }
-
-    @Override
-    public void onDestroy() {
-        stopRecognizing();
-        super.onDestroy();
     }
 }

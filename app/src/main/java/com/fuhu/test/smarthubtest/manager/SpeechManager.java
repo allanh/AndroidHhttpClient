@@ -1,4 +1,4 @@
-package com.fuhu.test.smarthubtest;
+package com.fuhu.test.smarthubtest.manager;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
