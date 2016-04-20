@@ -1,4 +1,4 @@
-package com.fuhu.test.smarthubtest;
+package com.fuhu.test.smarthub;
 
 import org.junit.Test;
 

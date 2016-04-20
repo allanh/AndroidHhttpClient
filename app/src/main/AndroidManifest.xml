@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fuhu.test.smarthubtest">
+    package="com.fuhu.test.smarthub">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Google Cloud Message -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Google Place -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <permission android:name="com.fuhu.test.smarthub.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.fuhu.test.smarthub.permission.C2D_MESSAGE" />
+
     <application
-        android:name=".SmartHubApp"
+        android:name="com.fuhu.test.smarthub.SmartHubApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name="com.fuhu.test.smarthub.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +31,49 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".middleware.service.GoogleRecognizeService" />
+        <service android:name="com.fuhu.test.smarthub.middleware.service.GoogleRecognizeService" />
+
+        <service
+            android:name="com.fuhu.test.smarthub.middleware.service.gcm.MyGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.fuhu.test.smarthub.middleware.service.gcm.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.fuhu.test.smarthub.gcm" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.fuhu.test.smarthub.middleware.receiver.SaveToCacheReceiver" >
+            <intent-filter>
+                <action android:name="com.fuhu.test.smarthub.action.saveYoCache" />
+                <action android:name="com.fuhu.test.smarthub.action.resetYoCache" />
+                <action android:name="com.fuhu.test.smarthub.action.renewYoCache" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDvPan9UFVL950p-okbJ-XCFKAnHzjn0Hk" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>
