@@ -10,6 +10,7 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 import com.fuhu.test.smarthub.middleware.componet.ARecognizeService;
+import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
 import com.fuhu.test.smarthub.middleware.componet.CommandType;
 
 import java.util.ArrayList;
@@ -48,10 +49,17 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
     }
 
     @Override
+    public void onDestroy() {
+        com.fuhu.test.smarthub.middleware.componet.Log.d(TAG, "onDestroy");
+        stopRecognizing();
+        super.onDestroy();
+    }
+
+    @Override
     public void sendResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                Intent intent = new Intent(ACTION_RECEIVE_RESPONSE);
+                Intent intent = new Intent(ActionPreferences.RECEIVE_RECOGNIZE_RESULT);
                 intent.putExtra("result", result);
                 sendBroadcast(intent);
             }

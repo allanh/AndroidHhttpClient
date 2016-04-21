@@ -7,4 +7,6 @@ public class SmartHubConfig {
 
     // is turn on tracking function or not
     public static final boolean isNeedToTrack = true;
+
+    public static final boolean isRecognizingSpeech = false;
 }

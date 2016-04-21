@@ -9,8 +9,6 @@ import com.fuhu.test.smarthub.middleware.contract.MockCommandParser;
 public abstract class ARecognizeService extends Service implements IRecognizeService {
     private static final String TAG = ARecognizeService.class.getSimpleName();
 
-    public static final String ACTION_RECEIVE_RESPONSE = "com.fuhu.test.smarthub.receiveResponse";
-
     // create a new command parser
     private static ICommandParser mCommandParser = new MockCommandParser();
 
@@ -22,12 +20,6 @@ public abstract class ARecognizeService extends Service implements IRecognizeSer
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        stopRecognizing();
-        super.onDestroy();
     }
 
     public abstract void createRecognizer();

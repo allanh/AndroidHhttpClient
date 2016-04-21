@@ -6,11 +6,17 @@ import android.util.Log;
 
 import java.util.Locale;
 
-public class SpeechManager implements TextToSpeech.OnInitListener {
-    private static final String TAG = SpeechManager.class.getSimpleName();
+/**
+ * Helper to speak the string using TTS engine
+ */
+public class TextToSpeechManager implements TextToSpeech.OnInitListener {
+    private static final String TAG = TextToSpeechManager.class.getSimpleName();
     private TextToSpeech mTTS;
 
-    public SpeechManager(Context context) {
+    /**
+     * Default constructor
+     */
+    public TextToSpeechManager(Context context) {
         if (mTTS == null) {
             mTTS = new TextToSpeech(context, this);
         }

@@ -1,29 +1,10 @@
 package com.fuhu.test.smarthub.middleware.contract;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class CheckUtil {
-    /**
-     * Check if service is running
-     * @param context
-     * @param serviceClass
-     * @return
-     */
-    public static boolean isRunning(Context context, Class<?> serviceClass) {
-        if (context != null && serviceClass != null) {
-            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (serviceClass.getSimpleName().equals(service.service.getClassName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * Check if network is available
      * @param context

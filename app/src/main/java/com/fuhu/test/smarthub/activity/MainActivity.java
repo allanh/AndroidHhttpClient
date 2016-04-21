@@ -4,9 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,13 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fuhu.test.smarthub.R;
-import com.fuhu.test.smarthub.callback.IFTTTCallback;
-import com.fuhu.test.smarthub.middleware.componet.MailItem;
-import com.fuhu.test.smarthub.middleware.contract.CheckUtil;
-import com.fuhu.test.smarthub.middleware.manager.IFTTTManager;
-import com.fuhu.test.smarthub.middleware.manager.SpeechManager;
-import com.fuhu.test.smarthub.middleware.service.GoogleRecognizeService;
-import com.fuhu.test.smarthub.middleware.service.gcm.ActionPreferences;
+import com.fuhu.test.smarthub.SmartHubConfig;
+import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
+import com.fuhu.test.smarthub.middleware.manager.SpeechRecognizeManager;
+import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
+import com.fuhu.test.smarthub.middleware.receiver.RegistrationGCMReceiver;
+import com.fuhu.test.smarthub.middleware.receiver.WiFiDirectBroadcastReceiver;
 import com.fuhu.test.smarthub.middleware.service.gcm.RegistrationIntentService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -33,14 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tv_response;
     private ImageView iv_play;
-    private Intent mParseService;
 
-    private IntentFilter filter;
-    private BroadcastReceiver receiver;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private BroadcastReceiver mWiFiDirectBroadcastReceiver;
 
-    private SpeechManager mSpeechManager;
-    private boolean isReceiverRegistered;
+    private TextToSpeechManager mSpeechManager;
+    private boolean isGCMRegistered, isWifiP2PRegistered;
+
+    WifiP2pManager mManager;
+    WifiP2pManager.Channel mChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,60 +55,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mParseService = new Intent(this, GoogleRecognizeService.class);
-
         // create a new SpeechManager
-        mSpeechManager = new SpeechManager(this);
+        mSpeechManager = new TextToSpeechManager(this);
 
-        // create a new BroadcastReceiver
-        filter = new IntentFilter();
-        filter.addAction(GoogleRecognizeService.ACTION_RECEIVE_RESPONSE);
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "receive broadcast");
-                if (intent != null && intent.getExtras() != null) {
-                    String response = intent.getStringExtra("result");
-                    Log.d(TAG, "result: " + response);
-
-                    tv_response.setText(response);
-
-                    // speak response
-                    mSpeechManager.speakOut(response);
-
-                    // Send to IFTTT
-                    IFTTTManager.sendToIFTTT(getApplicationContext(),
-                        new IFTTTCallback() {
-                            public void onIftttReceived(MailItem mailItem) {
-
-                            };
-                            public void onFailed(String status, String message) {
-
-                            };
-                        }, response);
-                }
-            }
-        };
-
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences
-                        .getBoolean(ActionPreferences.SENT_TOKEN_TO_SERVER, false);
-
-                Log.d(TAG, "send Token: " + sentToken);
-//                if (sentToken) {
-//                    mInformationTextView.setText(getString(R.string.gcm_send_message));
-//                } else {
-//                    mInformationTextView.setText(getString(R.string.token_error_message));
-//                }
-            }
-        };
-
-        // Registering BroadcastReceiver
-        registerReceiver();
+        if (SmartHubConfig.isRecognizingSpeech) {
+            SpeechRecognizeManager.getInstance(this).startService();
+        }
 
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
@@ -142,39 +93,59 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, filter);
-        registerReceiver();
 
-        if (mParseService == null) {
-            mParseService = new Intent(this, GoogleRecognizeService.class);
+        if (SmartHubConfig.isRecognizingSpeech) {
+            SpeechRecognizeManager.getInstance(this).startService();
+            SpeechRecognizeManager.getInstance(this).registerReceiver(mSpeechManager, tv_response);
+        }
+        registerReceivers();
+    }
+
+    private void registerReceivers(){
+        // GCM
+        if(!isGCMRegistered) {
+            if (mRegistrationBroadcastReceiver == null) {
+                mRegistrationBroadcastReceiver = new RegistrationGCMReceiver();
+            }
+
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                    new IntentFilter(ActionPreferences.REGISTRATION_COMPLETE));
+            isGCMRegistered = true;
         }
 
-        if (!CheckUtil.isRunning(this, GoogleRecognizeService.class)) {
-            Log.d(TAG, " start service");
-            startService(mParseService);
+        if (!isWifiP2PRegistered) {
+            if (mManager == null || mChannel == null || mWiFiDirectBroadcastReceiver == null) {
+                // Wifi Direct
+                mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+                mChannel = mManager.initialize(this, getMainLooper(), null);
+                mWiFiDirectBroadcastReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+            }
+
+            registerReceiver(mWiFiDirectBroadcastReceiver, WiFiDirectBroadcastReceiver.getFilter());
+            isWifiP2PRegistered = true;
         }
     }
 
-    private void registerReceiver(){
-        if(!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(ActionPreferences.REGISTRATION_COMPLETE));
-            isReceiverRegistered = true;
-        }
+    private void unregisterReceivers(){
+        // GCM
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        isGCMRegistered = false;
+
+        unregisterReceiver(mWiFiDirectBroadcastReceiver);
+        isWifiP2PRegistered = false;
+
     }
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        isReceiverRegistered = false;
-
-        unregisterReceiver(receiver);
-        if (CheckUtil.isRunning(this, GoogleRecognizeService.class)) {
-            Log.d(TAG, " stop service");
-            stopService(mParseService);
-        }
-
         super.onPause();
+
+        unregisterReceivers();
+
+        if (SmartHubConfig.isRecognizingSpeech) {
+            SpeechRecognizeManager.getInstance(this).unregisterReceiver();
+            SpeechRecognizeManager.getInstance(this).stopService();
+        }
     }
 
     @Override
