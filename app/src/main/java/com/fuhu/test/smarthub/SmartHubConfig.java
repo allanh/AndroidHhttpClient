@@ -9,4 +9,6 @@ public class SmartHubConfig {
     public static final boolean isNeedToTrack = true;
 
     public static final boolean isRecognizingSpeech = false;
+
+    public static final boolean enableGCM = true;
 }

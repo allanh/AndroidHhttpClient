@@ -1,5 +1,6 @@
 package com.fuhu.test.smarthub.middleware.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -11,7 +12,10 @@ import java.util.Locale;
  */
 public class TextToSpeechManager implements TextToSpeech.OnInitListener {
     private static final String TAG = TextToSpeechManager.class.getSimpleName();
-    private TextToSpeech mTTS;
+
+    private static TextToSpeechManager INSTANCE;
+
+    private static TextToSpeech mTTS;
 
     /**
      * Default constructor
@@ -20,6 +24,13 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
         if (mTTS == null) {
             mTTS = new TextToSpeech(context, this);
         }
+    }
+
+    public static synchronized TextToSpeechManager getInstance(Activity activity) {
+        if (INSTANCE == null) {
+            INSTANCE = new TextToSpeechManager(activity);
+        }
+        return INSTANCE;
     }
 
     @Override

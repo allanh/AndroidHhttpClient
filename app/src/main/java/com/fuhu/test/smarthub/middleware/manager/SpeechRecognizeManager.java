@@ -103,7 +103,19 @@ public class SpeechRecognizeManager implements IManager {
     @Override
     public synchronized void unregisterReceiver() {
         Log.d(TAG, "unregister receiver");
-        mActivity.unregisterReceiver(mGoogleRecognizeReceiver);
-        isRegistered = false;
+        if (isRegistered) {
+            try {
+                mActivity.unregisterReceiver(mGoogleRecognizeReceiver);
+                isRegistered = false;
+            } catch (IllegalArgumentException iae) {
+                iae.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public synchronized void stop() {
+        unregisterReceiver();
+        stopService();
     }
 }
