@@ -58,10 +58,16 @@ public class OkHTTPRequest {
     private static final String IFTTTEvent = "aws_test";
     private static final String IFTTTKey = "bSFARZ-rJzNywhtItAh4IS";
 
+    private static final String GCMServerSite = "https://gcm-http.googleapis.com/gcm/send";
+
     private static final String AWSServerSite  = ":4321/version-service/";
 
     public static String getAPI_IFTTT() {
         return String.format(IFTTTServerSite, IFTTTEvent, IFTTTKey);
+    }
+
+    public static String getAPI_GCM() {
+        return GCMServerSite;
     }
 
     public static OkHttpClient getRuntimePoolInstance(final Context context) {

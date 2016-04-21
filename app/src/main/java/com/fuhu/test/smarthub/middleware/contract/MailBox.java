@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import com.fuhu.test.smarthub.middleware.componet.ICommand;
@@ -35,10 +36,10 @@ public class MailBox {
     private MailBox(){
         this.mMailTaskList = new HashMap<MailTask, IMailReceiveCallback>();
         
-        mReceiveHandler = new Handler(){
+        mReceiveHandler = new Handler(Looper.getMainLooper()){
 			@Override
 			public void handleMessage(Message msg){
-//                Log.d(TAG, "msg what: " + msg.what);
+                Log.d(TAG, "msg what: " + msg.what);
 				if(msg.what == ReceiveIntent){
 					Intent mIntent = (Intent) msg.obj;
 					Bundle bundle = mIntent.getExtras();
@@ -58,7 +59,7 @@ public class MailBox {
                     // check if receiveMailTask is running
                     if (!running) {
                         running = true;
-//                        Log.d(TAG, "post : " + mMailTask.getCommand());
+                        Log.d(TAG, "post : " + mMailTask.getCommand());
                         this.post(receiveMailTask);
                     }
 				}
@@ -72,9 +73,7 @@ public class MailBox {
         }
         return instance;
     }
-    
-    Context mContext;
-    
+
     public void deliverMail(Context mContext, ICommand mCommand, IMailReceiveCallback mMailRecCallback, Object... parameters){
         MailTask mMailTask=new MailTask();
         mMailTask.setCommand(mCommand);
@@ -112,7 +111,8 @@ public class MailBox {
         startTime = System.currentTimeMillis();
         Log.d(TAG, "receive mail: " + mMailTask.getCommand());
 //		mReceiveHandler.removeMessages(ReceiveIntent);
-		mReceiveHandler.sendMessage(mReceiveHandler.obtainMessage(ReceiveIntent, intent));
+        Message message = mReceiveHandler.obtainMessage(ReceiveIntent, intent);
+		mReceiveHandler.sendMessage(message);
 	}
 
     /**
@@ -121,7 +121,7 @@ public class MailBox {
     private Runnable receiveMailTask = new Runnable() {
         @Override
         public void run() {
-//            Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
+            Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
 
             try{
                 while (running && receiveQueue.size() > 0) {
@@ -145,7 +145,7 @@ public class MailBox {
             }catch(Exception e){
             }
 
-//            Log.d(TAG, "stop thread");
+            Log.d(TAG, "stop thread");
             // stop thread
             running = false;
             mReceiveHandler.removeCallbacks(this);

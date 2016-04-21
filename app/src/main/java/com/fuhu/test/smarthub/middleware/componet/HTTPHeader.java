@@ -21,6 +21,12 @@ public enum HTTPHeader{
         public String getValue() {
             return null;
         }
+    },
+    GCM_KEY("Authorization") {
+        @Override
+        public String getValue() {
+            return "key=AIzaSyDQzs8Byra6QQrMYzxbUc5XtKYQ6JDwWdk";
+        }
     }
     ;
     private String name="",

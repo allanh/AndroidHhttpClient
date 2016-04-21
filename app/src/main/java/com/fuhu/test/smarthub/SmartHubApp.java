@@ -17,7 +17,7 @@ public class SmartHubApp extends Application {
         super();
     }
 
-    public static SmartHubApp getInstance() {
+    public static synchronized SmartHubApp getInstance() {
         return instance;
     }
 
@@ -29,7 +29,7 @@ public class SmartHubApp extends Application {
         initial();
     }
 
-    public void initial() {
+    private void initial() {
         try {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             DATA_DIR_PATH = packageInfo.applicationInfo.dataDir;

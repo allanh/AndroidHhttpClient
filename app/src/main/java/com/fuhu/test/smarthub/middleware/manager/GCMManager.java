@@ -25,7 +25,7 @@ public class GCMManager implements IManager {
     /** Whether or not the broadcast receiver has been registered **/
     private static boolean isRegistered;
 
-    /** Whether or not the recognize service has been started **/
+    /** Whether or not the gcm service has been started **/
     private static boolean isServiceRunning;
 
     private static Activity mActivity;
@@ -36,6 +36,7 @@ public class GCMManager implements IManager {
     private GCMManager() {
         isRegistered = false;
         isServiceRunning = false;
+        mRegistrationBroadcastReceiver = new RegistrationGCMReceiver();
     }
 
     public static synchronized GCMManager getInstance(Activity activity) {
@@ -48,14 +49,13 @@ public class GCMManager implements IManager {
     }
 
     /**
-     * Start parsing service
+     * Start IntentService to register this application with GCM
      */
     @Override
     public synchronized void startService() {
-        Log.d(TAG, "start service: " + isServiceRunning);
+        Log.d(TAG, "start service: " + isServiceRunning + " check play service: " + checkPlayServices());
 
         if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
             Intent intent = new Intent(mActivity, RegistrationIntentService.class);
             mActivity.startService(intent);
 
@@ -64,14 +64,13 @@ public class GCMManager implements IManager {
     }
 
     /**
-     * Stop parsing service
+     * Stop service
      */
     @Override
     public synchronized void stopService() {
         Log.d(TAG, "stop service: " + isServiceRunning);
 
         if (isServiceRunning) {
-            // Start IntentService to register this application with GCM.
             Intent intent = new Intent(mActivity, RegistrationIntentService.class);
             mActivity.stopService(intent);
 
@@ -80,7 +79,7 @@ public class GCMManager implements IManager {
     }
 
     /**
-     * Register recognize receiver
+     * Register registration receiver
      */
     @Override
     public synchronized void registerReceiver() {
@@ -88,10 +87,6 @@ public class GCMManager implements IManager {
 
         // GCM
         if(!isRegistered) {
-            if (mRegistrationBroadcastReceiver == null) {
-                mRegistrationBroadcastReceiver = new RegistrationGCMReceiver();
-            }
-
             LocalBroadcastManager.getInstance(mActivity).registerReceiver(mRegistrationBroadcastReceiver,
                     new IntentFilter(ActionPreferences.REGISTRATION_COMPLETE));
             isRegistered = true;
@@ -99,14 +94,14 @@ public class GCMManager implements IManager {
     }
 
     /**
-     * UnRegister recognize receiver
+     * Unregister registration receiver
      */
     @Override
     public synchronized void unregisterReceiver() {
         Log.d(TAG, "unregister receiver: " + isRegistered);
         if (isRegistered) {
             try {
-                mActivity.unregisterReceiver(mRegistrationBroadcastReceiver);
+                LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mRegistrationBroadcastReceiver);
                 isRegistered = false;
             } catch (IllegalArgumentException iae) {
                 iae.printStackTrace();

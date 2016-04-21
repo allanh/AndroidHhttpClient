@@ -8,7 +8,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.fuhu.test.smarthub.R;
+import com.fuhu.test.smarthub.middleware.SmartHubCommand;
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
+import com.fuhu.test.smarthub.middleware.componet.GCMItem;
+import com.fuhu.test.smarthub.middleware.contract.MailBox;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -17,7 +20,7 @@ import java.io.IOException;
 
 public class RegistrationIntentService extends IntentService {
 
-    private static final String TAG = "RegIntentService";
+    private static final String TAG = RegistrationIntentService.class.getSimpleName();
     private static final String[] TOPICS = {"global"};
 
     public RegistrationIntentService() {
@@ -27,7 +30,6 @@ public class RegistrationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         try {
             // [START register_for_gcm]
             // Initially this call goes out to the network to retrieve the token, subsequent calls
@@ -43,6 +45,8 @@ public class RegistrationIntentService extends IntentService {
 
             // TODO: Implement this method to send any registration to your app's servers.
             sendRegistrationToServer(token);
+
+            sendTestMessages(token);
 
             // Subscribe to topic channels
             subscribeTopics(token);
@@ -90,4 +94,16 @@ public class RegistrationIntentService extends IntentService {
     }
     // [END subscribe_topics]
 
+    private void sendTestMessages(String token) {
+        GCMItem queryItem = new GCMItem();
+        queryItem.setTo(token);
+
+        GCMItem.Data data = new GCMItem.Data();
+        data.setScore("5x1");
+        data.setTime("15:10");
+
+        queryItem.setData(data);
+
+        MailBox.getInstance().deliverMail(this, SmartHubCommand.ReqSendToGCM, null, queryItem);
+    }
 }

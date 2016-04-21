@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.fuhu.test.smarthub.callback.IFTTTCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
-import com.fuhu.test.smarthub.middleware.componet.MailItem;
+import com.fuhu.test.smarthub.middleware.componet.IFTTTItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +13,7 @@ public class IFTTTManager {
     private static final String TAG = IFTTTManager.class.getSimpleName();
 
     public static void sendToIFTTT(Context context, IFTTTCallback mIFTTTCallback, String... messages) {
-        MailItem mailItem = new MailItem();
+        IFTTTItem iftttItem = new IFTTTItem();
 
         //        {"value1":"android","value2":"test","value3":"aaa"}
         Method method;
@@ -22,8 +22,8 @@ public class IFTTTManager {
                 Log.d(TAG, "message[" + i + "]: " + messages[i]);
 
                 try {
-                    method = MailItem.class.getDeclaredMethod("setValue" + (i + 1), String.class);
-                    method.invoke(mailItem, messages[i]);
+                    method = IFTTTItem.class.getDeclaredMethod("setValue" + (i + 1), String.class);
+                    method.invoke(iftttItem, messages[i]);
                 } catch (InvocationTargetException ite) {
                     ite.printStackTrace();
                 } catch (IllegalAccessException iae) {
@@ -34,7 +34,7 @@ public class IFTTTManager {
             }
         }
 
-        Log.d(TAG, "value1: " + mailItem.getValue1() + " value2: " + mailItem.getValue2());
-        IFTTTCallback.reqSend(context, mIFTTTCallback, mailItem);
+        Log.d(TAG, "value1: " + iftttItem.getValue1() + " value2: " + iftttItem.getValue2());
+        IFTTTCallback.reqSend(context, mIFTTTCallback, iftttItem);
     }
 }

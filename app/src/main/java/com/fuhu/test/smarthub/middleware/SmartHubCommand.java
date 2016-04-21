@@ -18,7 +18,8 @@ import java.util.List;
 
 public enum SmartHubCommand implements ICommand, Serializable{
 	ReqSendToIFTTT(1,1),
-	ReqSendToAWS(2,2)
+	ReqSendToAWS(2,2),
+	ReqSendToGCM(3,3)
 	;
 	
 	@SuppressLint("UseSparseArrays")

@@ -4,8 +4,10 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.fuhu.test.smarthub.middleware.componet.AMailItem;
+import com.fuhu.test.smarthub.middleware.componet.GCMItem;
 import com.fuhu.test.smarthub.middleware.componet.HTTPHeader;
 import com.fuhu.test.smarthub.middleware.componet.ICommand;
+import com.fuhu.test.smarthub.middleware.componet.IFTTTItem;
 import com.fuhu.test.smarthub.middleware.componet.IMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
@@ -36,17 +38,17 @@ public enum PostOffice implements ICommand {
                     resCode = JSONFormat.getString("status");
                 }else{
                     Log.e(TAG, "JSON is null");
-                    return reqErrorCode(retrieveItem, new MailItem(), ErrorCodeHandler.UNKNOWN_EXCEPTION.getCode());
+                    return reqErrorCode(retrieveItem, new IFTTTItem(), ErrorCodeHandler.UNKNOWN_EXCEPTION.getCode());
                 }
 
                 // Convert JSONObject to Object
-                MailItem mailItem = GSONUtil.fromJSON(JSONFormat, MailItem.class);
+                IFTTTItem iftttItem = GSONUtil.fromJSON(JSONFormat, IFTTTItem.class);
 
                 // check status
                 if (ErrorCodeHandler.isSuccess(resCode)) {
-                    retrieveItem.add(mailItem);
+                    retrieveItem.add(iftttItem);
                 } else {
-                    return reqErrorCode(retrieveItem, mailItem, resCode);
+                    return reqErrorCode(retrieveItem, iftttItem, resCode);
                 }
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -56,24 +58,76 @@ public enum PostOffice implements ICommand {
 
         @Override
         public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
-            MailItem mailItem = (MailItem) queryItem;
+            IFTTTItem iftttItem = (IFTTTItem) queryItem;
             this.setURL(OkHTTPRequest.getAPI_IFTTT());
 
             return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
                     HTTPHeader.getDefaultHeader(),
                     Request.Method.POST,
-                    genJson(mailItem)).execute("");
+                    genJson(iftttItem)).execute("");
         }
 
         @Override
         public JSONObject genJson(AMailItem queryItem) {
-            if (queryItem != null && queryItem instanceof MailItem) {
-                MailItem mailItem = (MailItem) queryItem;
+            if (queryItem != null && queryItem instanceof IFTTTItem) {
+                IFTTTItem mailItem = (IFTTTItem) queryItem;
                 return GSONUtil.toJSON(mailItem, "value1");
             }
             return null;
         }
+    },
+
+    ReqSendToGCM(3,3) {
+        @Override
+        public List<IMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, IMailItem tmpMediaItem, Object... obj) {
+            List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+            String resCode= ErrorCodeHandler.Default.getCode();
+
+            Log.d("request", "ReqSendToGCM JSONFormat: " + JSONFormat);
+            try {
+                if(JSONFormat != null && JSONFormat.has("status")){
+                    resCode = JSONFormat.getString("status");
+                }else{
+                    Log.e(TAG, "JSON is null");
+                    return reqErrorCode(retrieveItem, new MailItem(), ErrorCodeHandler.UNKNOWN_EXCEPTION.getCode());
+                }
+
+                // Convert JSONObject to Object
+                GCMItem mailItem = GSONUtil.fromJSON(JSONFormat, GCMItem.class);
+
+                // check status
+                if (ErrorCodeHandler.isSuccess(resCode)) {
+                    retrieveItem.add(mailItem);
+                } else {
+                    return reqErrorCode(retrieveItem, mailItem, resCode);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return retrieveItem;
+        }
+
+        @Override
+        public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+            GCMItem gcmItem = (GCMItem) queryItem;
+            this.setURL(OkHTTPRequest.getAPI_GCM());
+
+            return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
+                    HTTPHeader.getHeader(HTTPHeader.GCM_KEY),
+                    Request.Method.POST,
+                    genJson(gcmItem)).execute("");
+        }
+
+        @Override
+        public JSONObject genJson(AMailItem queryItem) {
+            if (queryItem != null && queryItem instanceof GCMItem) {
+                GCMItem mailItem = (GCMItem) queryItem;
+                return GSONUtil.toJSON(mailItem, "to", "data");
+            }
+            return null;
+        }
     }
+
     ;
 
     private static HashMap<Integer, PostOffice> lookupTable = new HashMap<Integer, PostOffice>();
@@ -176,6 +230,9 @@ public enum PostOffice implements ICommand {
     }
 
     public List<IMailItem> reqSuccessCode(List<IMailItem> retrieveItem){
+        if (retrieveItem == null) {
+            retrieveItem = new ArrayList<IMailItem>();
+        }
         MailItem contentItem = new MailItem();
         contentItem.setStatus(ErrorCodeHandler.Success.getCode());
         retrieveItem.add(contentItem);
