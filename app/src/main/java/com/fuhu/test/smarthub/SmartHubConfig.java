@@ -9,11 +9,11 @@ public class SmartHubConfig {
     public static final boolean isNeedToTrack = true;
 
     // is turn on recognizing function or not
-    public static final boolean isRecognizingSpeech = false;
+    public static final boolean isRecognizingSpeech = true;
 
     // is turn on GCM function or not
-    public static final boolean enableGCM = true;
+    public static final boolean enableGCM = false;
 
     // is turn on Wifi peer to peer function or not
-    public static final boolean enableWifiP2P = true;
+    public static final boolean enableWifiP2P = false;
 }

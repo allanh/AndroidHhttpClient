@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        // TODO STT
         if (SmartHubConfig.isRecognizingSpeech) {
             SpeechRecognizeManager.getInstance(this).startService();
             SpeechRecognizeManager.getInstance(this).registerReceiver(

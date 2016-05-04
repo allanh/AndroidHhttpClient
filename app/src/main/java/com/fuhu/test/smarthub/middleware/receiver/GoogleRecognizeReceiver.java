@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.TextView;
 
-import com.fuhu.test.smarthub.callback.IFTTTCallback;
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
-import com.fuhu.test.smarthub.middleware.componet.IFTTTItem;
 import com.fuhu.test.smarthub.middleware.componet.Log;
-import com.fuhu.test.smarthub.middleware.manager.IFTTTManager;
+import com.fuhu.test.smarthub.middleware.ifttt.PondoIFTTT;
 import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
 
 public class GoogleRecognizeReceiver extends BroadcastReceiver {
@@ -44,24 +42,24 @@ public class GoogleRecognizeReceiver extends BroadcastReceiver {
             }
 
             // speak response
-            if (mSpeechManager != null) {
-                mSpeechManager.speakOut(response);
-            }
+//            if (mSpeechManager != null) {
+//                mSpeechManager.speakOut(response);
+//            }
 
-            if (mContext != null) {
-                // Send to IFTTT
-                IFTTTManager.sendToIFTTT(mContext,
-                        new IFTTTCallback() {
-                            public void onIftttReceived(IFTTTItem iftttItem) {
-
-                            }
-
-                            public void onFailed(String status, String message) {
-
-                            }
-                        },
-                        response);
-            }
+//            if (mContext != null) {
+//                // Send to IFTTT
+//                IFTTTManager.sendToIFTTT(mContext,
+//                        new IFTTTCallback() {
+//                            public void onIftttReceived(IFTTTItem iftttItem) {
+//
+//                            }
+//
+//                            public void onFailed(String status, String message) {
+//
+//                            }
+//                        },
+//                        response);
+//            }
         }
     }
 }

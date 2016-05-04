@@ -11,7 +11,8 @@ import android.util.Log;
 
 import com.fuhu.test.smarthub.middleware.componet.ARecognizeService;
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
-import com.fuhu.test.smarthub.middleware.componet.CommandType;
+import com.fuhu.test.smarthub.middleware.ifttt.PondoDecisionSeeker;
+import com.fuhu.test.smarthub.middleware.ifttt.PondoIFTTT;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -55,12 +56,12 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
         super.onDestroy();
     }
 
-    @Override
     public void sendResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
                 Intent intent = new Intent(ActionPreferences.RECEIVE_RECOGNIZE_RESULT);
                 intent.putExtra("result", result);
+
                 sendBroadcast(intent);
             }
         });
@@ -143,7 +144,7 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
     @Override
     public void onError(int error) {
         String errorMessage = getErrorText(error);
-        Log.d(TAG, "Failed: " + errorMessage);
+        Log.e(TAG, "Failed: " + errorMessage);
 //        txtSpeechInput.setText(errorMessage);
 //        toggleButton.setChecked(false);
     }
@@ -153,19 +154,25 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
      */
     @Override
     public void onResults(Bundle results) {
-        Log.d(TAG, "On result");
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String result = matches.get(0);
 
         // parse message
         String response = recognize(result);
 
-        if (CommandType.Exit.equals(response)) {
-            // TODO exit
-        } else {
-            sendResult(response);
-        }
+        Log.i(TAG, "On result: " + response);
 
+        // OnSTT
+        PondoIFTTT pondoIFTTTRoot=new PondoIFTTT("hello",0,"What action are you or your baby doing? Feeding, pumping, sleeping, or changing diaper ", "my Pondo","Hi Pondo", "Hello Pondo");;
+        pondoIFTTTRoot.setLeave();
+
+        PondoDecisionSeeker.getInstance(getApplicationContext()).
+                onSTT(matches.get(0), pondoIFTTTRoot);
+
+        // Send BroadCast
+        sendResult(response);
+
+        // Continue
         startRecognizing();
     }
 

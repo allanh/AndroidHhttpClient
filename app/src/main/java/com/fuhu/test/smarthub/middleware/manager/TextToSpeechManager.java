@@ -1,6 +1,5 @@
 package com.fuhu.test.smarthub.middleware.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -26,9 +25,9 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
         }
     }
 
-    public static synchronized TextToSpeechManager getInstance(Activity activity) {
+    public static synchronized TextToSpeechManager getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new TextToSpeechManager(activity);
+            INSTANCE = new TextToSpeechManager(context);
         }
         return INSTANCE;
     }
@@ -52,7 +51,9 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
      * @param text The string of text to be spoken
      */
     public void speakOut(String text) {
-        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        if (text != null) {
+            mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 
     public void shutdown() {

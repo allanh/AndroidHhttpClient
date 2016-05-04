@@ -8,10 +8,10 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:223932068374:android:7418336eb3c74a60",
-        "client_id": "android:com.fuhu.test.smarthubtest",
+        "client_id": "android:com.fuhu.test.smarthub",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "com.fuhu.test.smarthubtest",
+          "package_name": "com.fuhu.test.smarthub",
           "certificate_hash": []
         }
       },
