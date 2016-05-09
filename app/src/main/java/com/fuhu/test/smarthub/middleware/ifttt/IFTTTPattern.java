@@ -12,4 +12,5 @@ public interface IFTTTPattern {
 	public void setFound(final boolean isFound);
 	public int getIdentifier();
 	public int getTotalLevel();
+	public IFTTTPattern getPraentNode();
 }

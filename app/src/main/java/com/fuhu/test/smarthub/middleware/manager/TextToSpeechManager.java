@@ -1,8 +1,13 @@
 package com.fuhu.test.smarthub.middleware.manager;
 
 import android.content.Context;
+import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+
+import com.fuhu.test.smarthub.middleware.componet.ITTSListener;
 
 import java.util.Locale;
 
@@ -16,6 +21,8 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
 
     private static TextToSpeech mTTS;
 
+    private ITTSListener mTTSListener;
+    
     /**
      * Default constructor
      */
@@ -51,8 +58,42 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
      * @param text The string of text to be spoken
      */
     public void speakOut(String text) {
-        if (text != null) {
+        if (mTTS != null && text != null) {
             mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+
+    private void setTtsListener() {
+        if (Build.VERSION.SDK_INT >= 15) {
+            int listenerResult = mTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                @Override
+                public void onDone(String utteranceId) {
+                    mTTSListener.onDone();
+                }
+
+                @Override
+                public void onError(String utteranceId) {
+                    mTTSListener.onError();
+                }
+
+                @Override
+                public void onStart(String utteranceId) {
+                    mTTSListener.onStart();
+                }
+            });
+            if (listenerResult != TextToSpeech.SUCCESS) {
+                Log.e(TAG, "failed to add utterance progress listener");
+            }
+        } else {
+            int listenerResult = mTTS.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+                @Override
+                public void onUtteranceCompleted(String utteranceId) {
+                    mTTSListener.onDone();
+                }
+            });
+            if (listenerResult != TextToSpeech.SUCCESS) {
+                Log.e(TAG, "failed to add utterance completed listener");
+            }
         }
     }
 

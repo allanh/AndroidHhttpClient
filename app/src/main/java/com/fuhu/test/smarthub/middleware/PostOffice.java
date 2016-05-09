@@ -13,6 +13,7 @@ import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.componet.MailItem;
+import com.fuhu.test.smarthub.middleware.componet.TrackItem;
 import com.fuhu.test.smarthub.middleware.contract.ErrorCodeHandler;
 import com.fuhu.test.smarthub.middleware.contract.GSONUtil;
 import com.fuhu.test.smarthub.middleware.contract.OkHTTPRequest;
@@ -113,7 +114,7 @@ public enum PostOffice implements ICommand {
             this.setURL(OkHTTPRequest.getAPI_GCM());
 
             return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
-                    HTTPHeader.getHeader(HTTPHeader.GCM_KEY),
+                    HTTPHeader.getHeader(mContext, HTTPHeader.GCM_KEY),
                     Request.Method.POST,
                     genJson(gcmItem)).execute("");
         }
@@ -123,6 +124,57 @@ public enum PostOffice implements ICommand {
             if (queryItem != null && queryItem instanceof GCMItem) {
                 GCMItem mailItem = (GCMItem) queryItem;
                 return GSONUtil.toJSON(mailItem, "to", "data");
+            }
+            return null;
+        }
+    },
+
+    ReqSendToTrack(4,4) {
+        @Override
+        public List<IMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, IMailItem tmpMediaItem, Object... obj) {
+            List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+            String resCode= ErrorCodeHandler.Default.getCode();
+
+            Log.d("request", "ReqSendToTrack JSONFormat: " + JSONFormat);
+            try {
+                if(JSONFormat != null && JSONFormat.has("status")){
+                    resCode = JSONFormat.getString("status");
+                }else{
+                    Log.e(TAG, "JSON is null");
+                    return reqErrorCode(retrieveItem, new MailItem(), ErrorCodeHandler.UNKNOWN_EXCEPTION.getCode());
+                }
+
+                // Convert JSONObject to Object
+                TrackItem mailItem = GSONUtil.fromJSON(JSONFormat, TrackItem.class);
+
+                // check status
+                if (ErrorCodeHandler.isSuccess(resCode)) {
+                    retrieveItem.add(mailItem);
+                } else {
+                    return reqErrorCode(retrieveItem, mailItem, resCode);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return retrieveItem;
+        }
+
+        @Override
+        public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+            TrackItem trackItem = (TrackItem) queryItem;
+            this.setURL(OkHTTPRequest.getAPI_Track());
+
+            return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
+                    HTTPHeader.getTrackingHeader(mContext),
+                    Request.Method.POST,
+                    genJson(trackItem)).execute("");
+        }
+
+        @Override
+        public JSONObject genJson(AMailItem queryItem) {
+            if (queryItem != null && queryItem instanceof TrackItem) {
+                TrackItem mailItem = (TrackItem) queryItem;
+                return GSONUtil.toJSON(mailItem, "VoiceTracking");
             }
             return null;
         }

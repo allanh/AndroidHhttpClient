@@ -2,7 +2,10 @@ package com.fuhu.test.smarthub.middleware.ifttt;
 
 import android.content.Context;
 
+import com.fuhu.test.smarthub.callback.TrackCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
+import com.fuhu.test.smarthub.middleware.componet.TrackItem;
+import com.fuhu.test.smarthub.middleware.componet.TrackItem.VoiceTracking;
 import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
 
 import java.util.ArrayList;
@@ -33,10 +36,10 @@ public class PondoDecisionSeeker extends DecisionSeeker {
 
     public void onTTS(final List<PondoIFTTT> myroot,final String sentence) {
         Log.d(TAG, "onTTS: " + sentence);
-        // TODO TTS
+        // TTS
         TextToSpeechManager.getInstance(mContext).speakOut(sentence);
 
-        // TODO save list
+        // save list
         if (myroot != null) {
             mPondoIFTTTList.addAll(myroot);
         }
@@ -46,6 +49,39 @@ public class PondoDecisionSeeker extends DecisionSeeker {
         //TODO send all list to nicky
         Log.d(TAG, "send to nicky");
 
+        if (myroot != null && myroot.size() > 0) {
+            TrackItem trackItem = new TrackItem();
+
+            for (PondoIFTTT pondoIFTTT: myroot) {
+                Log.d(TAG, "Pondo: " + pondoIFTTT.getMainRecoWords() + " isFound: " + pondoIFTTT.isFound());
+                VoiceTracking voiceTracking = new VoiceTracking();
+                voiceTracking.setIsSuccess(pondoIFTTT.isFound());
+                voiceTracking.setInput(pondoIFTTT.getMainRecoWords());
+                voiceTracking.setTimestamp(System.currentTimeMillis());
+
+                trackItem.getVoiceTracking().add(voiceTracking);
+            }
+
+            sendToTrackingServer(trackItem);
+        }
+
+        // clear list
         mPondoIFTTTList.clear();
+    }
+
+    private void sendToTrackingServer(final TrackItem trackItem) {
+        if (trackItem != null) {
+            TrackCallback.reqSend(mContext, new TrackCallback() {
+                @Override
+                public void onResultReceived(TrackItem trackItem) {
+                    Log.d(TAG, "onResultReceived");
+                }
+
+                @Override
+                public void onFailed(String status, String message) {
+                    Log.d(TAG, "onFailed: " + message);
+                }
+            }, trackItem);
+        }
     }
 }

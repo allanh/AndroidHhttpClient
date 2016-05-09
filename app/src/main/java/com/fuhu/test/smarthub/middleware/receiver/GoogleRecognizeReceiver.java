@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
 import com.fuhu.test.smarthub.middleware.componet.Log;
-import com.fuhu.test.smarthub.middleware.ifttt.PondoIFTTT;
 import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
 
 public class GoogleRecognizeReceiver extends BroadcastReceiver {

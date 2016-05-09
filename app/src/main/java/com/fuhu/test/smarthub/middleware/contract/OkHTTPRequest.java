@@ -62,12 +62,20 @@ public class OkHTTPRequest {
 
     private static final String AWSServerSite  = ":4321/version-service/";
 
+    private static final String TrackServerSite = "http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080";
+    private static final String TrackServerPath = "/IITService/tracking/voicetracking";
+
+
     public static String getAPI_IFTTT() {
         return String.format(IFTTTServerSite, IFTTTEvent, IFTTTKey);
     }
 
     public static String getAPI_GCM() {
         return GCMServerSite;
+    }
+
+    public static String getAPI_Track() {
+        return TrackServerSite + TrackServerPath;
     }
 
     public static OkHttpClient getRuntimePoolInstance(final Context context) {

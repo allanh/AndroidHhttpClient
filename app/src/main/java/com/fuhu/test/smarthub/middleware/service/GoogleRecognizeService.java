@@ -11,10 +11,11 @@ import android.util.Log;
 
 import com.fuhu.test.smarthub.middleware.componet.ARecognizeService;
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
+import com.fuhu.test.smarthub.middleware.ifttt.Initialization;
 import com.fuhu.test.smarthub.middleware.ifttt.PondoDecisionSeeker;
-import com.fuhu.test.smarthub.middleware.ifttt.PondoIFTTT;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class GoogleRecognizeService extends ARecognizeService implements RecognitionListener {
@@ -156,21 +157,19 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
     public void onResults(Bundle results) {
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String result = matches.get(0);
-
+        List<String> keywords=new ArrayList<String>();
+        for(String tmp:result.split(" ")){
+            keywords.add(tmp);
+        }
         // parse message
-        String response = recognize(result);
-
-        Log.i(TAG, "On result: " + response);
-
-        // OnSTT
-        PondoIFTTT pondoIFTTTRoot=new PondoIFTTT("hello",0,"What action are you or your baby doing? Feeding, pumping, sleeping, or changing diaper ", "my Pondo","Hi Pondo", "Hello Pondo");;
-        pondoIFTTTRoot.setLeave();
+//        String response = recognize(result);
+//        Log.i(TAG, "On result: " + response);
 
         PondoDecisionSeeker.getInstance(getApplicationContext()).
-                onSTT(matches.get(0), pondoIFTTTRoot);
+                onSTT(keywords, Initialization.samplePondoIFTTTRoot);
 
         // Send BroadCast
-        sendResult(response);
+        sendResult(matches.get(0));
 
         // Continue
         startRecognizing();

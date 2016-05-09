@@ -49,7 +49,9 @@ public class PondoIFTTT implements IFTTTPattern{
 		}
 		return false;
 	}
-	public boolean equals(final String keywrods){
+
+
+	public boolean similarMatch(final String keywrods){
 			if(this.mainRecoWords.equalsIgnoreCase(keywrods)){
 				return true;
 			}else{
