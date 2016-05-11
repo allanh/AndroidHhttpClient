@@ -14,7 +14,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.test.smarthub.middleware.PostOffice;
-import com.fuhu.test.smarthub.middleware.componet.IMailItem;
+import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.test.smarthub.middleware.componet.Log;
@@ -35,8 +35,8 @@ public class VolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private IPostOfficeProxy mPostOfficeProxy;
     private Context mContext;
 
-    private List<IMailItem> obtainItems=null;
-    private IMailItem mMediaItem;
+    private List<AMailItem> obtainItems=null;
+    private AMailItem mMediaItem;
     private Map<String, String> headerPair = null;
 
     private int id;
@@ -50,7 +50,7 @@ public class VolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private static Executor executorGeneral = Executors.newFixedThreadPool(10);
     private static Executor executorSpeed = Executors.newFixedThreadPool(2);
 
-    public VolleyActionProxy(final Context mContext, final PostOffice mPostOffice,IMailItem mMediaItem, final boolean isNeedToDoNext, IPostOfficeProxy mPostOfficeProxy, final Map<String, String> headerPair, int httpAction, Object ...obj ){
+    public VolleyActionProxy(final Context mContext, final PostOffice mPostOffice,AMailItem mMediaItem, final boolean isNeedToDoNext, IPostOfficeProxy mPostOfficeProxy, final Map<String, String> headerPair, int httpAction, Object ...obj ){
         this.mPostOffice=mPostOffice;
         this.isNeedToDoNext=isNeedToDoNext;
         this.mPostOfficeProxy=mPostOfficeProxy;

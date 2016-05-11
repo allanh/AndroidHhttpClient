@@ -53,56 +53,22 @@ public class TrackItem extends AMailItem{
     }
 
     /**
-     * VoiceTracking
+     * voiceTrackingList
      */
-    public List<VoiceTracking> getVoiceTracking() {
-        if(VoiceTracking == null){
-            VoiceTracking = new ArrayList<VoiceTracking>();
+    public List<VoiceTrackingList> getVoiceTrackingList() {
+        if(voiceTrackingList == null){
+            voiceTrackingList = new ArrayList<VoiceTrackingList>();
         }
-        return VoiceTracking;
+        return voiceTrackingList;
     }
 
-    public void setVoiceTracking(List<VoiceTracking> VoiceTracking) {
-        this.VoiceTracking = VoiceTracking;
+    public void setVoiceTrackingList(List<VoiceTrackingList> voiceTrackingList) {
+        this.voiceTrackingList = voiceTrackingList;
     }
 
-    private List<VoiceTracking> VoiceTracking;
+    private List<VoiceTrackingList> voiceTrackingList;
 
-//    public static class VoiceTracking{
-//        public boolean isSuccess() {
-//            return isSuccess;
-//        }
-//
-//        public boolean getIsSuccess() {
-//            return isSuccess;
-//        }
-//
-//        public void setIsSuccess(boolean isSuccess) {
-//            this.isSuccess = isSuccess;
-//        }
-//
-//        public String getText() {
-//            return text;
-//        }
-//
-//        public void setText(String text) {
-//            this.text = text;
-//        }
-//
-//        public long getTimestamp() {
-//            return timestamp;
-//        }
-//
-//        public void setTimestamp(long timestamp) {
-//            this.timestamp = timestamp;
-//        }
-//
-//        private boolean isSuccess;
-//        private String text;
-//        private long timestamp;
-//    }
-
-    public static class VoiceTracking{
+    public static class VoiceTrackingList{
         public boolean isSuccess() {
             return isSuccess;
         }
@@ -115,28 +81,20 @@ public class TrackItem extends AMailItem{
             this.isSuccess = isSuccess;
         }
 
-        public String getInput() {
-            return input;
+        public String getText() {
+            return text;
         }
 
-        public void setInput(String input) {
-            this.input = input;
+        public void setText(String text) {
+            this.text = text;
         }
 
-        public List<String> getResponse() {
+        public String getResponse() {
             return response;
         }
 
-        public void setResponse(List<String> response) {
+        public void setResponse(String response) {
             this.response = response;
-        }
-
-        public long getConfidence() {
-            return confidence;
-        }
-
-        public void setConfidence(int confidence) {
-            this.confidence = confidence;
         }
 
         public long getTimestamp() {
@@ -148,9 +106,8 @@ public class TrackItem extends AMailItem{
         }
 
         private boolean isSuccess;
-        private String input;
-        private List<String> response;
-        private int confidence;
+        private String text;
+        private String response;
         private long timestamp;
     }
 }

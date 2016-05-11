@@ -5,7 +5,7 @@ import android.content.Context;
 import com.fuhu.test.smarthub.callback.TrackCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.componet.TrackItem;
-import com.fuhu.test.smarthub.middleware.componet.TrackItem.VoiceTracking;
+import com.fuhu.test.smarthub.middleware.componet.TrackItem.VoiceTrackingList;
 import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
 
 import java.util.ArrayList;
@@ -54,12 +54,13 @@ public class PondoDecisionSeeker extends DecisionSeeker {
 
             for (PondoIFTTT pondoIFTTT: myroot) {
                 Log.d(TAG, "Pondo: " + pondoIFTTT.getMainRecoWords() + " isFound: " + pondoIFTTT.isFound());
-                VoiceTracking voiceTracking = new VoiceTracking();
+                VoiceTrackingList voiceTracking = new VoiceTrackingList();
                 voiceTracking.setIsSuccess(pondoIFTTT.isFound());
-                voiceTracking.setInput(pondoIFTTT.getMainRecoWords());
+                voiceTracking.setText(pondoIFTTT.getMainRecoWords());
+//                voiceTracking.setInput(pondoIFTTT.getMainRecoWords());
                 voiceTracking.setTimestamp(System.currentTimeMillis());
 
-                trackItem.getVoiceTracking().add(voiceTracking);
+                trackItem.getVoiceTrackingList().add(voiceTracking);
             }
 
             sendToTrackingServer(trackItem);

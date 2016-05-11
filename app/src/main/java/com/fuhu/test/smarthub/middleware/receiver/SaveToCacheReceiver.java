@@ -4,15 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fuhu.test.smarthub.SmartHubApp;
 import com.fuhu.test.smarthub.middleware.MediaItemCollection;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 
 
 public class SaveToCacheReceiver extends BroadcastReceiver {
     private static final String TAG = SaveToCacheReceiver.class.getSimpleName();
-    public static final String ACTION_SAVE_TO_CACHE = "com.fuhu.test.smarthub.action.saveYoCache";//use current Collection to save cache
-    public static final String ACTION_RESET_CACHE 	= "com.fuhu.test.smarthub.action.resetYoCache";//use new Collection to save cache
-    public static final String ACTION_RENEW_CACHE 	= "com.fuhu.test.smarthub.action.renewYoCache";//use self adapt Collection to save cache
+    public static final String ACTION_SAVE_TO_CACHE = SmartHubApp.getINSTANCE().getPackageName() + ".action.saveYoCache";//use current Collection to save cache
+    public static final String ACTION_RESET_CACHE 	= SmartHubApp.getINSTANCE().getPackageName() + ".action.resetYoCache";//use new Collection to save cache
+    public static final String ACTION_RENEW_CACHE 	= SmartHubApp.getINSTANCE().getPackageName() + ".action.renewYoCache";//use self adapt Collection to save cache
 
     public static final String KEY_COLLECTION = "KEY_COLLECTION";
 

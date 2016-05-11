@@ -3,8 +3,11 @@ package com.fuhu.test.smarthub.middleware.contract;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IMailItem;
+import com.fuhu.test.smarthub.middleware.componet.MailItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,5 +138,19 @@ public enum ErrorCodeHandler{
         if (context != null) {
             Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * Generate error item to MailItem list
+     * @param errorCodeHandler
+     * @return MailItem list
+     */
+    public static List<AMailItem> genErrorItem(ErrorCodeHandler errorCodeHandler) {
+        List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
+        MailItem resultItem = new MailItem();
+        resultItem.setStatus(errorCodeHandler.getCode());
+        resultItem.setMessage(errorCodeHandler.toString());
+        retrieveItem.add(resultItem);
+        return retrieveItem;
     }
 }

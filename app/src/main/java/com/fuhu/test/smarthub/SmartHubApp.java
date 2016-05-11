@@ -8,24 +8,23 @@ import com.fuhu.test.smarthub.middleware.componet.Log;
 
 public class SmartHubApp extends Application {
     public static final String TAG = SmartHubApp.class.getSimpleName();
-    public static final String RESOURCE_URI_PATH = "android.resource://com.fuhu.test.smarthub/";
 
-    private static SmartHubApp instance;
+    private static SmartHubApp INSTANCE;
     private static String DATA_DIR_PATH;
 
     public SmartHubApp() {
         super();
     }
 
-    public static synchronized SmartHubApp getInstance() {
-        return instance;
+    public static synchronized SmartHubApp getINSTANCE() {
+        return INSTANCE;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, TAG + " initial");
-        instance = this;
+        INSTANCE = this;
         initial();
     }
 
@@ -40,5 +39,10 @@ public class SmartHubApp extends Application {
 
     public static String getDataDirPath() {
         return DATA_DIR_PATH;
+    }
+
+    public static String getApplicationName() {
+        int stringId = INSTANCE.getApplicationInfo().labelRes;
+        return INSTANCE.getString(stringId);
     }
 }

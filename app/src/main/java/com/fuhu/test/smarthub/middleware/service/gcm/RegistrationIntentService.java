@@ -8,10 +8,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.fuhu.test.smarthub.R;
-import com.fuhu.test.smarthub.middleware.SmartHubCommand;
 import com.fuhu.test.smarthub.middleware.componet.ActionPreferences;
 import com.fuhu.test.smarthub.middleware.componet.GCMItem;
-import com.fuhu.test.smarthub.middleware.contract.MailBox;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -104,6 +102,7 @@ public class RegistrationIntentService extends IntentService {
 
         queryItem.setData(data);
 
-        MailBox.getInstance().deliverMail(this, SmartHubCommand.ReqSendToGCM, null, queryItem);
+//        MailBox.getInstance().deliverMail(this, SmartHubCommand.ReqSendToGCM, null, queryItem);
+        //TODO send gcm request
     }
 }

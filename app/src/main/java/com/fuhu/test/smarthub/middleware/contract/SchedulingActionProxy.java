@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.fuhu.test.smarthub.middleware.PostOffice;
-import com.fuhu.test.smarthub.middleware.componet.IMailItem;
+import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
 
@@ -26,8 +26,8 @@ public class SchedulingActionProxy implements ISchedulingActionProxy, Runnable {
     private IPostOfficeProxy mPostOfficeProxy;
     private Context mContext;
     
-    private List<IMailItem> obtainItems=null;
-    private IMailItem mMediaItem;
+    private List<AMailItem> obtainItems=null;
+    private AMailItem mMediaItem;
     private Map<String, String> headerPair = null;
     
     private int id;
@@ -56,7 +56,7 @@ public class SchedulingActionProxy implements ISchedulingActionProxy, Runnable {
     }
      
     public SchedulingActionProxy(final Context mContext, final PostOffice mPostOffice, 
-                                 IMailItem mMediaItem, final boolean isNeedToDoNext, 
+                                 AMailItem mMediaItem, final boolean isNeedToDoNext, 
                                  IPostOfficeProxy mPostOfficeProxy, final Map<String, String> headerPair, 
                                  int httpAction, Object ...obj ){
         this.mPostOffice=mPostOffice;

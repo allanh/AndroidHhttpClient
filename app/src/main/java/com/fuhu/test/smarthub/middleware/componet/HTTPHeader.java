@@ -3,6 +3,7 @@ package com.fuhu.test.smarthub.middleware.componet;
 import android.content.Context;
 import android.os.Build;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +76,13 @@ public enum HTTPHeader{
         public String getValue(final Context context) {
             return "android " + Build.VERSION.RELEASE;
         }
+    },
+
+    TimeZone("TimeZone") {
+        @Override
+        public String getValue(final Context context) {
+            return Calendar.getInstance().getTimeZone().getID();
+        }
     }
     ;
 
@@ -128,6 +136,7 @@ public enum HTTPHeader{
         headerPair.put(APP_NAME.getName(), APP_NAME.getValue(context));
         headerPair.put(APP_Version.getName(), APP_Version.getValue(context));
         headerPair.put(OSVersion.getName(), OSVersion.getValue(context));
+        headerPair.put(TimeZone.getName(), TimeZone.getValue(context));
         return headerPair;
     }
 }

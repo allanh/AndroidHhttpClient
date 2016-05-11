@@ -8,7 +8,6 @@ import com.fuhu.test.smarthub.middleware.componet.GCMItem;
 import com.fuhu.test.smarthub.middleware.componet.HTTPHeader;
 import com.fuhu.test.smarthub.middleware.componet.ICommand;
 import com.fuhu.test.smarthub.middleware.componet.IFTTTItem;
-import com.fuhu.test.smarthub.middleware.componet.IMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.test.smarthub.middleware.componet.Log;
@@ -29,8 +28,8 @@ import java.util.List;
 public enum PostOffice implements ICommand {
     ReqSendToIFTTT(1,1) {
         @Override
-        public List<IMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, IMailItem tmpMediaItem, Object... obj) {
-            List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+        public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
+            List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
             String resCode= ErrorCodeHandler.Default.getCode();
 
             Log.d("request", "ReqSendToIFTTT JSONFormat: " + JSONFormat);
@@ -58,7 +57,7 @@ public enum PostOffice implements ICommand {
         }
 
         @Override
-        public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+        public synchronized Object doAction(Context mContext, AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
             IFTTTItem iftttItem = (IFTTTItem) queryItem;
             this.setURL(OkHTTPRequest.getAPI_IFTTT());
 
@@ -80,8 +79,8 @@ public enum PostOffice implements ICommand {
 
     ReqSendToGCM(3,3) {
         @Override
-        public List<IMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, IMailItem tmpMediaItem, Object... obj) {
-            List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+        public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
+            List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
             String resCode= ErrorCodeHandler.Default.getCode();
 
             Log.d("request", "ReqSendToGCM JSONFormat: " + JSONFormat);
@@ -109,7 +108,7 @@ public enum PostOffice implements ICommand {
         }
 
         @Override
-        public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+        public synchronized Object doAction(Context mContext, AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
             GCMItem gcmItem = (GCMItem) queryItem;
             this.setURL(OkHTTPRequest.getAPI_GCM());
 
@@ -131,8 +130,8 @@ public enum PostOffice implements ICommand {
 
     ReqSendToTrack(4,4) {
         @Override
-        public List<IMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, IMailItem tmpMediaItem, Object... obj) {
-            List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+        public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
+            List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
             String resCode= ErrorCodeHandler.Default.getCode();
 
             Log.d("request", "ReqSendToTrack JSONFormat: " + JSONFormat);
@@ -160,7 +159,7 @@ public enum PostOffice implements ICommand {
         }
 
         @Override
-        public synchronized Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+        public synchronized Object doAction(Context mContext, AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
             TrackItem trackItem = (TrackItem) queryItem;
             this.setURL(OkHTTPRequest.getAPI_Track());
 
@@ -227,13 +226,13 @@ public enum PostOffice implements ICommand {
         return _APIKey;
     }
     
-    public List<IMailItem> JSONParse(boolean isIterative,JSONObject JSONFormat,IMailItem mMediaItem, Object ...obj){
+    public List<AMailItem> JSONParse(boolean isIterative,JSONObject JSONFormat,AMailItem mMediaItem, Object ...obj){
 	return null;
     }
 
     @Override
-    public void  onCommandFailed(final Context mContext, IPostOfficeProxy mPostOfficeProxy, IMailItem queryItem, ErrorCodeHandler errorCode) {
-        List<IMailItem> retrieveItem = new ArrayList<IMailItem>();
+    public void  onCommandFailed(final Context mContext, IPostOfficeProxy mPostOfficeProxy, AMailItem queryItem, ErrorCodeHandler errorCode) {
+        List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
         MailItem resultItem = new MailItem();
         resultItem.setStatus(errorCode.getCode());
         resultItem.setMessage(errorCode.toString());
@@ -242,7 +241,7 @@ public enum PostOffice implements ICommand {
     }
     
     @Override
-    public void onCommandComplete(IPostOfficeProxy mPostOfficeProxy, ISchedulingActionProxy mISchedulingActionProxy, IMailItem queryITem, List<IMailItem> result, Object... parameters) {
+    public void onCommandComplete(IPostOfficeProxy mPostOfficeProxy, ISchedulingActionProxy mISchedulingActionProxy, AMailItem queryITem, List<AMailItem> result, Object... parameters) {
         Log.d(TAG, "onCommandComplete: " + SmartHubCommand.lookup(this.getID()));
         mPostOfficeProxy.onMailItemUpdate(SmartHubCommand.lookup(this.getID()), queryITem, result, parameters);
     }
@@ -253,12 +252,12 @@ public enum PostOffice implements ICommand {
     }
 
     @Override
-    public Object doAction(Context mContext, IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+    public Object doAction(Context mContext, AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
          return null;
     }
 
     @Override
-    public Object doNextAction(IMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
+    public Object doNextAction(AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
         return null;
     }
     
@@ -267,23 +266,22 @@ public enum PostOffice implements ICommand {
         return _id;
     }
 
-    @Override
     public JSONObject genJson(final AMailItem queryItem) {
         return null;
     }
 
-    public List<IMailItem> reqErrorCode(List<IMailItem> retrieveItem, IMailItem mIMailItem, String resCode){
-        if(mIMailItem instanceof MailItem){
-            ((MailItem) mIMailItem).setStatus(resCode);
+    public List<AMailItem> reqErrorCode(List<AMailItem> retrieveItem, AMailItem mAMailItem, String resCode){
+        if(mAMailItem instanceof MailItem){
+            ((MailItem) mAMailItem).setStatus(resCode);
         }
 
-        retrieveItem.add(mIMailItem);
+        retrieveItem.add(mAMailItem);
         return retrieveItem;
     }
 
-    public List<IMailItem> reqSuccessCode(List<IMailItem> retrieveItem){
+    public List<AMailItem> reqSuccessCode(List<AMailItem> retrieveItem){
         if (retrieveItem == null) {
-            retrieveItem = new ArrayList<IMailItem>();
+            retrieveItem = new ArrayList<AMailItem>();
         }
         MailItem contentItem = new MailItem();
         contentItem.setStatus(ErrorCodeHandler.Success.getCode());

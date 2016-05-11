@@ -61,9 +61,9 @@ public abstract class DecisionSeeker {
 		}
 
         // Allan test
-//        if (testList.size() > 0) {
-//            onComplete(testList);
-//        }
+        if (testList.size() > 0) {
+            onComplete(testList);
+        }
 
         if (searchIndex != null) {
 			Log.d(TAG, "searchIndex: " + searchIndex.getMainRecoWords());

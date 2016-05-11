@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 
+import com.fuhu.test.smarthub.SmartHubApp;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 
 import java.io.FileInputStream;
@@ -24,7 +25,7 @@ public class MediaItemCollection implements Serializable{
 	private static final long serialVersionUID  = 1L;
 	private static MediaItemCollection instance = null;
 	private static final String TAG				= MediaItemCollection.class.getSimpleName();
-	private static final String mFileName		= "smarthub.ser";
+	private static final String mFileName		= SmartHubApp.getApplicationName() + ".ser";
 	
 	private static HandlerThread mThread 	= null;
 	private static Handler mThreadHandler	= null;

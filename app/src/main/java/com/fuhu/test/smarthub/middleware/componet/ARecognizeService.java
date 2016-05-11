@@ -10,7 +10,7 @@ public abstract class ARecognizeService extends Service implements IRecognizeSer
     private static final String TAG = ARecognizeService.class.getSimpleName();
 
     // create a new command parser
-    private static ICommandParser mCommandParser = new MockCommandParser();
+    private static MockCommandParser mCommandParser = new MockCommandParser();
 
     @Override
     public String recognize(String text) {

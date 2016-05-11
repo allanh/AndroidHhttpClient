@@ -3,9 +3,8 @@ package com.fuhu.test.smarthub.middleware.contract;
 import android.util.Log;
 
 import com.fuhu.test.smarthub.middleware.componet.CommandType;
-import com.fuhu.test.smarthub.middleware.componet.ICommandParser;
 
-public class MockCommandParser implements ICommandParser {
+public class MockCommandParser {
     private static final String TAG = MockCommandParser.class.getSimpleName();
 
     public String parseCommand(String text){

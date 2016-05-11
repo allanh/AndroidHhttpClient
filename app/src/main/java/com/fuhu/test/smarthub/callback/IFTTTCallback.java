@@ -2,13 +2,11 @@ package com.fuhu.test.smarthub.callback;
 
 import android.content.Context;
 
-import com.fuhu.test.smarthub.middleware.SmartHubCommand;
 import com.fuhu.test.smarthub.middleware.componet.IFTTTItem;
 import com.fuhu.test.smarthub.middleware.componet.IMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IMailReceiveCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.contract.ErrorCodeHandler;
-import com.fuhu.test.smarthub.middleware.contract.MailBox;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ public abstract class IFTTTCallback implements IMailReceiveCallback {
 
     public static void reqSend(final Context context, final IFTTTCallback mIftttCallback, final IFTTTItem iftttItem) {
         Log.d(TAG, "reqSend");
-        MailBox.getInstance().deliverMail(context, SmartHubCommand.ReqSendToIFTTT, mIftttCallback, iftttItem);
+//        MailBox.getInstance().deliverMail(context, SmartHubCommand.ReqSendToIFTTT, mIftttCallback, iftttItem);
     }
 
     @Override

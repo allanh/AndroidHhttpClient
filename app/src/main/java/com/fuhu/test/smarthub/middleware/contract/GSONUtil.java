@@ -15,28 +15,39 @@ import java.util.Set;
 
 public class GSONUtil {
     private static final String TAG = GSONUtil.class.getSimpleName();
-    private static Gson mGson = new Gson();
+    private static Gson mGson;
 
     /**
-     * convert JSONObject to MailItem using Gson
+     * Get a Gson object
+     * @return gson
+     */
+    public synchronized static Gson getGson() {
+        if (mGson == null) {
+            mGson = new Gson();
+        }
+        return mGson;
+    }
+
+    /**
+     * Convert JSONObject to MailItem using Gson
      * @param jsonObject origin JSONObject
      * @param obj MailItem class
      * @param <T> the type of the MailItem object
      * @return
      */
     public static <T> T fromJSON(JSONObject jsonObject, Class<T> obj) {
-        return mGson.fromJson(jsonObject.toString(), obj);
+        return getGson().fromJson(jsonObject.toString(), obj);
     }
 
     /**
-     * convert MailItem to JSONObject using Gson
+     * Convert all key-value pairs of the MailItem to JSONObject
      * @param mailItem
      * @return
      */
     public static JSONObject toJSON(AMailItem mailItem) {
         if (mailItem != null) {
             try {
-                return mailItem.toJSONObject(mGson);
+                return mailItem.toJSONObject(getGson());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -44,6 +55,12 @@ public class GSONUtil {
         return new JSONObject();
     }
 
+    /**
+     * Convert the specified key-value pairs of the MailItem to JSONObject
+     * @param mailItem
+     * @param keys
+     * @return
+     */
     public static JSONObject toJSON(AMailItem mailItem, String... keys) {
         JsonObject newJSONObject = new JsonObject();
         if (keys == null)
@@ -51,7 +68,7 @@ public class GSONUtil {
 
         try {
             if (mailItem != null) {
-                JsonElement element = mailItem.toJsonTree(mGson);
+                JsonElement element = mailItem.toJsonTree(getGson());
 
                 // check if element is JSONObject
                 if (element != null && element.isJsonObject()) {
@@ -78,5 +95,9 @@ public class GSONUtil {
             e.printStackTrace();
         }
         return new JSONObject();
+    }
+
+    public static void release() {
+        mGson = null;
     }
 }

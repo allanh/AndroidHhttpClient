@@ -13,6 +13,7 @@ import com.fuhu.test.smarthub.middleware.componet.IMailReceiveCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.componet.MailTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +50,13 @@ public class MailBox {
                         receiveQueue = new LinkedBlockingQueue<Bundle>();
                     }
 
-                    try {
-                        // Inserts the MailTask into this queue
-                        receiveQueue.put(bundle);
-                    } catch (InterruptedException e) {
+                    synchronized (receiveQueue) {
+                        try {
+                            // Inserts the MailTask into this queue
+                            receiveQueue.put(bundle);
+                        } catch (InterruptedException e) {
 //                        e.printStackTrace();
+                        }
                     }
 
                     // check if receiveMailTask is running
@@ -74,22 +77,50 @@ public class MailBox {
         return instance;
     }
 
-    public void deliverMail(Context mContext, ICommand mCommand, IMailReceiveCallback mMailRecCallback, Object... parameters){
-        MailTask mMailTask=new MailTask();
-        mMailTask.setCommand(mCommand);
-        String add=null;
-        if(mCommand.getAddress()==null){
-            add=String.valueOf(System.currentTimeMillis());
-        }else{
-            add=mCommand.getAddress();
+    public void deliverMail(Context context, IMailReceiveCallback mailRecCallback, ICommand... commands){
+        if (commands != null && commands.length > 0) {
+            List<MailTask> taskList = new ArrayList<MailTask>();
+
+            for (ICommand command : commands) {
+                MailTask mMailTask=new MailTask();
+                mMailTask.setCommand(command);
+                String addr = null;
+                if(command.getAddress()==null){
+                    addr = String.valueOf(System.currentTimeMillis());
+                }else{
+                    addr = command.getAddress();
+                }
+
+                Log.d(TAG, "Command: " + command.getID() + " addr: " + addr);
+                mMailTask.setAddress(addr);
+                mMailTask.setClassName(this.getClass().getName());
+                taskList.add(mMailTask);
+
+                // set up callback
+                mMailTaskList.put(mMailTask, mailRecCallback);
+            }
+
+            // send command list to server
+            PostOfficeProxy.getInstance().onMailRequest(context, taskList);
         }
-        Log.d("MailBox", "Command: " + mCommand.getID() + " addr: " + add);
-        mMailTask.setAddress(add);
-        mMailTask.setClassName(this.getClass().getName());
-        mMailTaskList.put(mMailTask, mMailRecCallback);
-                
-        PostOfficeProxy.getInstance().onMailRequest(mContext, (IMailItem)parameters[0], mMailTask, parameters);
     }
+
+//    public void deliverMail(Context mContext, ICommand mCommand, IMailReceiveCallback mMailRecCallback, Object... parameters){
+//        MailTask mMailTask=new MailTask();
+//        mMailTask.setCommand(mCommand);
+//        String add=null;
+//        if(mCommand.getAddress()==null){
+//            add=String.valueOf(System.currentTimeMillis());
+//        }else{
+//            add=mCommand.getAddress();
+//        }
+//        Log.d("MailBox", "Command: " + mCommand.getID() + " addr: " + add);
+//        mMailTask.setAddress(add);
+//        mMailTask.setClassName(this.getClass().getName());
+//        mMailTaskList.put(mMailTask, mMailRecCallback);
+//
+//        PostOfficeProxy.getInstance().onMailRequest(mContext, (IMailItem)parameters[0], mMailTask, parameters);
+//    }
     
     public void receiveMail(MailTask mMailTask, IMailItem queryItem, List<IMailItem> result, Object... parameters){
         try{
@@ -121,20 +152,21 @@ public class MailBox {
     private Runnable receiveMailTask = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
+        Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
 
-            try{
-                while (running && receiveQueue.size() > 0) {
+        try{
+            while (running && receiveQueue.size() > 0) {
+                synchronized (receiveQueue) {
                     // Retrieve MailTask from receive Queue
                     Bundle bundle = receiveQueue.take();
 
-                    MailTask mMailTask = (MailTask)bundle.getSerializable("mailTask");
-                    List<IMailItem> result =  (List<IMailItem>)bundle.getSerializable("result");
+                    MailTask mMailTask = (MailTask) bundle.getSerializable("mailTask");
+                    List<IMailItem> result = (List<IMailItem>) bundle.getSerializable("result");
 
                     // check the command of MailTask
                     for (MailTask key : mMailTaskList.keySet()) {
-                        if(key.getCommand().equals(mMailTask.getCommand())){
-                            if(mMailTask.getAddress() == null || key.getAddress().equals(mMailTask.getAddress())){
+                        if (key.getCommand().equals(mMailTask.getCommand())) {
+                            if (mMailTask.getAddress() == null || key.getAddress().equals(mMailTask.getAddress())) {
 //                                Log.d(TAG, "receive command: " + mMailTask.getCommand() + " time: " + (System.currentTimeMillis() - startTime));
                                 mMailTaskList.get(key).onMailReceive(result);
                                 break;
@@ -142,13 +174,15 @@ public class MailBox {
                         }
                     }
                 }
-            }catch(Exception e){
             }
+        }catch(Exception e){
+//            e.printStackTrace();
+        }
 
-            Log.d(TAG, "stop thread");
-            // stop thread
-            running = false;
-            mReceiveHandler.removeCallbacks(this);
+        Log.d(TAG, "stop thread");
+        // stop thread
+        running = false;
+        mReceiveHandler.removeCallbacks(this);
         }
     };
 }
