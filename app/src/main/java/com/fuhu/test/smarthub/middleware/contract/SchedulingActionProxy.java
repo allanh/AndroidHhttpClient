@@ -30,7 +30,7 @@ public class SchedulingActionProxy implements ISchedulingActionProxy, Runnable {
     private AMailItem mMediaItem;
     private Map<String, String> headerPair = null;
     
-    private int id;
+    private String id;
     private int HTTP_ACTION;
     private String url;
     private String apiKey;

@@ -4,22 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.fuhu.test.smarthub.middleware.PostOffice;
 import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.HttpCommand;
 import com.fuhu.test.smarthub.middleware.componet.ICommand;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
+import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.componet.MailTask;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PostOfficeProxy implements IPostOfficeProxy {
-	
-	public static String ACTION_DATAUPDATE = "ACTION_DATAUPDATE";
+	private static final String TAG = PostOfficeProxy.class.getSimpleName();
+	public static String ACTION_DATA_UPDATE = "ACTION_DATA_UPDATE";
     private static PostOfficeProxy instance = new PostOfficeProxy();
     private Map<ICommand, MailTask> mMailTaskList;
     
@@ -40,7 +39,7 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 	    bundle.putSerializable("result", (Serializable) result);
 	    bundle.putSerializable("parameters", (Serializable) parameters);
 	    
-	    intent.setAction(PostOfficeProxy.ACTION_DATAUPDATE);
+	    intent.setAction(PostOfficeProxy.ACTION_DATA_UPDATE);
 	    intent.putExtras(bundle);
 	    MailBox.getInstance().receiveMail(intent);
 //        MailBox.getInstance().receiveMail(mMailTaskList.get(myCommand), queryItem, result, parameters);
@@ -54,18 +53,15 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 //    }
 
     @Override
-    public void onMailRequest(Context mContext, List<MailTask> mailTaskList) {
-        ICommand command = mailTaskList.get(0).getCommand();
-        mMailTaskList.put(command, mailTaskList.get(0));
+    public void onMailRequest(Context mContext, MailTask mailTask) {
+        ICommand command = mailTask.getCommand();
+        mMailTaskList.put(command, mailTask);
 
+        // Send command using NabiVolley
         if (command instanceof HttpCommand) {
-            List<ICommand> commandList = new ArrayList<ICommand>();
-            for (MailTask task : mailTaskList) {
-                commandList.add(task.getCommand());
-            }
-            new NabiVolleyActionProxy(mContext, this, commandList).execute();
+            new NabiVolleyActionProxy(mContext, this, (HttpCommand) command).execute();
         } else {
-
+            Log.d(TAG, "Command isn't HttpCommand.");
 //            PostOffice mPostOffice = PostOffice.lookup(command.getID());
 //            mPostOffice.doAction(mContext, queryItem, this, parameter);
         }
@@ -76,8 +72,8 @@ public class PostOfficeProxy implements IPostOfficeProxy {
        
     }
 
-    public void onMailRequest(ICommand mCommand, Context mContext, AMailItem queryItem, Object... parameter) {
-        PostOffice mPostOffice = PostOffice.lookup(mCommand.getID());
-        mPostOffice.doAction(mContext, queryItem, this, parameter);
-    }
+//    public void onMailRequest(ICommand mCommand, Context mContext, AMailItem queryItem, Object... parameter) {
+//        PostOffice mPostOffice = PostOffice.lookup(mCommand.getID());
+//        mPostOffice.doAction(mContext, queryItem, this, parameter);
+//    }
 }

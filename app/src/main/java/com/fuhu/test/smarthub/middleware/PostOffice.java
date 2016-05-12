@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public enum PostOffice implements ICommand {
-    ReqSendToIFTTT(1,1) {
+    ReqSendToIFTTT("1",1) {
         @Override
         public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
             List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
@@ -77,7 +77,7 @@ public enum PostOffice implements ICommand {
         }
     },
 
-    ReqSendToGCM(3,3) {
+    ReqSendToGCM("3",3) {
         @Override
         public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
             List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
@@ -128,7 +128,7 @@ public enum PostOffice implements ICommand {
         }
     },
 
-    ReqSendToTrack(4,4) {
+    ReqSendToTrack("4",4) {
         @Override
         public List<AMailItem> JSONParse(boolean isIterative, JSONObject JSONFormat, AMailItem tmpMediaItem, Object... obj) {
             List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
@@ -181,7 +181,7 @@ public enum PostOffice implements ICommand {
 
     ;
 
-    private static HashMap<Integer, PostOffice> lookupTable = new HashMap<Integer, PostOffice>();
+    private static HashMap<String, PostOffice> lookupTable = new HashMap<String, PostOffice>();
 
     static {
         for (PostOffice tmp : PostOffice.values()) {
@@ -189,18 +189,18 @@ public enum PostOffice implements ICommand {
         }
     }
 
-    public static PostOffice lookup(final int id) {
+    public static PostOffice lookup(final String id) {
         return lookupTable.get(id);
     }
 
-    private int _id = -1;
+    private String _id = "-1";
     private int _Content = -1;
     private String _URL = "";
     private String _APIKey;
 
     public static MediaItemCollection mMediaItemCollection = null;
 
-    private PostOffice(final int id, final int Content) {
+    private PostOffice(final String id, final int Content) {
         _id = id;
         set_Content(Content);
     }
@@ -242,8 +242,8 @@ public enum PostOffice implements ICommand {
     
     @Override
     public void onCommandComplete(IPostOfficeProxy mPostOfficeProxy, ISchedulingActionProxy mISchedulingActionProxy, AMailItem queryITem, List<AMailItem> result, Object... parameters) {
-        Log.d(TAG, "onCommandComplete: " + SmartHubCommand.lookup(this.getID()));
-        mPostOfficeProxy.onMailItemUpdate(SmartHubCommand.lookup(this.getID()), queryITem, result, parameters);
+//        Log.d(TAG, "onCommandComplete: " + SmartHubCommand.lookup(this.getID()));
+//        mPostOfficeProxy.onMailItemUpdate(SmartHubCommand.lookup(this.getID()), queryITem, result, parameters);
     }
 
     @Override
@@ -262,7 +262,7 @@ public enum PostOffice implements ICommand {
     }
     
     @Override
-    public int getID() {
+    public String getID() {
         return _id;
     }
 

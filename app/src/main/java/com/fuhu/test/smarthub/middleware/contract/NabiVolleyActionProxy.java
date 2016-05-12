@@ -15,25 +15,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.HttpCommand;
-import com.fuhu.test.smarthub.middleware.componet.ICommand;
 import com.fuhu.test.smarthub.middleware.componet.IPostOfficeProxy;
 import com.fuhu.test.smarthub.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private static String TAG = NabiVolleyActionProxy.class.getSimpleName();
     private static final int RETRY_MAX_COUNT = 3;
 
-    private BlockingQueue<ICommand> mCommandQueue = null;
+//    private BlockingQueue<ICommand> mCommandQueue = null;
     private HttpCommand mCurrentCommand;
     private IPostOfficeProxy mPostOfficeProxy;
     private Context mContext;
@@ -45,23 +43,24 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
 
     private static Executor executorGeneral = Executors.newFixedThreadPool(10);
 
-    public NabiVolleyActionProxy(final Context mContext, IPostOfficeProxy mPostOfficeProxy, List<ICommand> commandList){
+    public NabiVolleyActionProxy(final Context mContext, IPostOfficeProxy mPostOfficeProxy, HttpCommand command){
         this.mPostOfficeProxy=mPostOfficeProxy;
         this.mContext = mContext;
-        mCommandQueue = new LinkedBlockingQueue<ICommand>();
+        this.mCurrentCommand = command;
+//        mCommandQueue = new LinkedBlockingQueue<ICommand>();
 
         /**
          * set up Command queue
          */
-        synchronized (mCommandQueue) {
-            try {
-                for (ICommand command : commandList) {
-                    mCommandQueue.put(command);
-                }
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            }
-        }
+//        synchronized (mCommandQueue) {
+//            try {
+//                for (ICommand command : commandList) {
+//                    mCommandQueue.put(command);
+//                }
+//            } catch (InterruptedException ie) {
+//                ie.printStackTrace();
+//            }
+//        }
     }
 
     public void execute() {
@@ -74,13 +73,12 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     }
 
     protected String doInBackground(String... params) {
-        try {
-            if (mCommandQueue != null && mCommandQueue.size() > 0) {
-                ICommand command = mCommandQueue.take();
+//        try {
+//            if (mCommandQueue != null && mCommandQueue.size() > 0) {
+//                ICommand command = mCommandQueue.take();
 
-                if (command != null && command instanceof HttpCommand) {
+//                if (command != null && command instanceof HttpCommand) {
                     JsonObjectRequest jsonObjectRequest;
-                    mCurrentCommand = (HttpCommand) command;
                     mHeaderPair = mCurrentCommand.getHeaders();
                     String url = mCurrentCommand.getURL();
                     JSONObject jsonObject = mCurrentCommand.getJSONObject();
@@ -116,25 +114,25 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
 
                     // Add the request to the RequestQueue.
                     VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest);
-                }
-            }
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        }
+//                }
+//            }
+//        } catch (InterruptedException ie) {
+//            ie.printStackTrace();
+//        }
         return null;
     }
 
     protected void onPostExecute(String result) {
-        Log.i(TAG, "isNeedToDoNext:" + (mCommandQueue.size() > 0));
-        synchronized (mCommandQueue) {
-            if (mCommandQueue.size() > 0) {
-                execute();
+//        Log.i(TAG, "isNeedToDoNext:" + (mCommandQueue.size() > 0));
+//        synchronized (mCommandQueue) {
+//            if (mCommandQueue.size() > 0) {
+//                execute();
 //              mPostOffice.doNextAction(mMediaItem, mPostOfficeProxy, mObtainItems);
-            } else {
+//            } else {
                 onCommandComplete();
 //              mPostOffice.onCommandComplete(mPostOfficeProxy, this, mMediaItem, mObtainItems);
-            }
-        }
+//            }
+//        }
     }
 
     /**
@@ -145,10 +143,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         public void onResponse(JSONObject jsonObject) {
             Log.d(TAG, "response: " + jsonObject);
 //            mObtainItems = mPostOffice.JSONParse(isNeedToDoNext, jsonObject, mMediaItem, params);
-            if (jsonObject != null && mCurrentCommand.getJsonParser() != null) {
-                mObtainItems = mCurrentCommand.getJsonParser().JSONParse(jsonObject);
-            } else {
-                mObtainItems = null;
+            if (jsonObject != null && mCurrentCommand != null && mCurrentCommand.getDataClass() != null) {
+                Object object = GSONUtil.fromJSON(jsonObject, mCurrentCommand.getDataClass());
+
+                if (object != null) {
+                    mObtainItems = new ArrayList<AMailItem>();
+                    mObtainItems.add((AMailItem) object);
+                } else {
+                    mObtainItems = null;
+                }
             }
 
             if(mObtainItems!=null){
@@ -156,7 +159,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                 onPostExecute("");
             }else{
                 Log.i(TAG, "mObtainItems=null");
-                onCommandFailed(ErrorCodeHandler.UNKNOWN_ERROR);
+                onCommandFailed(ErrorCodeHandler.UNKNOWN_ERROR, mCurrentCommand.getDataClass());
             }
         }
     };
@@ -207,7 +210,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             } else {
                 retry_count++;
             }
-            onCommandFailed(errorCodeHandler);
+            onCommandFailed(errorCodeHandler, mCurrentCommand.getDataClass());
 //            mPostOffice.onCommandFailed(mContext, mPostOfficeProxy, mMediaItem, errorCodeHandler);
         }
     };
@@ -216,8 +219,8 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         mPostOfficeProxy.onMailItemUpdate(mCurrentCommand, mCurrentCommand.getDataObject(), mObtainItems);
     }
 
-    private void onCommandFailed(ErrorCodeHandler errorCodeHandler) {
-        List<AMailItem> retrieveItem = ErrorCodeHandler.genErrorItem(errorCodeHandler);
+    private void onCommandFailed(ErrorCodeHandler errorCodeHandler, Class<?> classOfT) {
+        List<AMailItem> retrieveItem = ErrorCodeHandler.genErrorItem(errorCodeHandler, classOfT);
         mPostOfficeProxy.onMailItemUpdate(mCurrentCommand, mCurrentCommand.getDataObject(), retrieveItem);
     }
 }

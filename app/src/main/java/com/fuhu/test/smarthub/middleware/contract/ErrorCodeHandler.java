@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import com.fuhu.test.smarthub.middleware.componet.AMailItem;
 import com.fuhu.test.smarthub.middleware.componet.IMailItem;
-import com.fuhu.test.smarthub.middleware.componet.MailItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,12 +144,19 @@ public enum ErrorCodeHandler{
      * @param errorCodeHandler
      * @return MailItem list
      */
-    public static List<AMailItem> genErrorItem(ErrorCodeHandler errorCodeHandler) {
+    public static List<AMailItem> genErrorItem(ErrorCodeHandler errorCodeHandler, Class<?> classOfT) {
         List<AMailItem> retrieveItem = new ArrayList<AMailItem>();
-        MailItem resultItem = new MailItem();
-        resultItem.setStatus(errorCodeHandler.getCode());
-        resultItem.setMessage(errorCodeHandler.toString());
-        retrieveItem.add(resultItem);
+//        try {
+//
+//            Method setStatus = classOfT.getDeclaredMethod("setStatus", String.class);
+//            Method setMessage = classOfT.getDeclaredMethod("setMessage", String.class);
+//            setStatus
+//            resultItem.setStatus(errorCodeHandler.getCode());
+//            resultItem.setMessage(errorCodeHandler.toString());
+//            retrieveItem.add(resultItem);
+//        } catch (NoSuchMethodException nsme) {
+//            nsme.printStackTrace();
+//        }
         return retrieveItem;
     }
 }

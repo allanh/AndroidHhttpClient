@@ -11,21 +11,23 @@ import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 
 public class HttpCommandBuilder implements ICommandBuilder {
-    private int id;
+    private String id;
     private Priority priority;
     private String url;
     private int method;
     private Map<String, String> headers;
+    private Class<? extends AMailItem> dataClass;
     private AMailItem dataObject;
     private JSONObject jsonObject;
     private SSLSocketFactory sslSocketFactory;
-    private IJsonParser jsonParser;
 
     public HttpCommandBuilder() {
-        this.id = (int) System.currentTimeMillis();
+        this.id = String.valueOf(System.currentTimeMillis());
         this.priority = Priority.NORMAL;
         this.method = HttpCommand.Method.GET;
         this.headers = HTTPHeader.getDefaultHeader();
+
+        // TODO set default SslSocketFactory
     }
 
     private HttpCommandBuilder(HttpCommand httpCommand) {
@@ -34,7 +36,10 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.url = httpCommand.getURL();
         this.method = httpCommand.getMethod();
         this.headers = httpCommand.getHeaders();
+        this.dataClass = httpCommand.getDataClass();
         this.dataObject = httpCommand.getDataObject();
+        this.jsonObject = httpCommand.getJSONObject();
+        this.sslSocketFactory = httpCommand.getSSlSocketFactory();
     }
 
     /**
@@ -42,16 +47,12 @@ public class HttpCommandBuilder implements ICommandBuilder {
      * is less than zero, the request is canceled by using the current time in milliseconds
      * since January 1, 1970 00:00:00.0 UTC as the tag.
      */
-    public HttpCommandBuilder setID(int id) {
-        if (id > 0) {
-            this.id = id;
-        } else {
-            this.id = (int) System.currentTimeMillis();
-        }
+    public HttpCommandBuilder setID(String id) {
+        this.id = id;
         return this;
     }
 
-    public int getID() {
+    public String getID() {
         return id;
     }
 
@@ -123,10 +124,15 @@ public class HttpCommandBuilder implements ICommandBuilder {
         return headers;
     }
 
+    public Class<? extends AMailItem> getDataClass() {
+        return dataClass;
+    }
+
     /**
      * Sets a AMailItem of parameters to be used for a POST or PUT request.
      */
-    public HttpCommandBuilder setDataObject(AMailItem mailItem, String... keys) {
+    public HttpCommandBuilder setDataObject(Class<? extends AMailItem> dataClass, AMailItem mailItem, String... keys) {
+        this.dataClass = dataClass;
         this.dataObject = mailItem;
         if (mailItem != null) {
             if (keys != null && keys.length > 0) {
@@ -147,7 +153,8 @@ public class HttpCommandBuilder implements ICommandBuilder {
     /**
      * Sets a JSONObject of parameters to be used for a POST or PUT request.
      */
-    public HttpCommandBuilder setJSONObject(JSONObject jsonObject) {
+    public HttpCommandBuilder setJSONObject(Class<? extends AMailItem> dataClass, JSONObject jsonObject) {
+        this.dataClass = dataClass;
         this.jsonObject = jsonObject;
         return this;
     }
@@ -172,18 +179,6 @@ public class HttpCommandBuilder implements ICommandBuilder {
 
     public SSLSocketFactory getSSLSocketFactory() {
         return sslSocketFactory;
-    }
-
-    /**
-     * Sets a JsonParser to parse the JSONObject from server.
-     */
-    public HttpCommandBuilder setJsonParser(IJsonParser jsonParser) {
-        this.jsonParser = jsonParser;
-        return this;
-    }
-
-    public IJsonParser getJsonParser() {
-        return jsonParser;
     }
 
     public HttpCommand build() {

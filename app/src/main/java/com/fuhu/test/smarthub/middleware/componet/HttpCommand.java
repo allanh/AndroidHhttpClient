@@ -14,7 +14,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class HttpCommand implements ICommand {
     /** The unique identifier of the request */
-    private int mId;
+    private String mId;
 
     /** Priority value */
     private Priority mPriority;
@@ -31,6 +31,9 @@ public class HttpCommand implements ICommand {
     /** HTTP headers of the request */
     private Map<String, String> mHttpHeaders;
 
+    /** The class of the data object */
+    private Class<? extends AMailItem> mDataClass;
+
     /** The data object of the request */
     private AMailItem mDataObject;
 
@@ -38,8 +41,6 @@ public class HttpCommand implements ICommand {
     private JSONObject mJsonObject;
 
     private SSLSocketFactory mSslSocketFactory;
-
-    private IJsonParser mJsonParser;
 
     /**
      * Priority values.  Requests will be processed from higher priorities to
@@ -66,18 +67,19 @@ public class HttpCommand implements ICommand {
     }
 
     public HttpCommand(ICommandBuilder builder) {
-        this.mId = builder.getID();
+        this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis() % 60000);
         this.mPriority = builder.getPriority();
         this.mUrl = builder.getURL();
         this.mMethod = builder.getMethod();
         this.mHttpHeaders = builder.getHeaders();
+        this.mDataClass = builder.getDataClass();
         this.mDataObject = builder.getDataObject();
         this.mJsonObject = builder.getJSONObject();
         this.mSslSocketFactory = builder.getSSLSocketFactory();
-        this.mJsonParser = builder.getJsonParser();
     }
 
-    public int getID() {
+    @Override
+    public String getID() {
         return mId;
     }
 
@@ -97,6 +99,10 @@ public class HttpCommand implements ICommand {
         return mHttpHeaders;
     }
 
+    public Class<? extends AMailItem> getDataClass() {
+        return mDataClass;
+    }
+
     public AMailItem getDataObject() {
         return mDataObject;
     }
@@ -109,23 +115,24 @@ public class HttpCommand implements ICommand {
         return mSslSocketFactory;
     }
 
-    public IJsonParser getJsonParser() {
-        return mJsonParser;
+    @Override
+    public String getAddress() {
+        return mId;
     }
 
-    public String getAddress() {
-        return String.valueOf(mId);
-    }
+    @Override
     public Object doAction(final Context mContext, final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj) {
         return null;
     }
+
+    @Override
     public Object doNextAction(final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj) {
         return null;
     }
 
-    public void onCommandComplete(final IPostOfficeProxy mPostOfficeProxy, final ISchedulingActionProxy mISchedulingActionProxy, final AMailItem queryITem, final List<AMailItem> result, final Object... parameters) {
-    }
+    @Override
+    public void onCommandComplete(final IPostOfficeProxy mPostOfficeProxy, final ISchedulingActionProxy mISchedulingActionProxy, final AMailItem queryITem, final List<AMailItem> result, final Object... parameters) {}
 
-    public void onCommandFailed(final Context mContext, IPostOfficeProxy mPostOfficeProxy, AMailItem queryItem, ErrorCodeHandler errorCode) {
-    }
+    @Override
+    public void onCommandFailed(final Context mContext, IPostOfficeProxy mPostOfficeProxy, AMailItem queryItem, ErrorCodeHandler errorCode) {}
 }

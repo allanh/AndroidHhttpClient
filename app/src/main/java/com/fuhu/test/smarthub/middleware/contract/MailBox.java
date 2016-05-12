@@ -13,7 +13,6 @@ import com.fuhu.test.smarthub.middleware.componet.IMailReceiveCallback;
 import com.fuhu.test.smarthub.middleware.componet.Log;
 import com.fuhu.test.smarthub.middleware.componet.MailTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,31 +76,27 @@ public class MailBox {
         return instance;
     }
 
-    public void deliverMail(Context context, IMailReceiveCallback mailRecCallback, ICommand... commands){
-        if (commands != null && commands.length > 0) {
-            List<MailTask> taskList = new ArrayList<MailTask>();
+    public void deliverMail(Context context, IMailReceiveCallback mailRecCallback, ICommand command){
+        if (command != null) {
+            MailTask mMailTask=new MailTask();
+            mMailTask.setCommand(command);
 
-            for (ICommand command : commands) {
-                MailTask mMailTask=new MailTask();
-                mMailTask.setCommand(command);
-                String addr = null;
-                if(command.getAddress()==null){
-                    addr = String.valueOf(System.currentTimeMillis());
-                }else{
-                    addr = command.getAddress();
-                }
-
-                Log.d(TAG, "Command: " + command.getID() + " addr: " + addr);
-                mMailTask.setAddress(addr);
-                mMailTask.setClassName(this.getClass().getName());
-                taskList.add(mMailTask);
-
-                // set up callback
-                mMailTaskList.put(mMailTask, mailRecCallback);
+            String addr = null;
+            if(command.getAddress() != null) {
+                addr = command.getAddress();
+            } else {
+                addr = String.valueOf(System.currentTimeMillis());
             }
 
+            Log.d(TAG, "Command: " + command.getID() + " addr: " + addr);
+            mMailTask.setAddress(addr);
+            mMailTask.setClassName(this.getClass().getName());
+
+            // set up callback
+            mMailTaskList.put(mMailTask, mailRecCallback);
+
             // send command list to server
-            PostOfficeProxy.getInstance().onMailRequest(context, taskList);
+            PostOfficeProxy.getInstance().onMailRequest(context, mMailTask);
         }
     }
 
@@ -121,21 +116,6 @@ public class MailBox {
 //
 //        PostOfficeProxy.getInstance().onMailRequest(mContext, (IMailItem)parameters[0], mMailTask, parameters);
 //    }
-    
-    public void receiveMail(MailTask mMailTask, IMailItem queryItem, List<IMailItem> result, Object... parameters){
-        try{
-            for (MailTask key : mMailTaskList.keySet()) {
-                if(key.getCommand().equals(mMailTask.getCommand())){
-                    if(mMailTask.getAddress() == null || key.getAddress().equals(mMailTask.getAddress())){ 
-                        mMailTaskList.get(key).onMailReceive(result);
-                        break;
-                    }
-                }
-            }
-        }catch(Exception e){
-             
-        }
-    }
     
     public void receiveMail(Intent intent){
         MailTask mMailTask = (MailTask)intent.getExtras().getSerializable("mailTask");

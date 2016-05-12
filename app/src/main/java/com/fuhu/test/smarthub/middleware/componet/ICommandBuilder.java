@@ -12,8 +12,8 @@ public interface ICommandBuilder {
      * is less than zero, the request is canceled by using the current time in milliseconds
      * since January 1, 1970 00:00:00.0 UTC as the tag.
      */
-    public ICommandBuilder setID(int id);
-    public int getID();
+    public ICommandBuilder setID(String id);
+    public String getID();
 
     /**
      * Sets the {@link HttpCommand.Priority} of this request; {@link HttpCommand.Priority#NORMAL} by default.
@@ -44,30 +44,24 @@ public interface ICommandBuilder {
     /**
      * Sets a AMailItem of parameters to be used for a POST or PUT request.
      */
-    public ICommandBuilder setDataObject(AMailItem mailItem, String... keys);
+    public ICommandBuilder setDataObject(Class<? extends AMailItem> dataClass, AMailItem mailItem, String... keys);
     public AMailItem getDataObject();
 
     /**
      * Sets a JSONObject of parameters to be used for a POST or PUT request.
      */
-    public ICommandBuilder setJSONObject(JSONObject jsonObject);
+    public ICommandBuilder setJSONObject(Class<? extends AMailItem> dataClass, JSONObject jsonObject);
     public JSONObject getJSONObject();
 
-        /**
-         * Sets the socket factory used to secure HTTPS connections.
-         *
-         * <p>If unset, a lazily created SSL socket factory will be used.
-         */
-    public ICommandBuilder setSSLSocketFactory(SSLSocketFactory factory);
-    public SSLSocketFactory getSSLSocketFactory();
+    public Class<? extends AMailItem> getDataClass();
 
     /**
-     * Sets a JsonParser to parse the JSONObject from server.
-     * @param jsonParser
-     * @return
+     * Sets the socket factory used to secure HTTPS connections.
+     *
+     * <p>If unset, a lazily created SSL socket factory will be used.
      */
-    public ICommandBuilder setJsonParser(IJsonParser jsonParser);
-    public IJsonParser getJsonParser();
+    public ICommandBuilder setSSLSocketFactory(SSLSocketFactory factory);
+    public SSLSocketFactory getSSLSocketFactory();
 
     public ICommand build();
 }

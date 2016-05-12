@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface ICommand extends Serializable{
-    public int getID();
+    public String getID();
     public String getAddress();
     public Object doAction(final Context mContext, final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj);
     public Object doNextAction(final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj);
