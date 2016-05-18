@@ -3,8 +3,6 @@
 
 -keepattributes *Annotation*
 
--keep class * implements java.io.Serializable { *; }
-
 -keep class android.support.v4.app.** { *; }
 -keep class android.content.pm.** { *; }
 
@@ -22,13 +20,6 @@
   public <init>(android.content.Context, android.util.AttributeSet);
   public <init>(android.content.Context, android.util.AttributeSet, int);
   public void set*(...);
-}
-
-# Glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
-  **[] $VALUES;
-  public *;
 }
 
 -ignorewarnings

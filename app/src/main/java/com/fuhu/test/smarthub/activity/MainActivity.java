@@ -10,12 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fuhu.middleware.MiddlewareConfig;
+import com.fuhu.middleware.manager.SpeechRecognizeManager;
+import com.fuhu.middleware.manager.TextToSpeechManager;
 import com.fuhu.test.smarthub.R;
-import com.fuhu.test.smarthub.SmartHubConfig;
-import com.fuhu.test.smarthub.middleware.manager.GCMManager;
-import com.fuhu.test.smarthub.middleware.manager.SpeechRecognizeManager;
-import com.fuhu.test.smarthub.middleware.manager.TextToSpeechManager;
-import com.fuhu.test.smarthub.middleware.manager.WifiP2PHandler;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -90,43 +88,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (SmartHubConfig.isRecognizingSpeech) {
+        if (MiddlewareConfig.isRecognizingSpeech) {
             SpeechRecognizeManager.getInstance(this).startService();
             SpeechRecognizeManager.getInstance(this).registerReceiver(
                     TextToSpeechManager.getInstance(this), tv_response);
         }
 
-        if (SmartHubConfig.enableGCM) {
-            GCMManager.getInstance(this).startService();
-            GCMManager.getInstance(this).registerReceiver();
-        }
+//        if (MiddlewareConfig.enableGCM) {
+//            GCMManager.getInstance(this).startService();
+//            GCMManager.getInstance(this).registerReceiver();
+//        }
 
-        if (SmartHubConfig.enableWifiP2P) {
-            WifiP2PHandler.getInstance(this).registerReceiver();
-        }
+//        if (MiddlewareConfig.enableWifiP2P) {
+//            WifiP2PHandler.getInstance(this).registerReceiver();
+//        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        if (SmartHubConfig.isRecognizingSpeech) {
+        if (MiddlewareConfig.isRecognizingSpeech) {
             SpeechRecognizeManager.getInstance(this).stop();
         }
 
-        if (SmartHubConfig.enableGCM) {
-            GCMManager.getInstance(this).stop();
-        }
+//        if (MiddlewareConfig.enableGCM) {
+//            GCMManager.getInstance(this).stop();
+//        }
 
-        if (SmartHubConfig.enableWifiP2P) {
-            WifiP2PHandler.getInstance(this).stop();
-        }
+//        if (MiddlewareConfig.enableWifiP2P) {
+//            WifiP2PHandler.getInstance(this).stop();
+//        }
 
     }
 
     @Override
     protected void onDestroy() {
-        if (SmartHubConfig.isRecognizingSpeech) {
+        if (MiddlewareConfig.isRecognizingSpeech) {
             TextToSpeechManager.getInstance(this).shutdown();
         }
 
