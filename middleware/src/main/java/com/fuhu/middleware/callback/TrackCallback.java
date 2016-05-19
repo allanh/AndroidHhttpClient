@@ -12,36 +12,32 @@ import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.TrackItem;
 import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.fuhu.middleware.contract.MailBox;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fuhu.middleware.contract.NabiHttpRequest;
 
 public abstract class TrackCallback implements IMailReceiveCallback {
     private static final String TAG = TrackCallback.class.getSimpleName();
 
     public static void reqSend(final Context context, final TrackCallback trackCallback, final TrackItem trackItem) {
         Log.d(TAG, "reqSend");
-        try {
-            String jsonSring = "{\"voiceTrackingList\":[{\"isSuccess\": true, \"text\":\"how are you;\", \"timestamp\":142345678967},{\"isSuccess\": true, \"text\":\"how are you\", \"timestamp\":142345678967}]}";
+//        try {
+//            String jsonSring = "{\"voiceTrackingList\":[{\"isSuccess\": true, \"text\":\"how are you;\", \"timestamp\":142345678967},{\"isSuccess\": true, \"text\":\"how are you\", \"timestamp\":142345678967}]}";
 
             HttpCommand trackCommand = new HttpCommandBuilder()
                     .setID("1")
-//                .setURL(NabiHttpRequest.getAPI_Track())
-                    .setURL("http://192.168.30.23:8080/IITService/tracking/voicetracking/test")
+                .setURL(NabiHttpRequest.getAPI_Track())
+//                    .setURL("http://192.168.30.23:8080/IITService/tracking/voicetracking/test")
                     .setMethod(HttpCommand.Method.POST)
                     .setHeaders(HTTPHeader.getTrackingHeader(context))
                     .setDataModel(TrackItem.class)
-                    .setJSONObject(new JSONObject(jsonSring))
-//                .setDataObject(trackItem, "voiceTrackingList")
+//                    .setJSONObject(new JSONObject(jsonSring))
+                    .setDataObject(trackItem, "voiceTrackingList")
                     .build();
 
             MailBox.getInstance().deliverMail(context, trackCommand, trackCallback);
-        } catch (JSONException je) {
-            je.printStackTrace();
-        }
+//        } catch (JSONException je) {
+//            je.printStackTrace();
+//        }
     }
-
-
 
     @Override
     public void onMailReceive(AMailItem mailItem) {

@@ -8,34 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum HTTPHeader{
-    API_key("APIKey"){
-        @Override
-        public String getValue(final Context context) {
-            return "8ebdd190-763f-11e5-a837-0800200c9a66";
-        }
-    },
-
-    PLAN_API_Key("APIKey") {
-        @Override
-        public String getValue(final Context context) {
-            return "e85beeda-0eb6-47d8-880b-680684b92a19";
-        }
-    },
-
-    Token("Token"){
-        @Override
-        public String getValue(final Context context) {
-            return null;
-        }
-    },
-
-    GCM_KEY("Authorization") {
-        @Override
-        public String getValue(final Context context) {
-            return "key=AIzaSyDQzs8Byra6QQrMYzxbUc5XtKYQ6JDwWdk";
-        }
-    },
-
     UserToken("UserToken"){
         @Override
         public String getValue(final Context context) {

@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.IErrorCodeList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,7 +58,7 @@ public class ErrorCodeHandler {
     /**
      * Generate error item
      */
-    public static AMailItem genErrorItem(IErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
+    public static AMailItem genErrorItem(ErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
         try {
             Object object = (classOfT != null) ? classOfT.newInstance()
                                             : AMailItem.class.newInstance();
@@ -89,48 +88,48 @@ public class ErrorCodeHandler {
         return null;
     }
 
-    /**
-     * To register a new error code
-     * @param errorCode the error code
-     * @param errorContent the error content
-     */
-    public static boolean registerErrorCode(String errorCode, String errorContent) {
-        if (errorCode != null && errorContent != null) {
-            if (lookup(errorCode) == null) {
-
-            } else {
-                throw new IllegalArgumentException("The error code is already used.");
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * To register the error code list
-     * @param errorCodeList the error code list
-     * @return
-     */
-    public static boolean registerErrorCodeList(IErrorCodeList errorCodeList) {
-        Map<String,ErrorCodeItem> tmpMap = new HashMap<String,ErrorCodeItem>();
-        if (errorCodeList != null) {
-            for(ErrorCodeItem tmp : errorCodeList.getItemList()){
-                if (lookup(tmp.getCode()) != null) {
-                    tmpMap.clear();
-                    throw new IllegalArgumentException("The error code is already used.");
-                } else {
-                    tmpMap.put(tmp.getCode(), new ErrorCodeItem(tmp.getCode(), tmp.getContent()));
-                }
-            }
-
-            if (tmpMap.keySet().size() > 0) {
-                lookupTable.putAll(tmpMap);
-                return true;
-            }
-        }
-
-        return false;
-    }
+//    /**
+//     * To register a new error code
+//     * @param errorCode the error code
+//     * @param errorContent the error content
+//     */
+//    public static boolean registerErrorCode(String errorCode, String errorContent) {
+//        if (errorCode != null && errorContent != null) {
+//            if (lookup(errorCode) == null) {
+//
+//            } else {
+//                throw new IllegalArgumentException("The error code is already used.");
+//            }
+//        }
+//
+//        return false;
+//    }
+//
+//    /**
+//     * To register the error code list
+//     * @param errorCodeList the error code list
+//     * @return
+//     */
+//    public static boolean registerErrorCodeList(IErrorCodeList errorCodeList) {
+//        Map<String,ErrorCodeItem> tmpMap = new HashMap<String,ErrorCodeItem>();
+//        if (errorCodeList != null) {
+//            for(ErrorCodeItem tmp : errorCodeList.getItemList()){
+//                if (lookup(tmp.getCode()) != null) {
+//                    tmpMap.clear();
+//                    throw new IllegalArgumentException("The error code is already used.");
+//                } else {
+//                    tmpMap.put(tmp.getCode(), new ErrorCodeItem(tmp.getCode(), tmp.getContent()));
+//                }
+//            }
+//
+//            if (tmpMap.keySet().size() > 0) {
+//                lookupTable.putAll(tmpMap);
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
 
 }

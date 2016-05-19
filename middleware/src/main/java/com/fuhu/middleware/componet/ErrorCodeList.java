@@ -14,6 +14,7 @@ public enum ErrorCodeList implements IErrorCodeList{
     UNKNOWN_ERROR("-3","UNKNOWN ERROR"),
     NO_MAILITEM_DATA("-4","NO MAILITEM DATA"),
 
+    // Command
     COMMAND_NULL("-10", "COMMAND NULL"),
     URL_NULL("-11", "URL NULL"),
     DATA_CLASS_NULL("-12", "DATA CLASS NULL"),

@@ -16,7 +16,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.HttpCommand;
-import com.fuhu.middleware.componet.IErrorCodeList;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
 import com.fuhu.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.middleware.componet.Log;
@@ -223,7 +222,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         mPostOfficeProxy.onMailItemUpdate(mCurrentCommand, mCurrentCommand.getDataObject(), mObtainItem);
     }
 
-    private void onCommandFailed(IErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
+    private void onCommandFailed(ErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
         AMailItem retrieveItem = ErrorCodeHandler.genErrorItem(errorCodeList, classOfT);
         mPostOfficeProxy.onMailItemUpdate(mCurrentCommand, mCurrentCommand.getDataObject(), retrieveItem);
     }
