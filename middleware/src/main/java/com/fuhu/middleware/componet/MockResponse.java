@@ -1,5 +1,10 @@
 package com.fuhu.middleware.componet;
 
+import com.fuhu.middleware.contract.GSONUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MockResponse implements IResponse {
     private String url;
     private Class<? extends AMailItem> dataModel;
@@ -25,11 +30,19 @@ public class MockResponse implements IResponse {
     }
 
     public AMailItem getDataObject() {
-        return dataObject;
+        if (dataObject != null) {
+            return dataObject;
+        } else if (dataModel != null && body != null) {
+            try {
+                return GSONUtil.fromJSON(new JSONObject(body), dataModel);
+            } catch (JSONException je) {
+                je.printStackTrace();
+            }
+        }
+        return null;
     }
 
-    public MockResponse setDataObject(Class<? extends AMailItem> dataModel, AMailItem dataObject) {
-        this.dataModel = dataModel;
+    public MockResponse setDataObject(AMailItem dataObject) {
         this.dataObject = dataObject;
         return this;
     }
@@ -38,7 +51,8 @@ public class MockResponse implements IResponse {
         return body;
     }
 
-    public MockResponse setBody(String body) {
+    public MockResponse setBody(Class<? extends AMailItem> dataModel, String body) {
+        this.dataModel = dataModel;
         this.body = body;
         return this;
     }

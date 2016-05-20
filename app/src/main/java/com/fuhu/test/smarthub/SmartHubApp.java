@@ -7,6 +7,7 @@ import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.IFTTTItem;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockResponse;
+import com.fuhu.middleware.componet.TrackItem;
 import com.fuhu.middleware.service.MockServer;
 
 public class SmartHubApp extends Application {
@@ -34,7 +35,7 @@ public class SmartHubApp extends Application {
         // Tracking mock response
         MockResponse trackResponse = new MockResponse()
                 .setURL("http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080/IITService/tracking/voicetracking")
-                .setBody("{\"status\":\"0\"");
+                .setBody(TrackItem.class, "{\"status\":\"123\"}");
 
         // IFTTT mock response
         IFTTTItem iftttItem = new IFTTTItem();
@@ -43,7 +44,7 @@ public class SmartHubApp extends Application {
 
         MockResponse iftttResponse = new MockResponse()
                 .setURL("https://maker.ifttt.com/trigger/aws_test/with/key/bSFARZ-rJzNywhtItAh4IS")
-                .setDataObject(IFTTTItem.class, iftttItem);
+                .setDataObject(iftttItem);
 
         // Sets the mock responses to MockServer
         MockServer.getInstance().addResponse(trackResponse, iftttResponse);

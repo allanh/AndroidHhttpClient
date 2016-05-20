@@ -36,6 +36,8 @@ public class HttpCommand implements ICommand {
     /** The json object of the request */
     private JSONObject mJsonObject;
 
+    private boolean mUseMockData = false;
+
     /**
      * Priority values.  Requests will be processed from higher priorities to
      * lower priorities, in FIFO order.
@@ -69,6 +71,7 @@ public class HttpCommand implements ICommand {
         this.mDataModel = builder.getDataModel();
         this.mDataObject = builder.getDataObject();
         this.mJsonObject = builder.getJSONObject();
+        this.mUseMockData = builder.useMockData();
     }
 
     @Override
@@ -102,6 +105,10 @@ public class HttpCommand implements ICommand {
 
     public JSONObject getJSONObject() {
         return mJsonObject;
+    }
+
+    public boolean useMockData() {
+        return mUseMockData;
     }
 
     @Override

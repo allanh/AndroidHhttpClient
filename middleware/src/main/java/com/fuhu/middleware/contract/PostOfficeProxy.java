@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.ICommand;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
+import com.fuhu.middleware.componet.MockResponse;
+import com.fuhu.middleware.service.MockServer;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -58,11 +61,30 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 
         // Send command using NabiVolley
         if (command instanceof HttpCommand) {
-            new NabiVolleyActionProxy(mContext, this, (HttpCommand) command).execute();
+            HttpCommand httpCommand = (HttpCommand) command;
+
+            // Checks if using mock data
+            if (httpCommand.useMockData()) {
+                handleMockData(httpCommand);
+            } else {
+                new NabiVolleyActionProxy(mContext, this, httpCommand).execute();
+            }
         } else {
             Log.d(TAG, "Command isn't HttpCommand.");
 //            PostOffice mPostOffice = PostOffice.lookup(command.getID());
 //            mPostOffice.doAction(mContext, queryItem, this, parameter);
+        }
+    }
+
+    private void handleMockData(HttpCommand httpCommand) {
+        MockResponse mockResponse = (MockResponse) MockServer.getInstance().findResponse(httpCommand.getURL());
+
+        // Can't find mock response from MockServer
+        if (mockResponse != null) {
+            onMailItemUpdate(httpCommand, httpCommand.getDataObject(), mockResponse.getDataObject());
+        } else {
+            onMailItemUpdate(httpCommand, httpCommand.getDataObject(),
+                    ErrorCodeHandler.genErrorItem(ErrorCodeList.UNKNOWN_ERROR, httpCommand.getDataModel()));
         }
     }
 

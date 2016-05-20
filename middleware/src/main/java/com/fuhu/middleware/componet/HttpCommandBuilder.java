@@ -17,12 +17,14 @@ public class HttpCommandBuilder implements ICommandBuilder {
     private Class<? extends AMailItem> dataModel;
     private AMailItem dataObject;
     private JSONObject jsonObject;
+    private boolean useMockData;
 
     public HttpCommandBuilder() {
         this.id = String.valueOf(System.currentTimeMillis());
         this.priority = Priority.NORMAL;
         this.method = HttpCommand.Method.GET;
         this.headers = HTTPHeader.getDefaultHeader();
+        this.useMockData = false;
     }
 
     private HttpCommandBuilder(HttpCommand httpCommand) {
@@ -34,6 +36,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.dataModel = httpCommand.getDataModel();
         this.dataObject = httpCommand.getDataObject();
         this.jsonObject = httpCommand.getJSONObject();
+        this.useMockData = httpCommand.useMockData();
     }
 
     /**
@@ -179,6 +182,18 @@ public class HttpCommandBuilder implements ICommandBuilder {
 
     public JSONObject getJSONObject() {
         return jsonObject;
+    }
+
+    /**
+     * Whether or not the mock data is using
+     */
+    public HttpCommandBuilder useMockData(boolean use) {
+        this.useMockData = use;
+        return this;
+    }
+
+    public boolean useMockData() {
+        return useMockData;
     }
 
     public HttpCommand build() {

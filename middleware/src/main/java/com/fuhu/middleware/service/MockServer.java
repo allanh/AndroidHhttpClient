@@ -32,6 +32,7 @@ public class MockServer {
             for (IResponse response: responses) {
                 // Checks if response id isn't null
                 if (response != null && response.getURL() != null) {
+
                     String key = MD5Util.genMD5Key(response.getURL());
                     Log.d(TAG, "Url: " + response.getURL());
                     if (lookupTable.get(key) != null) {
@@ -47,12 +48,16 @@ public class MockServer {
 
     /**
      * Returns the response of the mapping with the specified key.
-     * @param id the key
+     * @param url the url of request
      * @return
      */
-    public IResponse findResponse(String id) {
-        if (id != null) {
-            return lookupTable.get(id);
+    public IResponse findResponse(String url) {
+        if (url != null) {
+            String key = MD5Util.genMD5Key(url);
+            Log.d(TAG, "find url: " + url + " key: " + key);
+            if (key != null) {
+                return lookupTable.get(key);
+            }
         }
 
         return null;

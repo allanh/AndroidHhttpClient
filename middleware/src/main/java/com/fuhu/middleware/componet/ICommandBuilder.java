@@ -58,5 +58,13 @@ public interface ICommandBuilder {
     public ICommandBuilder setDataModel(Class<? extends AMailItem> dataModel);
     public Class<? extends AMailItem> getDataModel();
 
+    /**
+     * Whether or not the mock data is using
+     * @param use
+     * @return
+     */
+    public ICommandBuilder useMockData(boolean use);
+    public boolean useMockData();
+
     public ICommand build();
 }
