@@ -112,11 +112,11 @@ public enum PostOffice implements ICommand {
         public synchronized Object doAction(Context mContext, AMailItem queryItem, IPostOfficeProxy mPostOfficeProxy, Object... obj) {
             GCMItem gcmItem = (GCMItem) queryItem;
             this.setURL(NabiHttpRequest.getAPI_GCM());
-
-            return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
-                    HTTPHeader.getHeader(mContext, HTTPHeader.GCM_KEY),
-                    Request.Method.POST,
-                    genJson(gcmItem)).execute("");
+            return null;
+//            return new VolleyActionProxy(mContext, this, queryItem, false, mPostOfficeProxy,
+//                    HTTPHeader.getHeader(mContext, HTTPHeader.GCM_KEY),
+//                    Request.Method.POST,
+//                    genJson(gcmItem)).execute("");
         }
 
         @Override

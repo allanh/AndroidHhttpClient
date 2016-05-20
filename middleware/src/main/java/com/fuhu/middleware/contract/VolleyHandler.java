@@ -25,11 +25,6 @@ import javax.net.ssl.X509TrustManager;
 
 public class VolleyHandler {
     private static final String TAG = VolleyHandler.class.getSimpleName();
-    /*
-     * Set whether or not responses to this request should be cached
-     */
-    private static final boolean SHOULD_CACHE = false;
-
     private static VolleyHandler instance;
     private static Context mContext;
 
@@ -40,7 +35,9 @@ public class VolleyHandler {
     private static final int VOLLEY_SOCKET_TIMEOUT = 15000;
 
     public VolleyHandler(Context mContext) {
-        this.mContext = mContext;
+        if (mContext != null) {
+            this.mContext = mContext.getApplicationContext();
+        }
         this.mRequestQueue = getRequestQueue();
         this.mImageLoader = getImageLoader();
     }
@@ -106,7 +103,19 @@ public class VolleyHandler {
         request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_SOCKET_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        request.setShouldCache(SHOULD_CACHE);
+        getRequestQueue().add(request);
+    }
+
+    /**
+     * Adds the specified request to the global queue and .
+     * @param request Adds a Request to the dispatch queue
+     * @param shouldCache
+     */
+    public <T> void addToRequestQueue(Request<T> request, boolean shouldCache) {
+        request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_SOCKET_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(shouldCache);
         getRequestQueue().add(request);
     }
 
