@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
-import com.fuhu.middleware.manager.SpeechRecognizeManager;
-import com.fuhu.middleware.manager.TextToSpeechManager;
+import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
+import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 import com.fuhu.test.smarthub.R;
 
 public class MainActivity extends AppCompatActivity {

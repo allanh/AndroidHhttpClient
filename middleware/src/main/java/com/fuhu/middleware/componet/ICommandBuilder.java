@@ -14,10 +14,10 @@ public interface ICommandBuilder {
     public String getID();
 
     /**
-     * Sets the {@link HttpCommand.Priority} of this request; {@link HttpCommand.Priority#NORMAL} by default.
+     * Sets the {@link Priority} of this request; {@link Priority#NORMAL} by default.
      */
-    public ICommandBuilder setPriority(HttpCommand.Priority priority);
-    public HttpCommand.Priority getPriority();
+    public ICommandBuilder setPriority(Priority priority);
+    public Priority getPriority();
 
     /**
      * Sets the {@link HttpCommand.Method} of this request.

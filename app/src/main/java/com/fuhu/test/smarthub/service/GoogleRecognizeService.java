@@ -1,4 +1,4 @@
-package com.fuhu.middleware.service;
+package com.fuhu.test.smarthub.service;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,12 @@ import android.os.IBinder;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
 
-import com.fuhu.middleware.componet.ARecognizeService;
 import com.fuhu.middleware.componet.ActionPreferences;
-import com.fuhu.middleware.ifttt.Initialization;
-import com.fuhu.middleware.ifttt.PondoDecisionSeeker;
+import com.fuhu.test.smarthub.componet.ARecognizeService;
+import com.fuhu.test.smarthub.ifttt.Initialization;
+import com.fuhu.test.smarthub.ifttt.PondoDecisionSeeker;
+import com.fuhu.middleware.componet.Log;
 
 import java.util.ArrayList;
 import java.util.List;

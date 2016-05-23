@@ -1,4 +1,4 @@
-package com.fuhu.middleware.manager;
+package com.fuhu.test.smarthub.manager;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -7,8 +7,8 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.fuhu.middleware.componet.IManager;
-import com.fuhu.middleware.receiver.GoogleRecognizeReceiver;
-import com.fuhu.middleware.service.GoogleRecognizeService;
+import com.fuhu.test.smarthub.receiver.GoogleRecognizeReceiver;
+import com.fuhu.test.smarthub.service.GoogleRecognizeService;
 
 /**
  * Helper to recognize speech using google recognize service

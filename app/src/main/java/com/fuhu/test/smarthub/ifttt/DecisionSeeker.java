@@ -1,4 +1,4 @@
-package com.fuhu.middleware.ifttt;
+package com.fuhu.test.smarthub.ifttt;
 
 import com.fuhu.middleware.componet.Log;
 

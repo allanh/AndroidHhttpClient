@@ -1,4 +1,4 @@
-package com.fuhu.middleware.ifttt;
+package com.fuhu.test.smarthub.ifttt;
 
 public class Initialization {
 	public static PondoIFTTT samplePondoIFTTTRoot=new PondoIFTTT("Hello",0,"What action are you or your baby doing? Feeding, pumping, sleeping, or changing diaper ", "Nikki","Pondo", "honda");;

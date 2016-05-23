@@ -1,10 +1,10 @@
-package com.fuhu.middleware.manager;
+package com.fuhu.test.smarthub.manager;
 
 import android.content.Context;
 
-import com.fuhu.middleware.callback.IFTTTCallback;
+import com.fuhu.test.smarthub.callback.IFTTTCallback;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.componet.IFTTTItem;
+import com.fuhu.test.smarthub.componet.IFTTTItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

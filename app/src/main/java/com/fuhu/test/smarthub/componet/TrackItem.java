@@ -1,12 +1,15 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
+
+import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.MailItem;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrackItem extends AMailItem{
+public class TrackItem extends AMailItem {
     private static final String TAG= MailItem.class.getSimpleName();
 
     /**

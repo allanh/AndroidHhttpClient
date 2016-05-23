@@ -1,6 +1,5 @@
 package com.fuhu.middleware.componet;
 
-import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 

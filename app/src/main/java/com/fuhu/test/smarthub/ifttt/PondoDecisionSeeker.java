@@ -1,12 +1,12 @@
-package com.fuhu.middleware.ifttt;
+package com.fuhu.test.smarthub.ifttt;
 
 import android.content.Context;
 
-import com.fuhu.middleware.callback.TrackCallback;
+import com.fuhu.test.smarthub.callback.TrackCallback;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.componet.TrackItem;
-import com.fuhu.middleware.componet.TrackItem.VoiceTrackingList;
-import com.fuhu.middleware.manager.TextToSpeechManager;
+import com.fuhu.test.smarthub.componet.TrackItem;
+import com.fuhu.test.smarthub.componet.TrackItem.VoiceTrackingList;
+import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 
 import java.util.ArrayList;
 import java.util.List;

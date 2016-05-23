@@ -4,11 +4,11 @@ import android.app.Application;
 
 import com.fuhu.middleware.MiddlewareApp;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.IFTTTItem;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockResponse;
-import com.fuhu.middleware.componet.TrackItem;
 import com.fuhu.middleware.service.MockServer;
+import com.fuhu.test.smarthub.componet.IFTTTItem;
+import com.fuhu.test.smarthub.componet.TrackItem;
 
 public class SmartHubApp extends Application {
     public static final String TAG = SmartHubApp.class.getSimpleName();
@@ -32,6 +32,11 @@ public class SmartHubApp extends Application {
         // Initializing middleware
         MiddlewareApp.getInstance(this).initial();
 
+        // Initializing mock data
+        initMockData();
+    }
+
+    private void initMockData() {
         // Tracking mock response
         MockResponse trackResponse = new MockResponse()
                 .setURL("http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080/IITService/tracking/voicetracking")

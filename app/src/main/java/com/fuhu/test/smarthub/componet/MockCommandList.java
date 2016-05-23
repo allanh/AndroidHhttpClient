@@ -1,14 +1,51 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
 import android.content.Context;
+
+import com.fuhu.middleware.MiddlewareApp;
+import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.ErrorCodeList;
+import com.fuhu.middleware.componet.HTTPHeader;
+import com.fuhu.middleware.componet.IHttpCommand;
+import com.fuhu.middleware.componet.IPostOfficeProxy;
+import com.fuhu.middleware.componet.ISchedulingActionProxy;
+import com.fuhu.middleware.componet.Priority;
+import com.fuhu.middleware.contract.NabiHttpRequest;
 
 import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
 
+public enum MockCommandList implements IHttpCommand {
+    ReqTracking("1", IHttpCommand.Method.POST, NabiHttpRequest.getAPI_Track(), TrackItem.class) {
+        @Override
+        public Map<String, String> getHeaders() {
+            return HTTPHeader.getTrackingHeader(MiddlewareApp.getApplicationContext());
+        }
 
-public class HttpCommand implements IHttpCommand {
+        @Override
+        public AMailItem getDataObject() {
+            TrackItem trackItem = new TrackItem();
+            return trackItem;
+        }
+    },
+
+    ReqSendToIFTTT("2", IHttpCommand.Method.POST, NabiHttpRequest.getAPI_IFTTT(), IFTTTItem.class) {
+        @Override
+        public Map<String, String> getHeaders() {
+            return HTTPHeader.getDefaultHeader();
+        }
+
+        @Override
+        public AMailItem getDataObject() {
+            IFTTTItem iftttItem = new IFTTTItem();
+            iftttItem.setValue1("testIFTTT");
+            return iftttItem;
+        }
+    }
+    ;
+
     /** The unique identifier of the request */
     private String mId;
 
@@ -19,8 +56,7 @@ public class HttpCommand implements IHttpCommand {
     private String mUrl;
 
     /**
-     * Request method of this request.  Currently supports GET, POST, PUT, DELETE, HEAD, OPTIONS,
-     * TRACE, and PATCH.
+     * Request method of this request.
      */
     private int mMethod;
 
@@ -38,16 +74,11 @@ public class HttpCommand implements IHttpCommand {
 
     private boolean mUseMockData = false;
 
-    public HttpCommand(ICommandBuilder builder) {
-        this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis());
-        this.mPriority = builder.getPriority();
-        this.mUrl = builder.getURL();
-        this.mMethod = builder.getMethod();
-        this.mHttpHeaders = builder.getHeaders();
-        this.mDataModel = builder.getDataModel();
-        this.mDataObject = builder.getDataObject();
-        this.mJsonObject = builder.getJSONObject();
-        this.mUseMockData = builder.useMockData();
+    private MockCommandList(String id, int method, String url, Class<? extends AMailItem> dataModel) {
+        this.mId = id;
+        this.mMethod = method;
+        this.mUrl = url;
+        this.mDataModel = dataModel;
     }
 
     @Override
@@ -115,4 +146,5 @@ public class HttpCommand implements IHttpCommand {
 
     @Override
     public void onCommandFailed(final Context mContext, IPostOfficeProxy mPostOfficeProxy, AMailItem queryItem, ErrorCodeList errorCode) {}
+
 }

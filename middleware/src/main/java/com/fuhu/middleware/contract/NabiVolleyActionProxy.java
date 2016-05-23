@@ -15,9 +15,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.HttpCommand;
+import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
 import com.fuhu.middleware.componet.ISchedulingActionProxy;
+import com.fuhu.middleware.componet.Priority;
 import com.fuhu.middleware.componet.Log;
 
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private static final int RETRY_MAX_COUNT = 3;
 
 //    private BlockingQueue<ICommand> mCommandQueue = null;
-    private HttpCommand mCurrentCommand;
+    private IHttpCommand mCurrentCommand;
     private IPostOfficeProxy mPostOfficeProxy;
     private Context mContext;
 
@@ -42,7 +43,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
 
     private static Executor executorGeneral = Executors.newFixedThreadPool(10);
 
-    public NabiVolleyActionProxy(final Context mContext, IPostOfficeProxy mPostOfficeProxy, HttpCommand command){
+    public NabiVolleyActionProxy(final Context mContext, IPostOfficeProxy mPostOfficeProxy, IHttpCommand command){
         this.mPostOfficeProxy=mPostOfficeProxy;
         this.mContext = mContext;
         this.mCurrentCommand = command;
@@ -83,7 +84,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                     String url = mCurrentCommand.getURL();
                     JSONObject jsonObject = mCurrentCommand.getJSONObject();
                     int method = mCurrentCommand.getMethod();
-                    HttpCommand.Priority priority = mCurrentCommand.getPriority();
+                    Priority priority = mCurrentCommand.getPriority();
 
                     Log.d(TAG, "url: " + url);
                     Log.d(TAG, "id: " + id + " method: " + method + " priority: " + priority);

@@ -1,6 +1,8 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
-public class GCMItem extends AMailItem{
+import com.fuhu.middleware.componet.AMailItem;
+
+public class GCMItem extends AMailItem {
     private static final String TAG= GCMItem.class.getSimpleName();
 
     public String to;

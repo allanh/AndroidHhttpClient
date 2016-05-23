@@ -1,7 +1,5 @@
 package com.fuhu.middleware.componet;
 
-import com.fuhu.middleware.contract.ErrorCodeHandler;
-
 import org.json.JSONObject;
 
 public class MailItem extends AMailItem{

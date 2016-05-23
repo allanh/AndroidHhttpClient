@@ -1,8 +1,8 @@
 package com.fuhu.middleware.service;
 
 import com.fuhu.middleware.componet.IResponse;
-import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.MD5Util;
+import com.fuhu.middleware.componet.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,9 @@ public class MockServer {
         lookupTable.clear();
     }
 
+    /**
+     * Add the response to ResponseMap
+     */
     public void addResponse(IResponse... responses) {
         if (responses != null && responses.length > 0) {
             for (IResponse response: responses) {

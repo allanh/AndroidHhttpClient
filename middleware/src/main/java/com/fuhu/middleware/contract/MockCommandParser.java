@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.fuhu.middleware.componet.CommandType;
 
+
 public class MockCommandParser {
     private static final String TAG = MockCommandParser.class.getSimpleName();
 

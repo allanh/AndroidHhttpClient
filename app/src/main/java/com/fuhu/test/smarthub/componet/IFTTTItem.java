@@ -1,4 +1,6 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
+
+import com.fuhu.middleware.componet.AMailItem;
 
 public class IFTTTItem extends AMailItem {
     /**

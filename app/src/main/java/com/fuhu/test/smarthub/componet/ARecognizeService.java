@@ -1,9 +1,10 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.fuhu.middleware.componet.IRecognizeService;
 import com.fuhu.middleware.contract.MockCommandParser;
 
 public abstract class ARecognizeService extends Service implements IRecognizeService {

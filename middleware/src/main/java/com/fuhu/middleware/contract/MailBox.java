@@ -9,11 +9,11 @@ import android.os.Message;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.ICommand;
+import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IMailReceiveCallback;
-import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
+import com.fuhu.middleware.componet.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,8 +86,8 @@ public class MailBox {
 
         if (command != null) {
             // Checks if HttpCommand is valid.
-            if (command instanceof HttpCommand) {
-                HttpCommand httpCommand = (HttpCommand) command;
+            if (command instanceof IHttpCommand) {
+                IHttpCommand httpCommand = (IHttpCommand) command;
                 AMailItem errorItem = null;
 
                 if (httpCommand.getDataModel() == null) {

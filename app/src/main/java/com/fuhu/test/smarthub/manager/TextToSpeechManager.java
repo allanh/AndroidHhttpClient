@@ -1,4 +1,4 @@
-package com.fuhu.middleware.manager;
+package com.fuhu.test.smarthub.manager;
 
 import android.content.Context;
 import android.os.Build;
@@ -7,7 +7,7 @@ import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
-import com.fuhu.middleware.componet.ITTSListener;
+import com.fuhu.test.smarthub.componet.ITTSListener;
 
 import java.util.Locale;
 

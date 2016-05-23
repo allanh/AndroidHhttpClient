@@ -1,4 +1,4 @@
-package com.fuhu.middleware.callback;
+package com.fuhu.test.smarthub.callback;
 
 import android.content.Context;
 
@@ -7,12 +7,12 @@ import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.HTTPHeader;
 import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.HttpCommandBuilder;
-import com.fuhu.middleware.componet.IFTTTItem;
 import com.fuhu.middleware.componet.IMailReceiveCallback;
-import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.fuhu.middleware.contract.MailBox;
 import com.fuhu.middleware.contract.NabiHttpRequest;
+import com.fuhu.test.smarthub.componet.IFTTTItem;
+import com.fuhu.middleware.componet.Log;
 
 
 public abstract class IFTTTCallback implements IMailReceiveCallback {

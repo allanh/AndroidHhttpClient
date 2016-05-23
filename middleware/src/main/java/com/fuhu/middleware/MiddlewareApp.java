@@ -42,4 +42,12 @@ public class MiddlewareApp {
             return TAG;
         }
     }
+
+    public static Context getApplicationContext() {
+        if (mContext != null) {
+            return mContext.getApplicationContext();
+        }
+
+        return null;
+    }
 }

@@ -1,4 +1,4 @@
-package com.fuhu.middleware.receiver;
+package com.fuhu.test.smarthub.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.TextView;
 
-import com.fuhu.middleware.callback.IFTTTCallback;
 import com.fuhu.middleware.componet.ActionPreferences;
-import com.fuhu.middleware.componet.IFTTTItem;
+import com.fuhu.test.smarthub.callback.IFTTTCallback;
+import com.fuhu.test.smarthub.componet.IFTTTItem;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.manager.IFTTTManager;
-import com.fuhu.middleware.manager.TextToSpeechManager;
+import com.fuhu.test.smarthub.manager.IFTTTManager;
+import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 
 public class GoogleRecognizeReceiver extends BroadcastReceiver {
     private static final String TAG = GoogleRecognizeReceiver.class.getSimpleName();

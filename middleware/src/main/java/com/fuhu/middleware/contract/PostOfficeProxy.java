@@ -6,13 +6,13 @@ import android.os.Bundle;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.ICommand;
+import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
-import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
 import com.fuhu.middleware.componet.MockResponse;
 import com.fuhu.middleware.service.MockServer;
+import com.fuhu.middleware.componet.Log;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -60,8 +60,8 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         mMailTaskList.put(command, mailTask);
 
         // Send command using NabiVolley
-        if (command instanceof HttpCommand) {
-            HttpCommand httpCommand = (HttpCommand) command;
+        if (command instanceof IHttpCommand) {
+            IHttpCommand httpCommand = (IHttpCommand) command;
 
             // Checks if using mock data
             if (httpCommand.useMockData()) {
@@ -76,7 +76,7 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         }
     }
 
-    private void handleMockData(HttpCommand httpCommand) {
+    private void handleMockData(IHttpCommand httpCommand) {
         MockResponse mockResponse = (MockResponse) MockServer.getInstance().findResponse(httpCommand.getURL());
 
         // Can't find mock response from MockServer

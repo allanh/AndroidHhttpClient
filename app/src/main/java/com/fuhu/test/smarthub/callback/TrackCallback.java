@@ -1,4 +1,4 @@
-package com.fuhu.middleware.callback;
+package com.fuhu.test.smarthub.callback;
 
 import android.content.Context;
 
@@ -8,11 +8,11 @@ import com.fuhu.middleware.componet.HTTPHeader;
 import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.HttpCommandBuilder;
 import com.fuhu.middleware.componet.IMailReceiveCallback;
-import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.componet.TrackItem;
 import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.fuhu.middleware.contract.MailBox;
 import com.fuhu.middleware.contract.NabiHttpRequest;
+import com.fuhu.test.smarthub.componet.TrackItem;
+import com.fuhu.middleware.componet.Log;
 
 public abstract class TrackCallback implements IMailReceiveCallback {
     private static final String TAG = TrackCallback.class.getSimpleName();
@@ -35,6 +35,7 @@ public abstract class TrackCallback implements IMailReceiveCallback {
                     .build();
 
             MailBox.getInstance().deliverMail(context, trackCommand, trackCallback);
+
 //        } catch (JSONException je) {
 //            je.printStackTrace();
 //        }

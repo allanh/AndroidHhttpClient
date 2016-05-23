@@ -1,7 +1,5 @@
 package com.fuhu.middleware.componet;
 
-import com.fuhu.middleware.componet.HttpCommand.Method;
-import com.fuhu.middleware.componet.HttpCommand.Priority;
 import com.fuhu.middleware.contract.GSONUtil;
 
 import org.json.JSONObject;
@@ -71,7 +69,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
 
 
     /**
-     * Sets the {@link Method} of this request.
+     * Sets the Method of this request.
      */
     public HttpCommandBuilder setMethod(int method) {
         this.method = method;
