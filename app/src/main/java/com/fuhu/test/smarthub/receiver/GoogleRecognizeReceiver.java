@@ -7,10 +7,7 @@ import android.content.IntentFilter;
 import android.widget.TextView;
 
 import com.fuhu.middleware.componet.ActionPreferences;
-import com.fuhu.test.smarthub.callback.IFTTTCallback;
-import com.fuhu.test.smarthub.componet.IFTTTItem;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.test.smarthub.manager.IFTTTManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 
 public class GoogleRecognizeReceiver extends BroadcastReceiver {
@@ -48,20 +45,20 @@ public class GoogleRecognizeReceiver extends BroadcastReceiver {
 //                mSpeechManager.speakOut(response);
 //            }
 
-            if (mContext != null) {
-                // Send to IFTTT
-                IFTTTManager.sendToIFTTT(mContext,
-                        new IFTTTCallback() {
-                            public void onIftttReceived(IFTTTItem iftttItem) {
-
-                            }
-
-                            public void onFailed(String status, String message) {
-
-                            }
-                        },
-                        response);
-            }
+//            if (mContext != null) {
+//                // Send to IFTTT
+//                IFTTTManager.sendToIFTTT(mContext,
+//                        new IFTTTCallback() {
+//                            public void onIftttReceived(IFTTTItem iftttItem) {
+//
+//                            }
+//
+//                            public void onFailed(String status, String message) {
+//
+//                            }
+//                        },
+//                        response);
+//            }
         }
     }
 }

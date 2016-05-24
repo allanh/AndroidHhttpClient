@@ -40,7 +40,7 @@ public class SmartHubApp extends Application {
         // Tracking mock response
         MockResponse trackResponse = new MockResponse()
                 .setURL("http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080/IITService/tracking/voicetracking")
-                .setBody(TrackItem.class, "{\"status\":\"123\"}");
+                .setBody(TrackItem.class, "{\"status\":\"0\"}");
 
         // IFTTT mock response
         IFTTTItem iftttItem = new IFTTTItem();

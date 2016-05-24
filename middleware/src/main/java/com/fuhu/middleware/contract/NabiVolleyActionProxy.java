@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
 import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
@@ -12,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
@@ -102,6 +104,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                             public Map<String, String> getHeaders() throws AuthFailureError {
                                 return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
                             }
+
+                            @Override
+                            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                                Map<String, String> responseHeaders = response.headers;
+                                for (String key : responseHeaders.keySet()) {
+                                    Log.d(TAG, "cache h: " + key + " value: " + responseHeaders.get(key));
+                                }
+                                return super.parseNetworkResponse(response);
+                            }
                         };
                     } else {
                         // Creates a new request
@@ -110,6 +121,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                             public Map<String, String> getHeaders() throws AuthFailureError {
                                 return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
                             }
+
+                            @Override
+                            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                                Map<String, String> responseHeaders = response.headers;
+                                for (String key : responseHeaders.keySet()) {
+                                    Log.d(TAG, "cache h: " + key + " value: " + responseHeaders.get(key));
+                                }
+                                return super.parseNetworkResponse(response);
+                            }
                         };
                     }
 
@@ -117,8 +137,23 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                         jsonObjectRequest.setTag(id);
                     }
 
+                    Cache cache = VolleyHandler.getInstance(mContext).getRequestQueue().getCache();
+                    if (cache instanceof DiskBasedCache) {
+                        DiskBasedCache diskBasedCache = (DiskBasedCache) cache;
+                        Cache.Entry entry = diskBasedCache.get(jsonObjectRequest.getCacheKey());
+                        if (entry != null) {
+                            Log.d(TAG, "cache hint: " + url);
+                            Log.d(TAG, "Cache isExpired: " + entry.isExpired() + " refreshNeeded: " + entry.refreshNeeded());
+                            Log.d(TAG, "Cache lastModified: " + entry.lastModified + " serverDate: " + entry.serverDate);
+                            Log.d(TAG, "Cache etag: " + entry.etag + " ttl: " + entry.ttl + " softTtl: " + entry.softTtl);
+                            Log.d(TAG, "Cache data: " + new String(entry.data));
+                        } else {
+                            Log.d(TAG, "no cache: " + url);
+                        }
+                    }
+
                     // Add the request to the RequestQueue.
-                    VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest);
+                    VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest, true);
 //                }
 //            }
 //        } catch (InterruptedException ie) {

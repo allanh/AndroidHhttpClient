@@ -11,7 +11,7 @@ public enum HTTPHeader{
     UserToken("UserToken"){
         @Override
         public String getValue(final Context context) {
-            return "e85beeda-0eb6-47d8-880b-680684b92a19";
+            return "daa2c76895";
         }
     },
 
@@ -25,7 +25,7 @@ public enum HTTPHeader{
     Track_API_Key("APIKey") {
         @Override
         public String getValue(final Context context) {
-            return "46900aad65547b9e1a0922c40225eca81707ca8d794d3322cece832c226787";
+            return "daa2c76895d33d8feed0c6be9639ccfab74295";
         }
     },
 

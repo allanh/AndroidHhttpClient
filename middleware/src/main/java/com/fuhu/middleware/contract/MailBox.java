@@ -13,7 +13,6 @@ import com.fuhu.middleware.componet.ICommand;
 import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IMailReceiveCallback;
 import com.fuhu.middleware.componet.MailTask;
-import com.fuhu.middleware.componet.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class MailBox {
         mReceiveHandler = new Handler(Looper.getMainLooper()){
 			@Override
 			public void handleMessage(Message msg){
-                Log.d(TAG, "msg what: " + msg.what);
+//                Log.d(TAG, "msg what: " + msg.what);
 				if(msg.what == ReceiveIntent){
 					Intent mIntent = (Intent) msg.obj;
 					Bundle bundle = mIntent.getExtras();
@@ -62,7 +61,7 @@ public class MailBox {
                     // check if receiveMailTask is running
                     if (!running) {
                         running = true;
-                        Log.d(TAG, "post : " + mMailTask.getCommand().getID());
+//                        Log.d(TAG, "post : " + mMailTask.getCommand().getID());
                         this.post(receiveMailTask);
                     }
 				}
@@ -80,7 +79,7 @@ public class MailBox {
     public void deliverMail(Context context, ICommand command, IMailReceiveCallback mailRecCallback){
         // Checks if MailReceiveCallback is null.
         if (mailRecCallback == null) {
-            Log.e(TAG, "callback is null");
+//            Log.e(TAG, "callback is null");
             return;
         }
 
@@ -97,7 +96,7 @@ public class MailBox {
                 }
 
                 if (errorItem != null) {
-                    Log.e(TAG, "error: " + errorItem.getStatus() + " message: " + errorItem.getMessage());
+//                    Log.e(TAG, "error: " + errorItem.getStatus() + " message: " + errorItem.getMessage());
                     mailRecCallback.onMailReceive(errorItem);
                     return;
                 }
@@ -113,7 +112,7 @@ public class MailBox {
                 id = String.valueOf(System.currentTimeMillis());
             }
 
-            Log.d(TAG, "Command: " + command.getID());
+//            Log.d(TAG, "Command: " + command.getID());
             mMailTask.setAddress(id);
             mMailTask.setClassName(this.getClass().getName());
 
@@ -123,7 +122,7 @@ public class MailBox {
             // send command list to server
             PostOfficeProxy.getInstance().onMailRequest(context, mMailTask);
         } else {
-            Log.e(TAG, "command is null");
+//            Log.e(TAG, "command is null");
             mailRecCallback.onMailReceive(ErrorCodeHandler.genErrorItem(ErrorCodeList.COMMAND_NULL, AMailItem.class));
         }
     }
@@ -148,7 +147,7 @@ public class MailBox {
     public void receiveMail(Intent intent){
         MailTask mMailTask = (MailTask)intent.getExtras().getSerializable("mailTask");
         startTime = System.currentTimeMillis();
-        Log.d(TAG, "receive mail: " + mMailTask.getCommand().getID());
+//        Log.d(TAG, "receive mail: " + mMailTask.getCommand().getID());
 //		mReceiveHandler.removeMessages(ReceiveIntent);
         Message message = mReceiveHandler.obtainMessage(ReceiveIntent, intent);
 		mReceiveHandler.sendMessage(message);
@@ -167,7 +166,7 @@ public class MailBox {
     private Runnable receiveMailTask = new Runnable() {
         @Override
         public void run() {
-        Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
+//        Log.d(TAG, "running: " + running + " queue size: " + receiveQueue.size());
 
         try{
             while (running && receiveQueue.size() > 0) {
@@ -194,7 +193,7 @@ public class MailBox {
 //            e.printStackTrace();
         }
 
-        Log.d(TAG, "stop thread");
+//        Log.d(TAG, "stop thread");
         // stop thread
         running = false;
         mReceiveHandler.removeCallbacks(this);
