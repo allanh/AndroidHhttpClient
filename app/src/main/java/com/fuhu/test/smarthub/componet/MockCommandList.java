@@ -74,6 +74,8 @@ public enum MockCommandList implements IHttpCommand {
 
     private boolean mUseMockData = false;
 
+    private boolean shouldCache = true;
+
     private MockCommandList(String id, int method, String url, Class<? extends AMailItem> dataModel) {
         this.mId = id;
         this.mMethod = method;
@@ -124,6 +126,11 @@ public enum MockCommandList implements IHttpCommand {
     @Override
     public boolean useMockData() {
         return mUseMockData;
+    }
+
+    @Override
+    public boolean shouldCache() {
+        return shouldCache;
     }
 
     @Override

@@ -66,5 +66,13 @@ public interface ICommandBuilder {
     public ICommandBuilder useMockData(boolean use);
     public boolean useMockData();
 
+    /**
+     * Set whether or not responses to this request should be cached
+     * @param shouldCache
+     * @return
+     */
+    public ICommandBuilder setShouldCache(boolean shouldCache);
+    public boolean shouldCache();
+
     public ICommand build();
 }

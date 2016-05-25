@@ -24,6 +24,11 @@ public interface IHttpCommand extends ICommand {
     public boolean useMockData();
 
     /**
+     * Whether or not responses to this request should be cached
+     */
+    public boolean shouldCache();
+
+    /**
      * Supported request methods.
      */
     public interface Method {

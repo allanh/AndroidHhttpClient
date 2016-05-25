@@ -92,6 +92,7 @@ public class VolleyHandler {
         request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_SOCKET_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(true);
         getRequestQueue().add(request);
     }
 
@@ -103,6 +104,7 @@ public class VolleyHandler {
         request.setRetryPolicy(new DefaultRetryPolicy(VOLLEY_SOCKET_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        request.setShouldCache(true);
         getRequestQueue().add(request);
     }
 

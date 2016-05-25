@@ -38,6 +38,11 @@ public class HttpCommand implements IHttpCommand {
 
     private boolean mUseMockData = false;
 
+    /**
+     * Whether or not responses to this request should be cached
+     */
+    private boolean shouldCache = true;
+
     public HttpCommand(ICommandBuilder builder) {
         this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis());
         this.mPriority = builder.getPriority();
@@ -48,6 +53,7 @@ public class HttpCommand implements IHttpCommand {
         this.mDataObject = builder.getDataObject();
         this.mJsonObject = builder.getJSONObject();
         this.mUseMockData = builder.useMockData();
+        this.shouldCache = builder.shouldCache();
     }
 
     @Override
@@ -93,6 +99,11 @@ public class HttpCommand implements IHttpCommand {
     @Override
     public boolean useMockData() {
         return mUseMockData;
+    }
+
+    @Override
+    public boolean shouldCache() {
+        return shouldCache;
     }
 
     @Override

@@ -16,6 +16,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
     private AMailItem dataObject;
     private JSONObject jsonObject;
     private boolean useMockData;
+    private boolean shouldCache;
 
     public HttpCommandBuilder() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -23,6 +24,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.method = HttpCommand.Method.GET;
         this.headers = HTTPHeader.getDefaultHeader();
         this.useMockData = false;
+        this.shouldCache = true;
     }
 
     private HttpCommandBuilder(HttpCommand httpCommand) {
@@ -35,6 +37,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.dataObject = httpCommand.getDataObject();
         this.jsonObject = httpCommand.getJSONObject();
         this.useMockData = httpCommand.useMockData();
+        this.shouldCache = httpCommand.shouldCache();
     }
 
     /**
@@ -192,6 +195,20 @@ public class HttpCommandBuilder implements ICommandBuilder {
 
     public boolean useMockData() {
         return useMockData;
+    }
+
+    /**
+     * Set whether or not responses to this request should be cached
+     * @param shouldCache
+     * @return
+     */
+    public HttpCommandBuilder setShouldCache(boolean shouldCache) {
+        this.shouldCache = shouldCache;
+        return this;
+    }
+
+    public boolean shouldCache() {
+        return shouldCache;
     }
 
     public HttpCommand build() {

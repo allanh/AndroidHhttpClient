@@ -32,6 +32,7 @@ public abstract class TrackCallback implements IMailReceiveCallback {
 //                    .setJSONObject(new JSONObject(jsonSring))
                     .setDataObject(trackItem, "voiceTrackingList")
 //                    .useMockData(true)
+                    .setShouldCache(true)
                     .build();
 
             MailBox.getInstance().deliverMail(context, trackCommand, trackCallback);

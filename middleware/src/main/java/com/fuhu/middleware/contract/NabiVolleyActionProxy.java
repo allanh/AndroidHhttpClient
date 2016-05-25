@@ -87,6 +87,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                     JSONObject jsonObject = mCurrentCommand.getJSONObject();
                     int method = mCurrentCommand.getMethod();
                     Priority priority = mCurrentCommand.getPriority();
+                    boolean shouldCache = mCurrentCommand.shouldCache();
 
                     Log.d(TAG, "url: " + url);
                     Log.d(TAG, "id: " + id + " method: " + method + " priority: " + priority);
@@ -126,7 +127,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                                 Map<String, String> responseHeaders = response.headers;
                                 for (String key : responseHeaders.keySet()) {
-                                    Log.d(TAG, "cache h: " + key + " value: " + responseHeaders.get(key));
+                                    Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
                                 }
                                 return super.parseNetworkResponse(response);
                             }
@@ -153,7 +154,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                     }
 
                     // Add the request to the RequestQueue.
-                    VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest, true);
+                    VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest, shouldCache);
 //                }
 //            }
 //        } catch (InterruptedException ie) {
