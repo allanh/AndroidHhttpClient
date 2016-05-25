@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Cache;
 import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
@@ -13,15 +12,14 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
 import com.fuhu.middleware.componet.ISchedulingActionProxy;
-import com.fuhu.middleware.componet.Priority;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.componet.Priority;
 
 import org.json.JSONObject;
 
@@ -33,7 +31,6 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private static String TAG = NabiVolleyActionProxy.class.getSimpleName();
     private static final int RETRY_MAX_COUNT = 3;
 
-//    private BlockingQueue<ICommand> mCommandQueue = null;
     private IHttpCommand mCurrentCommand;
     private IPostOfficeProxy mPostOfficeProxy;
     private Context mContext;
@@ -49,20 +46,6 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         this.mPostOfficeProxy=mPostOfficeProxy;
         this.mContext = mContext;
         this.mCurrentCommand = command;
-//        mCommandQueue = new LinkedBlockingQueue<ICommand>();
-
-        /**
-         * set up Command queue
-         */
-//        synchronized (mCommandQueue) {
-//            try {
-//                for (ICommand command : commandList) {
-//                    mCommandQueue.put(command);
-//                }
-//            } catch (InterruptedException ie) {
-//                ie.printStackTrace();
-//            }
-//        }
     }
 
     public void execute() {
@@ -75,91 +58,87 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     }
 
     protected String doInBackground(String... params) {
-//        try {
-//            if (mCommandQueue != null && mCommandQueue.size() > 0) {
-//                ICommand command = mCommandQueue.take();
+        JsonObjectRequest jsonObjectRequest;
+        mHeaderPair = mCurrentCommand.getHeaders();
+        String id = mCurrentCommand.getID();
+        String url = mCurrentCommand.getURL();
+        JSONObject jsonObject = mCurrentCommand.getJSONObject();
+        int method = mCurrentCommand.getMethod();
+        Priority priority = mCurrentCommand.getPriority();
+        boolean shouldCache = mCurrentCommand.shouldCache();
 
-//                if (command != null && command instanceof HttpCommand) {
-                    JsonObjectRequest jsonObjectRequest;
-                    mHeaderPair = mCurrentCommand.getHeaders();
-                    String id = mCurrentCommand.getID();
-                    String url = mCurrentCommand.getURL();
-                    JSONObject jsonObject = mCurrentCommand.getJSONObject();
-                    int method = mCurrentCommand.getMethod();
-                    Priority priority = mCurrentCommand.getPriority();
-                    boolean shouldCache = mCurrentCommand.shouldCache();
+        Log.d(TAG, "url: " + url);
+        Log.d(TAG, "id: " + id + " method: " + method + " priority: " + priority);
+        if (mHeaderPair != null) {
+            for (String key : mHeaderPair.keySet()) {
+                Log.d(TAG, "header: " + key + " value: " + mHeaderPair.get(key));
+            }
+        }
 
-                    Log.d(TAG, "url: " + url);
-                    Log.d(TAG, "id: " + id + " method: " + method + " priority: " + priority);
-                    if (mHeaderPair != null) {
-                        for (String key : mHeaderPair.keySet()) {
-                            Log.d(TAG, "header: " + key + " value: " + mHeaderPair.get(key));
-                        }
+        if (jsonObject != null) {
+            Log.d(TAG, "params: " + jsonObject);
+            // Creates a new request with JSON parameters
+            jsonObjectRequest = new JsonObjectRequest(method, url, jsonObject, listener, errorListener) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
+                }
+
+                /*
+                @Override
+                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                    Map<String, String> responseHeaders = response.headers;
+                    for (String key : responseHeaders.keySet()) {
+                        Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
                     }
+                    return super.parseNetworkResponse(response);
+                }
+                */
+            };
+        } else {
+            // Creates a new request
+            jsonObjectRequest = new JsonObjectRequest(method, url, listener, errorListener) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
+                }
 
-                    if (jsonObject != null) {
-                        Log.d(TAG, "params: " + jsonObject);
-                        // Creates a new request with JSON parameters
-                        jsonObjectRequest = new JsonObjectRequest(method, url, jsonObject, listener, errorListener) {
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
-                            }
-
-                            @Override
-                            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                                Map<String, String> responseHeaders = response.headers;
-                                for (String key : responseHeaders.keySet()) {
-                                    Log.d(TAG, "cache h: " + key + " value: " + responseHeaders.get(key));
-                                }
-                                return super.parseNetworkResponse(response);
-                            }
-                        };
-                    } else {
-                        // Creates a new request
-                        jsonObjectRequest = new JsonObjectRequest(method, url, listener, errorListener) {
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
-                            }
-
-                            @Override
-                            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                                Map<String, String> responseHeaders = response.headers;
-                                for (String key : responseHeaders.keySet()) {
-                                    Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
-                                }
-                                return super.parseNetworkResponse(response);
-                            }
-                        };
+                /*
+                @Override
+                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                    Map<String, String> responseHeaders = response.headers;
+                    for (String key : responseHeaders.keySet()) {
+                        Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
                     }
+                    return super.parseNetworkResponse(response);
+                }
+                */
+            };
+        }
 
-                    if (id != null) {
-                        jsonObjectRequest.setTag(id);
-                    }
+        if (id != null) {
+            jsonObjectRequest.setTag(id);
+        }
 
-                    Cache cache = VolleyHandler.getInstance(mContext).getRequestQueue().getCache();
-                    if (cache instanceof DiskBasedCache) {
-                        DiskBasedCache diskBasedCache = (DiskBasedCache) cache;
-                        Cache.Entry entry = diskBasedCache.get(jsonObjectRequest.getCacheKey());
-                        if (entry != null) {
-                            Log.d(TAG, "cache hint: " + url);
-                            Log.d(TAG, "Cache isExpired: " + entry.isExpired() + " refreshNeeded: " + entry.refreshNeeded());
-                            Log.d(TAG, "Cache lastModified: " + entry.lastModified + " serverDate: " + entry.serverDate);
-                            Log.d(TAG, "Cache etag: " + entry.etag + " ttl: " + entry.ttl + " softTtl: " + entry.softTtl);
-                            Log.d(TAG, "Cache data: " + new String(entry.data));
-                        } else {
-                            Log.d(TAG, "no cache: " + url);
-                        }
-                    }
+/*
+        Cache cache = VolleyHandler.getInstance(mContext).getRequestQueue().getCache();
+        if (cache instanceof DiskBasedCache) {
+            DiskBasedCache diskBasedCache = (DiskBasedCache) cache;
+            Cache.Entry entry = diskBasedCache.get(jsonObjectRequest.getCacheKey());
+            if (entry != null) {
+                Log.d(TAG, "cache hint: " + url);
+                Log.d(TAG, "Cache isExpired: " + entry.isExpired() + " refreshNeeded: " + entry.refreshNeeded());
+                Log.d(TAG, "Cache lastModified: " + entry.lastModified + " serverDate: " + entry.serverDate);
+                Log.d(TAG, "Cache etag: " + entry.etag + " ttl: " + entry.ttl + " softTtl: " + entry.softTtl);
+                Log.d(TAG, "Cache data: " + new String(entry.data));
+            } else {
+                Log.d(TAG, "no cache: " + url);
+            }
+        }
+*/
+        // Add the request to the RequestQueue.
+        VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest, shouldCache);
 
-                    // Add the request to the RequestQueue.
-                    VolleyHandler.getInstance(mContext).addToRequestQueue(jsonObjectRequest, shouldCache);
-//                }
-//            }
-//        } catch (InterruptedException ie) {
-//            ie.printStackTrace();
-//        }
         return null;
     }
 

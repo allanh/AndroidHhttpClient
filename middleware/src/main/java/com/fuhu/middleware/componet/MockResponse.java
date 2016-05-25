@@ -12,7 +12,6 @@ public class MockResponse implements IResponse {
     private AMailItem dataObject;
     private String body;
 
-    /** Creates a new mock response with an empty body. */
     public MockResponse() {
         body = "{\"status\":\"0\"";
     }
@@ -52,8 +51,15 @@ public class MockResponse implements IResponse {
         return body;
     }
 
+    /** @deprecated */
+    @Deprecated
     public MockResponse setBody(Class<? extends AMailItem> dataModel, String body) {
         this.dataModel = dataModel;
+        this.body = body;
+        return this;
+    }
+
+    public MockResponse setBody(String body) {
         this.body = body;
         return this;
     }

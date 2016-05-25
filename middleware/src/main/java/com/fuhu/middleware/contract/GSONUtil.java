@@ -40,6 +40,17 @@ public class GSONUtil {
     }
 
     /**
+     * Convert JSON String to MailItem using Gson
+     * @param jsonString origin JSON String
+     * @param obj MailItem class
+     * @param <T> the type of the MailItem object
+     * @return
+     */
+    public static <T> T fromJSON(String jsonString, Class<T> obj) {
+        return getGson().fromJson(jsonString, obj);
+    }
+
+    /**
      * Convert all key-value pairs of the MailItem to JSONObject
      * @param mailItem
      * @return

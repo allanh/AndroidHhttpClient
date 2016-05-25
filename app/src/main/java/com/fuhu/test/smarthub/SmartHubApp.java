@@ -8,7 +8,6 @@ import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockResponse;
 import com.fuhu.middleware.service.MockServer;
 import com.fuhu.test.smarthub.componet.IFTTTItem;
-import com.fuhu.test.smarthub.componet.TrackItem;
 
 public class SmartHubApp extends Application {
     public static final String TAG = SmartHubApp.class.getSimpleName();
@@ -40,7 +39,7 @@ public class SmartHubApp extends Application {
         // Tracking mock response
         MockResponse trackResponse = new MockResponse()
                 .setURL("http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080/IITService/tracking/voicetracking")
-                .setBody(TrackItem.class, "{\"status\":\"0\"}");
+                .setBody("{\"status\":\"0\"}");
 
         // IFTTT mock response
         IFTTTItem iftttItem = new IFTTTItem();
