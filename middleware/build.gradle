@@ -31,6 +31,12 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
@@ -40,4 +46,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile files('libs/volley-1.0.19.jar')
     compile files('libs/gson-2.6.2.jar')
+    compile files('libs/libjingle_peerconnection.jar')
 }

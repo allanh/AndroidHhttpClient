@@ -11,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
+import com.fuhu.test.smarthub.R;
 import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
-import com.fuhu.test.smarthub.R;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();

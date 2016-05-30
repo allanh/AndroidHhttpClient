@@ -55,8 +55,17 @@ public class ErrorCodeHandler {
         }
     }
 
+
     /**
      * Generate error item
+     */
+    public static AMailItem genErrorItem(ErrorCodeList errorCodeList) {
+        return genErrorItem(errorCodeList, AMailItem.class);
+    }
+
+
+    /**
+     * Generate error item with class type
      */
     public static AMailItem genErrorItem(ErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
         try {

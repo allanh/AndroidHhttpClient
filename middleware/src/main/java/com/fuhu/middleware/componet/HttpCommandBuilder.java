@@ -2,6 +2,7 @@ package com.fuhu.middleware.componet;
 
 import com.fuhu.middleware.contract.GSONUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -150,11 +151,15 @@ public class HttpCommandBuilder implements ICommandBuilder {
     public HttpCommandBuilder setDataObject(AMailItem mailItem, String... keys) {
         this.dataObject = mailItem;
         if (mailItem != null) {
-            if (keys != null && keys.length > 0) {
-                this.jsonObject = GSONUtil.toJSON(mailItem, keys);
-            } else {
-                // convert all key-value pairs
-                this.jsonObject = GSONUtil.toJSON(mailItem);
+            try {
+                if (keys != null && keys.length > 0) {
+                    this.jsonObject = GSONUtil.toJSON(mailItem, keys);
+                } else {
+                    // convert all key-value pairs
+                    this.jsonObject = GSONUtil.toJSON(mailItem);
+                }
+            } catch (JSONException je) {
+                je.printStackTrace();
             }
         }
         return this;
@@ -164,7 +169,11 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.dataObject = mailItem;
         if (mailItem != null) {
             // convert all key-value pairs
-            this.jsonObject = GSONUtil.toJSON(mailItem);
+            try {
+                this.jsonObject = GSONUtil.toJSON(mailItem);
+            } catch (JSONException je) {
+                je.printStackTrace();
+            }
         }
         return this;
     }

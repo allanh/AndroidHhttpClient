@@ -35,7 +35,7 @@ public class GSONUtil {
      * @param <T> the type of the MailItem object
      * @return
      */
-    public static <T> T fromJSON(JSONObject jsonObject, Class<T> obj) {
+    public static <T> T fromJSON(JSONObject jsonObject, Class<T> obj) throws JSONException {
         return getGson().fromJson(jsonObject.toString(), obj);
     }
 
@@ -46,7 +46,7 @@ public class GSONUtil {
      * @param <T> the type of the MailItem object
      * @return
      */
-    public static <T> T fromJSON(String jsonString, Class<T> obj) {
+    public static <T> T fromJSON(String jsonString, Class<T> obj) throws JSONException {
         return getGson().fromJson(jsonString, obj);
     }
 
@@ -55,13 +55,9 @@ public class GSONUtil {
      * @param mailItem
      * @return
      */
-    public static JSONObject toJSON(AMailItem mailItem) {
+    public static JSONObject toJSON(AMailItem mailItem) throws JSONException{
         if (mailItem != null) {
-            try {
-                return mailItem.toJSONObject(getGson());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            return mailItem.toJSONObject(getGson());
         }
         return new JSONObject();
     }
@@ -72,38 +68,34 @@ public class GSONUtil {
      * @param keys
      * @return
      */
-    public static JSONObject toJSON(AMailItem mailItem, String... keys) {
+    public static JSONObject toJSON(AMailItem mailItem, String... keys) throws JSONException {
         JsonObject newJSONObject = new JsonObject();
         if (keys == null)
             return toJSON(mailItem);
 
-        try {
-            if (mailItem != null) {
-                JsonElement element = mailItem.toJsonTree(getGson());
+        if (mailItem != null) {
+            JsonElement element = mailItem.toJsonTree(getGson());
 
-                // check if element is JSONObject
-                if (element != null && element.isJsonObject()) {
-                    JsonObject jObject = element.getAsJsonObject();
-                    Set<Map.Entry<String, JsonElement>> entries = jObject.entrySet();
-                    HashMap<String, JsonElement> elementHashMap = new HashMap<String, JsonElement>();
+            // check if element is JSONObject
+            if (element != null && element.isJsonObject()) {
+                JsonObject jObject = element.getAsJsonObject();
+                Set<Map.Entry<String, JsonElement>> entries = jObject.entrySet();
+                HashMap<String, JsonElement> elementHashMap = new HashMap<String, JsonElement>();
 
-                    // put key and value to HashMap
-                    for (Map.Entry<String, JsonElement> entry : entries) {
-                        Log.d(TAG, "key: " + entry.getKey() + " value: " + entry.getValue());
-                        elementHashMap.put(entry.getKey(), entry.getValue());
-                    }
-
-                    // check if element map contains key and add to new JSONObject
-                    for (String key : keys) {
-                        if (elementHashMap.containsKey(key)) {
-                            newJSONObject.add(key, elementHashMap.get(key));
-                        }
-                    }
-                    return new JSONObject(newJSONObject.toString());
+                // put key and value to HashMap
+                for (Map.Entry<String, JsonElement> entry : entries) {
+                    Log.d(TAG, "key: " + entry.getKey() + " value: " + entry.getValue());
+                    elementHashMap.put(entry.getKey(), entry.getValue());
                 }
+
+                // check if element map contains key and add to new JSONObject
+                for (String key : keys) {
+                    if (elementHashMap.containsKey(key)) {
+                        newJSONObject.add(key, elementHashMap.get(key));
+                    }
+                }
+                return new JSONObject(newJSONObject.toString());
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
         return new JSONObject();
     }

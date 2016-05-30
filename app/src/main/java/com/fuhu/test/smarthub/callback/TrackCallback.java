@@ -8,11 +8,11 @@ import com.fuhu.middleware.componet.HTTPHeader;
 import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.HttpCommandBuilder;
 import com.fuhu.middleware.componet.IMailReceiveCallback;
+import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.fuhu.middleware.contract.MailBox;
 import com.fuhu.middleware.contract.NabiHttpRequest;
 import com.fuhu.test.smarthub.componet.TrackItem;
-import com.fuhu.middleware.componet.Log;
 
 public abstract class TrackCallback implements IMailReceiveCallback {
     private static final String TAG = TrackCallback.class.getSimpleName();
@@ -20,7 +20,7 @@ public abstract class TrackCallback implements IMailReceiveCallback {
     public static void reqSend(final Context context, final TrackCallback trackCallback, final TrackItem trackItem) {
         Log.d(TAG, "reqSend");
 //        try {
-//            String jsonSring = "{\"voiceTrackingList\":[{\"isSuccess\": true, \"text\":\"how are you;\", \"timestamp\":142345678967},{\"isSuccess\": true, \"text\":\"how are you\", \"timestamp\":142345678967}]}";
+//            String jsonSring = "{\"voiceTrackingList\":[{\"isSuccess\": \"true\", \"text\":\"how are you;\", \"timestamp\":142345678967},{\"isSuccess\": \"true\", \"text\":\"how are you\", \"timestamp\":142345678967}]}";
 
             HttpCommand trackCommand = new HttpCommandBuilder()
                     .setID("1")

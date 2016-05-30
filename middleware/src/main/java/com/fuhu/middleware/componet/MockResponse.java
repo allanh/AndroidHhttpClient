@@ -1,6 +1,7 @@
 package com.fuhu.middleware.componet;
 
 
+import com.fuhu.middleware.contract.ErrorCodeHandler;
 import com.fuhu.middleware.contract.GSONUtil;
 
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class MockResponse implements IResponse {
                 return GSONUtil.fromJSON(new JSONObject(body), dataModel);
             } catch (JSONException je) {
                 je.printStackTrace();
+                return ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
             }
         }
         return null;

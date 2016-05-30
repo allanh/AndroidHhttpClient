@@ -21,6 +21,7 @@ import com.fuhu.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.Priority;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -164,7 +165,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         public void onResponse(JSONObject jsonObject) {
             Log.d(TAG, "response: " + jsonObject);
             if (jsonObject != null && mCurrentCommand != null && mCurrentCommand.getDataModel() != null) {
-                Object object = GSONUtil.fromJSON(jsonObject, mCurrentCommand.getDataModel());
+                Object object = null;
+
+                // Parsing json object to data object
+                try {
+                    object = GSONUtil.fromJSON(jsonObject, mCurrentCommand.getDataModel());
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                    object = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
+                }
 
                 if (object != null) {
                     mObtainItem = (AMailItem) object;

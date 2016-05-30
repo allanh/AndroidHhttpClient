@@ -14,6 +14,8 @@ import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
 import com.fuhu.middleware.service.MockServer;
 
+import org.json.JSONException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,8 +90,13 @@ public class PostOfficeProxy implements IPostOfficeProxy {
             if (dataItem != null) {
                 onMailItemUpdate(httpCommand, httpCommand.getDataObject(), dataItem);
             } else if (mockResponse.getBody() != null) {
-                // Convert the json string of MockResponse to java object
-                dataItem = GSONUtil.fromJSON(mockResponse.getBody(), httpCommand.getDataModel());
+                // Parsing the json string of MockResponse to java object
+                try {
+                    dataItem = GSONUtil.fromJSON(mockResponse.getBody(), httpCommand.getDataModel());
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                    dataItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
+                }
                 onMailItemUpdate(httpCommand, httpCommand.getDataObject(), dataItem);
             } else {
                 // No data object and json strong of MockResponse

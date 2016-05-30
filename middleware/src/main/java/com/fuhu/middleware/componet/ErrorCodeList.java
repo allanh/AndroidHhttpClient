@@ -18,6 +18,7 @@ public enum ErrorCodeList implements IErrorCodeList{
     COMMAND_NULL("-10", "COMMAND NULL"),
     URL_NULL("-11", "URL NULL"),
     DATA_CLASS_NULL("-12", "DATA CLASS NULL"),
+    GSON_PARSE_ERROR("-13", "GSON PARSE NULL"),
 
     // Volley
     VOLLEY_TIMEOUT("-9000", "VOLLEY TIMEOUT"),
