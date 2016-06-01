@@ -18,7 +18,7 @@ public abstract class AMailItem implements IMailItem{
     /**
      * Status
      */
-    private String 	status;
+    private String status;
 
     public String getStatus() {
         return (status != null)? status : ErrorCodeList.UNKNOWN_EXCEPTION.getCode();

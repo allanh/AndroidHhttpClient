@@ -1,13 +1,14 @@
 package com.fuhu.test.smarthub.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private TextView tv_response;
-    private ImageView iv_play;
+    private Button bt_webrtc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tv_response = (TextView) findViewById(R.id.result);
-
-        iv_play = (ImageView) findViewById(R.id.iv_play);
-        iv_play.setVisibility(View.GONE);
+        bt_webrtc= (Button) findViewById(R.id.bt_webrtc);
 
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
@@ -57,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
                 // result of the request.
 //            }
         }
+
+        bt_webrtc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getParent(), WebRtcActivity.class));
+                finish();
+            }
+        });
     }
 
     @Override

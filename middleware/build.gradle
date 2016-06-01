@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 23
@@ -12,6 +14,7 @@ android {
 
         multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -32,11 +35,38 @@ android {
         exclude 'META-INF/LICENSE'
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
+//    sourceSets {
+//        main {
+//            jniLibs.srcDirs = ['libs']
+//        }
+//    }
+}
+
+task sourceJar(type: Jar) {
+    classifier "source"
+}
+
+publishing {
+    publications {
+
+        repositories.maven {
+            url 'http://archiva.fuhu.tw:8080'
+            credentials {
+                username "mike.wang"
+                password "fuhu123"
+            }
+        }
+
+        maven(MavenPublication) {
+            artifacts {
+                groupId 'com.fuhu.middleware'
+                artifactId 'middleware'
+                version '1.2'
+                artifact 'build/outputs/aar/middleware-release.aar'
+            }
         }
     }
+
 }
 
 dependencies {
@@ -47,4 +77,8 @@ dependencies {
     compile files('libs/volley-1.0.19.jar')
     compile files('libs/gson-2.6.2.jar')
     compile files('libs/libjingle_peerconnection.jar')
+    compile files('libs/pubnub-3.7.10.jar')
+    compile files('libs/pnwebrtc-1.0.6.jar')
+    compile files('libs/autobanh.jar')
+    compile files('libs/slf4j-api-1.7.21.jar')
 }
