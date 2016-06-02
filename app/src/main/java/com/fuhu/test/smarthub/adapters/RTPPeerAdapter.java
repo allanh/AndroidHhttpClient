@@ -27,7 +27,7 @@ public class RTPPeerAdapter extends ArrayAdapter<RtpChannel> {
         this.values=values;
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         TextView channelKey;
         TextView uuids;
         TextView occupancy;
@@ -54,6 +54,7 @@ public class RTPPeerAdapter extends ArrayAdapter<RtpChannel> {
         }
         holder.channelKey.setText(rtpChannel.getKey());
         holder.uuids.setText(rtpChannel.getUuidsString());
+        holder.occupancy.setText(String.valueOf(rtpChannel.getOccupancy()));
         holder.rtpChannel=rtpChannel;
         return convertView;
     }
@@ -74,13 +75,16 @@ public class RTPPeerAdapter extends ArrayAdapter<RtpChannel> {
         return values.get(position).hashCode();
     }
 
-    public void removeMsg(int loc){
-        this.values.remove(loc);
-        notifyDataSetChanged();
+    public void setChannels(List<RtpChannel> values) {
+        if (values != null) {
+            this.values = values;
+            notifyDataSetChanged();
+        }
     }
 
-    public void addMessage(RtpChannel chatMsg){
-        this.values.add(chatMsg);
-        notifyDataSetChanged();
+    @Override
+    public RtpChannel getItem(int position) {
+        if (position >= values.size()){ return null; }
+        return values.get(position);
     }
 }

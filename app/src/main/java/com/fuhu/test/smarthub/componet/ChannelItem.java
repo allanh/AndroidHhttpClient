@@ -2,6 +2,7 @@ package com.fuhu.test.smarthub.componet;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.contract.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ChannelItem extends AMailItem {
@@ -70,7 +72,7 @@ public class ChannelItem extends AMailItem {
     private List<RtpChannel> channels_list;
     public List<RtpChannel> getChannels() {
         if (channels_list == null) {
-            channels_list = new ArrayList<RtpChannel>();
+            channels_list = new LinkedList<RtpChannel>();
         }
         return channels_list;
     }
@@ -82,9 +84,10 @@ public class ChannelItem extends AMailItem {
 /**
  {"channels":{"allan-stdby":{"uuids":[{"uuid":"allan"}],"occupancy":1},"fu-stdby":{"uuids":[{"uuid":"fu"}],"occupancy":1}},"total_channels":2,"total_occupancy":2}
  */
-    public void setChannels(JSONObject jsonObject) {
+    public void setChannels(final String UUID, final JSONObject jsonObject) {
         if (jsonObject != null) {
             Log.d(TAG, "json object: " + jsonObject.toString());
+            String stdbyChannel = UUID + Constants.STDBY_SUFFIX;
             Iterator<String> keys = jsonObject.keys();
 
             // set keys list
@@ -100,7 +103,13 @@ public class ChannelItem extends AMailItem {
             try {
                 // add channel item
                 for (String key : keysList) {
-                    Log.d(TAG, "key: " + key);
+                    Log.d(TAG, "channel: " + stdbyChannel + " key: " + key);
+
+                    // ignore to parse uuids when key equals user's channel
+                    if (key.equals(stdbyChannel) || !key.endsWith(Constants.STDBY_SUFFIX)) {
+                        continue;
+                    }
+
                     RtpChannel channel = new RtpChannel();
                     channel.setKey(key);
 
@@ -129,8 +138,8 @@ public class ChannelItem extends AMailItem {
 
                 for (RtpChannel ch : channels_list) {
                     Log.d(TAG, "ch " + ch.getKey() + " occupancy: " + ch.getOccupancy());
-                    for (RtpUuid uuid: ch.getUuids()) {
-                        Log.d(TAG, "uuid: " + uuid.getUuid());
+                    for (RtpUuid id: ch.getUuids()) {
+                        Log.d(TAG, "uuid: " + id.getUuid());
                     }
                 }
             } catch (JSONException je) {
@@ -156,13 +165,14 @@ public class ChannelItem extends AMailItem {
         }
 
         public String getUuidsString() {
-            if (uuids != null) {
-                StringBuilder builder = new StringBuilder();
-                for (RtpUuid uuid: uuids) {
-                    builder.append(uuid).append(',');
-                }
-                builder.deleteCharAt(builder.length()-1);
-                return builder.toString();
+            if (uuids != null && uuids.size() > 0) {
+                return uuids.get(0).getUuid();
+//                StringBuilder builder = new StringBuilder();
+//                for (RtpUuid uuid: uuids) {
+//                    builder.append(uuid.getUuid()).append(',');
+//                }
+//                builder.deleteCharAt(builder.length()-1);
+//                return builder.toString();
             }
 
             return "";

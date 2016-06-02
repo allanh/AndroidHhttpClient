@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,7 +19,9 @@ import android.widget.Toast;
 
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.Constants;
+import com.fuhu.middleware.contract.NabiHttpRequest;
 import com.fuhu.test.smarthub.R;
+import com.fuhu.test.smarthub.adapters.RTPPeerAdapter;
 import com.fuhu.test.smarthub.componet.ChannelItem;
 import com.google.gson.Gson;
 import com.pubnub.api.Callback;
@@ -28,6 +31,8 @@ import com.pubnub.api.PubnubException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * TODO: Uncomment mPubNub instance variable
@@ -43,6 +48,9 @@ public class WebRtcActivity extends Activity {
     private ListView mPeerList;
     private Pubnub mPubNub;
     private String username;
+
+    private ChannelItem mChannelItem;
+    private RTPPeerAdapter mPeerAdapter;
 
     /**
      * TODO: "Login" by subscribing to PubNub channel + Constants.SUFFIX
@@ -66,7 +74,26 @@ public class WebRtcActivity extends Activity {
         this.mCallNumET  = (EditText) findViewById(R.id.call_num);
         this.mUsernameTV = (TextView) findViewById(R.id.main_username);
         this.mUsernameTV.setText(this.username);  // Set the username to the username text view
+
         this.mPeerList = (ListView) findViewById(R.id.peerlist);
+        // Set up the List View for chatting
+        mPeerAdapter = new RTPPeerAdapter(this, new ArrayList<ChannelItem.RtpChannel>());
+        this.mPeerList.setAdapter(mPeerAdapter);
+        this.mPeerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, " click: " + position);
+
+                // dispatch call
+                if (mChannelItem != null && mChannelItem.getChannels() != null
+                        && mChannelItem.getChannels().size() > position
+                        && mChannelItem.getChannels().get(position) != null) {
+                    String callNum = mChannelItem.getChannels().get(position).getUuidsString();
+                    Log.d(TAG, "call: " + callNum);
+                    dispatchCall(callNum);
+                }
+            }
+        });
 
         //TODO: Create and instance of Pubnub and subscribe to standby channel
         // In pubnub subscribe callback, send user to your VideoActivity
@@ -98,6 +125,40 @@ public class WebRtcActivity extends Activity {
             // result of the request.
 //            }
         }
+
+        mPubNub.hereNow(true, true, new Callback() {
+            @Override
+            public void successCallback(String channel, Object message) {
+                Log.d(TAG, "HERE NOW : " + message);
+
+                mChannelItem = mGson.fromJson(message.toString(), ChannelItem.class);
+                Log.d(TAG, "total: " + mChannelItem.getTotal_channels());
+
+                if (mChannelItem.getTotal_channels() > 0) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(message.toString());
+
+                        if (jsonObject.has("channels")) {
+                            mChannelItem.setChannels(username, jsonObject.getJSONObject("channels"));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mPeerAdapter.setChannels(mChannelItem.getChannels());
+                                }
+                            });
+                        }
+                    } catch (JSONException je) {
+                        je.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void errorCallback(String channel, PubnubError error) {
+                Log.d(TAG, "HERE NOW : " + error);
+            }
+        });
+
     }
 
     public void initPubNub() {
@@ -125,32 +186,6 @@ public class WebRtcActivity extends Activity {
                     }
                 }
             });
-
-            mPubNub.hereNow(true, true, new Callback() {
-                @Override
-                public void successCallback(String channel, Object message) {
-                    Log.d(TAG, "HERE NOW : " + message);
-
-                    ChannelItem channelItem = mGson.fromJson(message.toString(), ChannelItem.class);
-                    Log.d(TAG, "channels: " + channelItem.getChannels().size() + " total: " + channelItem.getTotal_channels());
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(message.toString());
-
-                        if (jsonObject.has("channels")) {
-                            channelItem.setChannels(jsonObject.getJSONObject("channels"));
-                        }
-                    } catch (JSONException je) {
-                        je.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void errorCallback(String channel, PubnubError error) {
-                    Log.d(TAG, "HERE NOW : " + error);
-                }
-            });
-
             //        this.mPubNub.whereNow(new Callback() {
 //            @Override
 //            public void successCallback(String channel, Object message) {
@@ -163,12 +198,16 @@ public class WebRtcActivity extends Activity {
     }
 
     public void makeCall(View view){
-        String callNum = mCallNumET.getText().toString();
-        Log.d(TAG, "make call: " + callNum);
-        if (callNum.isEmpty() || callNum.equals(this.username)) {
-            Toast.makeText(this, "Enter a valid number.", Toast.LENGTH_SHORT).show();
+        if (NabiHttpRequest.haveNetworkConnection(this)) {
+            String callNum = mCallNumET.getText().toString();
+            Log.d(TAG, "make call: " + callNum);
+            if (callNum.isEmpty() || callNum.equals(this.username)) {
+                Toast.makeText(this, "Enter a valid number.", Toast.LENGTH_SHORT).show();
+            }
+            dispatchCall(callNum);
+        } else {
+            Toast.makeText(this, getString(R.string.no_wifi), Toast.LENGTH_LONG).show();
         }
-        dispatchCall(callNum);
     }
 
     public void dispatchCall(final String callNum) {
