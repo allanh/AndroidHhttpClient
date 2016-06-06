@@ -43,6 +43,8 @@ public class HttpCommand implements IHttpCommand {
      */
     private boolean shouldCache = true;
 
+    private Map<String, DataPart> mDataPartMap;
+
     public HttpCommand(ICommandBuilder builder) {
         this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis());
         this.mPriority = builder.getPriority();
@@ -54,6 +56,7 @@ public class HttpCommand implements IHttpCommand {
         this.mJsonObject = builder.getJSONObject();
         this.mUseMockData = builder.useMockData();
         this.shouldCache = builder.shouldCache();
+        this.mDataPartMap = builder.getDataPartMap();
     }
 
     @Override
@@ -109,6 +112,11 @@ public class HttpCommand implements IHttpCommand {
     @Override
     public String getAddress() {
         return mId;
+    }
+
+    @Override
+    public Map<String, DataPart> getDataPartMap() {
+        return mDataPartMap;
     }
 
     @Override

@@ -74,5 +74,8 @@ public interface ICommandBuilder {
     public ICommandBuilder setShouldCache(boolean shouldCache);
     public boolean shouldCache();
 
+    public ICommandBuilder setDataPartMap(Map<String, DataPart> dataPartMap);
+    public Map<String, DataPart> getDataPartMap();
+
     public ICommand build();
 }

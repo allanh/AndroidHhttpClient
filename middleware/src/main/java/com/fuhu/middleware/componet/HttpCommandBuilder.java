@@ -5,6 +5,7 @@ import com.fuhu.middleware.contract.GSONUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpCommandBuilder implements ICommandBuilder {
@@ -18,6 +19,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
     private JSONObject jsonObject;
     private boolean useMockData;
     private boolean shouldCache;
+    private Map<String, DataPart> dataPartMap;
 
     public HttpCommandBuilder() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -39,6 +41,7 @@ public class HttpCommandBuilder implements ICommandBuilder {
         this.jsonObject = httpCommand.getJSONObject();
         this.useMockData = httpCommand.useMockData();
         this.shouldCache = httpCommand.shouldCache();
+        this.dataPartMap = httpCommand.getDataPartMap();
     }
 
     /**
@@ -218,6 +221,27 @@ public class HttpCommandBuilder implements ICommandBuilder {
 
     public boolean shouldCache() {
         return shouldCache;
+    }
+
+    public HttpCommandBuilder addDataPart(String key, DataPart dataPart) {
+        if (key != null && dataPart != null && dataPart.getFile() != null) {
+            if (this.dataPartMap == null) {
+                this.dataPartMap = new HashMap<String, DataPart>();
+            }
+
+            dataPartMap.put(key, dataPart);
+        }
+
+        return this;
+    }
+
+    public HttpCommandBuilder setDataPartMap(Map<String, DataPart> dataPartMap) {
+        this.dataPartMap = dataPartMap;
+        return this;
+    }
+
+    public Map<String, DataPart> getDataPartMap() {
+        return dataPartMap;
     }
 
     public HttpCommand build() {

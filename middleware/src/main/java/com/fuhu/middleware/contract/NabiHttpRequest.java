@@ -8,6 +8,7 @@ public class NabiHttpRequest {
     private static final String TAG = NabiHttpRequest.class.getSimpleName();
     private static final String CHARSET_NAME = "UTF-8";
     private static final long SIZE_OF_CACHE = 10 * 1024 * 1024; // 10 MB
+    public static final String BOUNDARY = "apiclient-md";
 
     /**
      * API URL
@@ -22,7 +23,7 @@ public class NabiHttpRequest {
 
     private static final String TrackServerSite = "http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080";
     private static final String TrackServerPath = "/IITService/tracking/voicetracking";
-
+    private static final String UploadPhotoPath = "/IITService/tracking/upload/photo";
 
     public static String getAPI_IFTTT() {
         return String.format(IFTTTServerSite, IFTTTEvent, IFTTTKey);
@@ -34,6 +35,10 @@ public class NabiHttpRequest {
 
     public static String getAPI_Track() {
         return TrackServerSite + TrackServerPath;
+    }
+
+    public static String getAPI_UploadPhoto() {
+        return TrackServerSite + UploadPhotoPath;
     }
 
     /**

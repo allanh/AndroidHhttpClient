@@ -81,4 +81,6 @@ dependencies {
     compile files('libs/pnwebrtc-1.0.6.jar')
     compile files('libs/autobanh.jar')
     compile files('libs/slf4j-api-1.7.21.jar')
+    compile files('libs/okhttp-3.3.1.jar')
+    compile files('libs/okio-1.8.0.jar')
 }

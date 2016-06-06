@@ -28,6 +28,8 @@ public interface IHttpCommand extends ICommand {
      */
     public boolean shouldCache();
 
+    public Map<String, DataPart> getDataPartMap();
+
     /**
      * Supported request methods.
      */

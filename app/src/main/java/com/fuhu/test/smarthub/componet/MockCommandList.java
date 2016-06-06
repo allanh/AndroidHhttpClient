@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fuhu.middleware.MiddlewareApp;
 import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.DataPart;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.HTTPHeader;
 import com.fuhu.middleware.componet.IHttpCommand;
@@ -76,6 +77,8 @@ public enum MockCommandList implements IHttpCommand {
 
     private boolean shouldCache = true;
 
+    private Map<String, DataPart> mDataPartMap;
+
     private MockCommandList(String id, int method, String url, Class<? extends AMailItem> dataModel) {
         this.mId = id;
         this.mMethod = method;
@@ -131,6 +134,11 @@ public enum MockCommandList implements IHttpCommand {
     @Override
     public boolean shouldCache() {
         return shouldCache;
+    }
+
+    @Override
+    public Map<String, DataPart> getDataPartMap() {
+        return mDataPartMap;
     }
 
     @Override
