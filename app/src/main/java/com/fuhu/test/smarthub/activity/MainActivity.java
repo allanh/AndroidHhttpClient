@@ -1,13 +1,11 @@
 package com.fuhu.test.smarthub.activity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -73,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
 //            }
         }
 
-        bt_webrtc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getParent(), WebRtcActivity.class));
-                finish();
-            }
-        });
+//        bt_webrtc.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getParent(), WebRtcActivity.class));
+//                finish();
+//            }
+//        });
     }
 
     @Override
@@ -126,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
 //            WifiP2PHandler.getInstance(this).registerReceiver();
 //        }
 
-
         File file =new File(getExternalCacheDir(), "test.jpg");
         try {
             InputStream inputStream = getResources().openRawResource(R.raw.pet802);
@@ -141,12 +138,11 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         DataPart dataPart = null;
         if (file != null) {
             dataPart = new DataPart(file, "image/jpeg");
-        }
 
-        if (dataPart != null) {
             Log.d(TAG, "file: " + dataPart.getFileName());
 
             HttpCommand trackCommand = new HttpCommandBuilder()

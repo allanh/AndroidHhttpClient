@@ -298,9 +298,9 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             DataPart dataPart = mDataPartMap.get(key);
             File file = dataPart.getFile();
             if (file != null && file.exists()) {
+                String mineType = (dataPart.getType() != null)? dataPart.getType() : "image/jpeg";
                 builder.addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse("image/jpeg"), file));
-
+                        RequestBody.create(MediaType.parse(mineType), file));
             }
         }
 
@@ -321,8 +321,10 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                 parseJsonObject(new JSONObject(response.body().string()));
             } catch (JSONException je) {
                 je.printStackTrace();
+                onCommandFailed(ErrorCodeList.VOLLEY_PARSE_ERROR, mCurrentCommand.getDataModel());
             } catch (IOException ie) {
                 ie.printStackTrace();
+                onCommandFailed(ErrorCodeList.VOLLEY_NETWORK_ERROR, mCurrentCommand.getDataModel());
             }
         }
     }
