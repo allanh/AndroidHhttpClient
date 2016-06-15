@@ -1,6 +1,14 @@
 package com.fuhu.middleware.contract;
 
 public class Constants {
+    /**
+     * Recognize service
+     */
+    public static final String RECEIVE_RECOGNIZE_RESULT = "com.fuhu.middleware.receiveRecognizeResult";
+
+    /**
+     * WebRTC
+     */
     public static final String SHARED_PREFS = "com.fuhu.middleware.SHARED_PREFS";
     public static final String USER_NAME    = "com.fuhu.middleware.SHARED_PREFS.USER_NAME";
     public static final String CALL_USER    = "com.fuhu.middleware.SHARED_PREFS.CALL_USER";
@@ -15,7 +23,9 @@ public class Constants {
     public static final String JSON_OCCUPANCY = "occupancy";
     public static final String JSON_STATUS    = "status";
 
-    // JSON for user messages
+    /**
+     * JSON for user messages
+     */
     public static final String JSON_USER_MSG  = "user_message";
     public static final String JSON_MSG_UUID  = "msg_uuid";
     public static final String JSON_MSG       = "msg_message";

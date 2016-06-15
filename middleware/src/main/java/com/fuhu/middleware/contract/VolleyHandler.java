@@ -34,7 +34,11 @@ public class VolleyHandler {
     private long startTime;
     private static final int VOLLEY_SOCKET_TIMEOUT = 15000;
 
-    public VolleyHandler(Context mContext) {
+    /*
+     * A private Constructor prevents any other
+     * class from instantiating.
+     */
+    private VolleyHandler(Context mContext) {
         if (mContext != null) {
             this.mContext = mContext.getApplicationContext();
         }

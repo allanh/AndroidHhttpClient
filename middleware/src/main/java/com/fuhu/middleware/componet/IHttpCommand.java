@@ -1,12 +1,8 @@
 package com.fuhu.middleware.componet;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 public interface IHttpCommand extends ICommand {
-    public String getID();
-
     public String getURL();
 
     public Priority getPriority();
@@ -15,20 +11,10 @@ public interface IHttpCommand extends ICommand {
 
     public Map<String, String> getHeaders();
 
-    public Class<? extends AMailItem> getDataModel();
-
-    public AMailItem getDataObject();
-
-    public JSONObject getJSONObject();
-
-    public boolean useMockData();
-
     /**
      * Whether or not responses to this request should be cached
      */
     public boolean shouldCache();
-
-    public Map<String, DataPart> getDataPartMap();
 
     /**
      * Supported request methods.

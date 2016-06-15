@@ -8,11 +8,11 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 
-import com.fuhu.middleware.componet.ActionPreferences;
+import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.contract.Constants;
 import com.fuhu.test.smarthub.componet.ARecognizeService;
 import com.fuhu.test.smarthub.ifttt.Initialization;
 import com.fuhu.test.smarthub.ifttt.PondoDecisionSeeker;
-import com.fuhu.middleware.componet.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class GoogleRecognizeService extends ARecognizeService implements Recogni
     public void sendResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                Intent intent = new Intent(ActionPreferences.RECEIVE_RECOGNIZE_RESULT);
+                Intent intent = new Intent(Constants.RECEIVE_RECOGNIZE_RESULT);
                 intent.putExtra("result", result);
 
                 sendBroadcast(intent);

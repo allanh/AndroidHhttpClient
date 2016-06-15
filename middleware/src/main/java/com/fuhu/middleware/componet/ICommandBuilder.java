@@ -14,33 +14,6 @@ public interface ICommandBuilder {
     public String getID();
 
     /**
-     * Sets the {@link Priority} of this request; {@link Priority#NORMAL} by default.
-     */
-    public ICommandBuilder setPriority(Priority priority);
-    public Priority getPriority();
-
-    /**
-     * Sets the {@link HttpCommand.Method} of this request.
-     */
-    public ICommandBuilder setMethod(int method);
-    public int getMethod();
-
-    /**
-     * Sets the URL target of this request.
-     */
-    public ICommandBuilder setURL(String url);
-    public String getURL();
-
-    /**
-     * Sets the headers. If this request already has any headers
-     * with that name, they are all replaced.
-     */
-    public ICommandBuilder setHeaders(Map<String, String> headers);
-    public ICommandBuilder addHeader(String Key, String value);
-    public ICommandBuilder removeHeader(String headerKey);
-    public Map<String, String> getHeaders();
-
-    /**
      * Sets a AMailItem of parameters to be used for a POST or PUT request.
      */
     public ICommandBuilder setDataObject(AMailItem mailItem, String... keys);

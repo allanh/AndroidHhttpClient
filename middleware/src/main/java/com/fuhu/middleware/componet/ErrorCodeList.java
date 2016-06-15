@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ErrorCodeList implements IErrorCodeList{
-    INSTANCE, //declare INSTANCE of the Enum
+    /**
+     * declare INSTANCE of the Enum
+     */
+    INSTANCE,
 
     Default("-1","Default"),
     Success("0","success"),
@@ -14,13 +17,17 @@ public enum ErrorCodeList implements IErrorCodeList{
     UNKNOWN_ERROR("-3","UNKNOWN ERROR"),
     NO_MAILITEM_DATA("-4","NO MAILITEM DATA"),
 
-    // Command
+    /**
+     * Command
+     */
     COMMAND_NULL("-10", "COMMAND NULL"),
     URL_NULL("-11", "URL NULL"),
     DATA_CLASS_NULL("-12", "DATA CLASS NULL"),
     GSON_PARSE_ERROR("-13", "GSON PARSE NULL"),
 
-    // Volley
+    /**
+     * Volley
+     */
     VOLLEY_TIMEOUT("-9000", "VOLLEY TIMEOUT"),
     VOLLEY_AUTH_FAILURE("-9001", "VOLLEY AUTH FAILURE"),
     VOLLEY_SERVER_ERROR("-9002", "VOLLEY SERVER ERROR"),

@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RetryPolicy;
+import com.fuhu.middleware.componet.Priority;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,7 +20,8 @@ public class DownloadRequest implements Comparable<DownloadRequest> {
     /** Download URL **/
     private String mURL;
 
-    /** The destination path on the device where the downloaded files needs to be put
+    /**
+     * The destination path on the device where the downloaded files needs to be put
      * It can be either External Directory ( SDcard ) or
      * internal app cache or files directory.
      * For using external SDCard access, application should have
@@ -38,20 +40,12 @@ public class DownloadRequest implements Comparable<DownloadRequest> {
 
     private HashMap<String, String> mCustomHeader;
 
-
     private String mTitle;
 
     /**
      * Priority values.  Requests will be processed from higher priorities to
      * lower priorities, in FIFO order.
      */
-    public enum Priority {
-        LOW,
-        NORMAL,
-        HIGH,
-        IMMEDIATE
-    }
-
     private Priority mPriority = Priority.NORMAL;
 
     public DownloadRequest(String mURL, String title, String dataPath, DownloadStatusListener mDownloadListener) {

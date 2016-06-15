@@ -16,10 +16,12 @@ public class DownloadHandler {
      * Status when the download has failed due to broken url or invalid download url
      */
     public final static int STATUS_NOT_FOUND = 1 << 6;
-    /**
-     * Default constructor
+
+    /*
+     * A private Constructor prevents any other
+     * class from instantiating.
      */
-    public DownloadHandler(Context mContext, String defaultTitle, String dataPath) {
+    private DownloadHandler(Context mContext, String defaultTitle, String dataPath) {
         this.mContext = mContext;
         mRequestQueue = new DownloadRequestQueue(mContext, defaultTitle, dataPath);
     }
@@ -33,7 +35,11 @@ public class DownloadHandler {
      */
     public static DownloadHandler getInstance(Context mContext, String defaultTitle, String dataPath) {
         if(instance==null){
-            instance=new DownloadHandler(mContext, defaultTitle, dataPath);
+            synchronized(DownloadHandler.class) {
+                if(instance==null) {
+                    instance = new DownloadHandler(mContext, defaultTitle, dataPath);
+                }
+            }
         }
         return instance;
     }

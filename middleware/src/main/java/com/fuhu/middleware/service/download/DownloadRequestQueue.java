@@ -24,7 +24,6 @@ import java.util.concurrent.Executor;
 
 public class DownloadRequestQueue {
     private static final String TAG = DownloadRequestQueue.class.getSimpleName();
-
     private static final int MAX_RETRY_COUNT = 100;
 
     /**

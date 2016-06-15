@@ -25,18 +25,12 @@ import com.fuhu.middleware.componet.Priority;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 
 public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private static String TAG = NabiVolleyActionProxy.class.getSimpleName();
@@ -50,6 +44,13 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private Map<String, String> mHeaderPair = null;
     private Map<String, DataPart> mDataPartMap = null;
 
+    private String mUrl;
+    private String mId;
+    private int mMethod;
+    private JSONObject mDataJSONObject;
+    private Priority mPriority;
+    private boolean shouldCache;
+
     private static int retry_count = 0;
 
     private static Executor executorGeneral = Executors.newFixedThreadPool(10);
@@ -59,6 +60,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         this.mPostOfficeProxy=mPostOfficeProxy;
         this.mContext = mContext;
         this.mCurrentCommand = command;
+
+        this.mId = command.getID();
+        this.mUrl = command.getURL();
+        this.mDataJSONObject = command.getJSONObject();
+        this.mMethod = command.getMethod();
+        this.mPriority = command.getPriority();
+        this.shouldCache = command.shouldCache();
+        this.mHeaderPair = command.getHeaders();
+        this.mDataPartMap = command.getDataPartMap();
     }
 
     public void execute() {
@@ -72,20 +82,11 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
 
     protected String doInBackground(String... params) {
         JsonObjectRequest jsonObjectRequest;
-        mHeaderPair = mCurrentCommand.getHeaders();
-        mDataPartMap = mCurrentCommand.getDataPartMap();
-        String id = mCurrentCommand.getID();
-        String url = mCurrentCommand.getURL();
-        JSONObject jsonObject = mCurrentCommand.getJSONObject();
-        int method = mCurrentCommand.getMethod();
-        Priority priority = mCurrentCommand.getPriority();
-        boolean shouldCache = mCurrentCommand.shouldCache();
 
-        Log.d(TAG, "url: " + url);
-        Log.d(TAG, "id: " + id + " method: " + method + " priority: " + priority);
-
-        if (jsonObject != null) {
-            Log.d(TAG, "params: " + jsonObject);
+        Log.d(TAG, "url: " + mUrl);
+        Log.d(TAG, "id: " + mId + " method: " + mMethod + " priority: " + mPriority);
+        if (mDataJSONObject != null) {
+            Log.d(TAG, "params: " + mDataJSONObject);
         }
 
         // Creates a new request with JSON parameters
@@ -93,20 +94,20 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             Log.d(TAG, "send MultiPartRequest");
 
             Log.d(TAG, "size: " + mDataPartMap.keySet().size());
-            for (String key : mDataPartMap.keySet()) {
-                DataPart dataPart = mDataPartMap.get(key);
-                if (dataPart != null && dataPart.getType() == null) {
-                    dataPart.setType(getContentType(dataPart));
 
-                    // reset data part
-                    mDataPartMap.remove(key);
-                    mDataPartMap.put(key, dataPart);
+            // Send MultiPart request using okhttp3
+            okhttp3.Response response = OkHttpRequest.getInstance(mContext).sendMultiPartRequest(mCurrentCommand);
+
+            if (response != null) {
+                try {
+                    parseJsonObject(response.body().string());
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    onCommandFailed(ErrorCodeList.VOLLEY_NETWORK_ERROR, mCurrentCommand.getDataModel());
                 }
-                Log.d(TAG, "add part: " + dataPart.getFileName() + " type: " + dataPart.getType());
+            } else {
+                onCommandFailed(ErrorCodeList.UNKNOWN_ERROR, mCurrentCommand.getDataModel());
             }
-
-            // upload file with okhttp3
-            uploadFileWithOkHttp(url, mHeaderPair, mDataPartMap);
 
         } else {
             if (mHeaderPair != null) {
@@ -115,7 +116,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                 }
             }
 
-            jsonObjectRequest = new JsonObjectRequest(method, url, jsonObject, listener, errorListener) {
+            jsonObjectRequest = new JsonObjectRequest(mMethod, mUrl, mDataJSONObject, listener, errorListener) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
@@ -134,8 +135,8 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             };
 
 
-            if (id != null) {
-                jsonObjectRequest.setTag(id);
+            if (mId != null) {
+                jsonObjectRequest.setTag(mId);
             }
 
 /*
@@ -166,17 +167,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     }
 
     protected void onPostExecute(String result) {
-//        Log.i(TAG, "isNeedToDoNext:" + (mCommandQueue.size() > 0));
-//        synchronized (mCommandQueue) {
-//            if (mCommandQueue.size() > 0) {
-//                execute();
-//              mPostOffice.doNextAction(mMediaItem, mPostOfficeProxy, mObtainItems);
-//            } else {
-                onCommandComplete();
-
-//              mPostOffice.onCommandComplete(mPostOfficeProxy, this, mMediaItem, mObtainItems);
-//            }
-//        }
+        onCommandComplete();
     }
 
     /**
@@ -189,6 +180,15 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             parseJsonObject(jsonObject);
         }
     };
+
+    private void parseJsonObject(String jsonString) {
+        try {
+            parseJsonObject(new JSONObject(jsonString));
+        } catch (JSONException je) {
+            je.printStackTrace();
+            onCommandFailed(ErrorCodeList.VOLLEY_PARSE_ERROR, mCurrentCommand.getDataModel());
+        }
+    }
 
     private void parseJsonObject(JSONObject jsonObject) {
         if (jsonObject != null && mCurrentCommand != null && mCurrentCommand.getDataModel() != null) {
@@ -248,8 +248,6 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             if(response != null && response.data != null){
                 Log.d(TAG, "status code: " + response.statusCode);
                 errorMessage = new String(response.data);
-//        }else{
-//            errorMessage = volleyError.getClass().getSimpleName();
             }
 
             if(!TextUtils.isEmpty(errorMessage)){
@@ -265,69 +263,8 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                 retry_count++;
             }
             onCommandFailed(errorCodeList, mCurrentCommand.getDataModel());
-//            mPostOffice.onCommandFailed(mContext, mPostOfficeProxy, mMediaItem, ErrorCodeList);
         }
     };
-
-    /*
-     * Get the file's content URI from the incoming Intent, then
-     * get the file's MIME type
-     */
-    public String getContentType(DataPart dataPart) {
-        String mimeType = "image/jpeg";
-        Log.d(TAG, "mime type: " + mimeType);
-        if (mimeType == null) {
-            mimeType = URLConnection.guessContentTypeFromName(dataPart.getFileName());
-            Log.d(TAG, "URL content type");
-        }
-
-        return mimeType;
-    }
-
-    /**
-     * Upload file with OkHttp3
-     * @param url
-     * @param mHeaderPair
-     * @param mDataPartMap
-     */
-    private void uploadFileWithOkHttp(String url, Map<String, String> mHeaderPair, Map<String, DataPart> mDataPartMap) {
-        MultipartBody.Builder builder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM);
-
-        for (String key: mDataPartMap.keySet()) {
-            DataPart dataPart = mDataPartMap.get(key);
-            File file = dataPart.getFile();
-            if (file != null && file.exists()) {
-                String mineType = (dataPart.getType() != null)? dataPart.getType() : "image/jpeg";
-                builder.addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse(mineType), file));
-            }
-        }
-
-        MultipartBody requestBody = builder.build();
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(url)
-                .post(requestBody);
-
-        for (String header : mHeaderPair.keySet()) {
-            requestBuilder.addHeader(header, mHeaderPair.get(header));
-        }
-
-        Request request = requestBuilder.build();
-
-        if (request != null) {
-            try {
-                okhttp3.Response response = okHttpClient.newCall(request).execute();
-                parseJsonObject(new JSONObject(response.body().string()));
-            } catch (JSONException je) {
-                je.printStackTrace();
-                onCommandFailed(ErrorCodeList.VOLLEY_PARSE_ERROR, mCurrentCommand.getDataModel());
-            } catch (IOException ie) {
-                ie.printStackTrace();
-                onCommandFailed(ErrorCodeList.VOLLEY_NETWORK_ERROR, mCurrentCommand.getDataModel());
-            }
-        }
-    }
 
     private void onCommandComplete() {
         mPostOfficeProxy.onMailItemUpdate(mCurrentCommand, mCurrentCommand.getDataObject(), mObtainItem);

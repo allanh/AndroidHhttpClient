@@ -1,5 +1,7 @@
 package com.fuhu.middleware.service;
 
+import com.fuhu.middleware.componet.ICommand;
+import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IResponse;
 import com.fuhu.middleware.contract.MD5Util;
 import com.fuhu.middleware.componet.Log;
@@ -55,6 +57,30 @@ public class MockServer {
      * @return
      */
     public IResponse findResponse(String url) {
+        if (url != null) {
+            String key = MD5Util.genMD5Key(url);
+            Log.d(TAG, "find url: " + url + " key: " + key);
+            if (key != null) {
+                return lookupTable.get(key);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the response of the mapping with the specified key.
+     * @param command the command of request
+     * @return
+     */
+    public IResponse findResponse(ICommand command) {
+        String url = null;
+        if (command instanceof IHttpCommand) {
+            url = ((IHttpCommand) command).getURL();
+        }
+
+
+        Log.d(TAG, "url: " + url);
         if (url != null) {
             String key = MD5Util.genMD5Key(url);
             Log.d(TAG, "find url: " + url + " key: " + key);

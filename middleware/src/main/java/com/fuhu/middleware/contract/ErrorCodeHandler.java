@@ -55,14 +55,12 @@ public class ErrorCodeHandler {
         }
     }
 
-
     /**
      * Generate error item
      */
     public static AMailItem genErrorItem(ErrorCodeList errorCodeList) {
         return genErrorItem(errorCodeList, AMailItem.class);
     }
-
 
     /**
      * Generate error item with class type
@@ -72,12 +70,12 @@ public class ErrorCodeHandler {
             Object object = (classOfT != null) ? classOfT.newInstance()
                                             : AMailItem.class.newInstance();
 
-            // Invoking method with a string to set status
+            /** Invoking method with a string to set status */
             Method setStatusMethod = AMailItem.class.getDeclaredMethod("setStatus", String.class);
             setStatusMethod.setAccessible(true);
             setStatusMethod.invoke(object, errorCodeList.getCode());
 
-            // Invoking method with a string to set message
+            /** Invoking method with a string to set message */
             Method setMessageMethod = AMailItem.class.getDeclaredMethod("setMessage", String.class);
             setMessageMethod.setAccessible(true);
             setMessageMethod.invoke(object, errorCodeList.getContent());

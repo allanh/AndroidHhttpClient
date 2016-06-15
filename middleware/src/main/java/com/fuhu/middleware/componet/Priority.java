@@ -5,7 +5,7 @@ package com.fuhu.middleware.componet;
  * lower priorities, in FIFO order.
  */
 public enum Priority {
-        LOW,
-        NORMAL,
-        HIGH
+    LOW,
+    NORMAL,
+    HIGH
 }

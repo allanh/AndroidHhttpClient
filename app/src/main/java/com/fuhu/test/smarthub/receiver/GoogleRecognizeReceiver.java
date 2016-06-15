@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.TextView;
 
-import com.fuhu.middleware.componet.ActionPreferences;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.contract.Constants;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 
 public class GoogleRecognizeReceiver extends BroadcastReceiver {
@@ -25,7 +25,7 @@ public class GoogleRecognizeReceiver extends BroadcastReceiver {
     public static IntentFilter getFilter() {
         // create a new BroadcastReceiver
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ActionPreferences.RECEIVE_RECOGNIZE_RESULT);
+        filter.addAction(Constants.RECEIVE_RECOGNIZE_RESULT);
         return filter;
     }
 

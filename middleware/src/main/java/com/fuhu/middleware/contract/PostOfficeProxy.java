@@ -6,10 +6,12 @@ import android.os.Bundle;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
+import com.fuhu.middleware.componet.IBleCommand;
 import com.fuhu.middleware.componet.ICommand;
 import com.fuhu.middleware.componet.IHttpCommand;
 import com.fuhu.middleware.componet.IPostOfficeProxy;
 import com.fuhu.middleware.componet.IResponse;
+import com.fuhu.middleware.componet.IRtcCommand;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
 import com.fuhu.middleware.service.MockServer;
@@ -61,26 +63,34 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         ICommand command = mailTask.getCommand();
         mMailTaskList.put(command, mailTask);
 
-        // Send command using NabiVolley
-        if (command instanceof IHttpCommand) {
-            IHttpCommand httpCommand = (IHttpCommand) command;
-
-            // Checks if using mock data
-            if (httpCommand.useMockData()) {
-                handleMockData(httpCommand);
-            } else {
-                new NabiVolleyActionProxy(mContext, this, httpCommand).execute();
-            }
+        // Checks if using mock data
+        if (command.useMockData()) {
+            handleMockData(command);
         } else {
-            Log.d(TAG, "Command isn't HttpCommand.");
+
+            // Send command using NabiVolley
+            if (command instanceof IHttpCommand) {
+                IHttpCommand httpCommand = (IHttpCommand) command;
+                new NabiVolleyActionProxy(mContext, this, httpCommand).execute();
+            } else if (command instanceof IRtcCommand) {
+                // TODO WebRTC
+            } else if (command instanceof IBleCommand) {
+                // TODO BLE
+            } else {
+                Log.d(TAG, "Command isn't HttpCommand.");
 //            PostOffice mPostOffice = PostOffice.lookup(command.getID());
 //            mPostOffice.doAction(mContext, queryItem, this, parameter);
+            }
         }
     }
 
-    private void handleMockData(IHttpCommand httpCommand) {
+    /**
+     *
+     * @param command
+     */
+    private void handleMockData(ICommand command) {
         // Find a mock response from MockServer
-        IResponse mockResponse = MockServer.getInstance().findResponse(httpCommand.getURL());
+        IResponse mockResponse = MockServer.getInstance().findResponse(command);
 
         // Checks if MockResponse is exist
         if (mockResponse != null) {
@@ -88,24 +98,24 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 
             // Checks if data object is exist
             if (dataItem != null) {
-                onMailItemUpdate(httpCommand, httpCommand.getDataObject(), dataItem);
+                onMailItemUpdate(command, command.getDataObject(), dataItem);
             } else if (mockResponse.getBody() != null) {
                 // Parsing the json string of MockResponse to java object
                 try {
-                    dataItem = GSONUtil.fromJSON(mockResponse.getBody(), httpCommand.getDataModel());
+                    dataItem = GSONUtil.fromJSON(mockResponse.getBody(), command.getDataModel());
                 } catch (JSONException je) {
                     je.printStackTrace();
                     dataItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
                 }
-                onMailItemUpdate(httpCommand, httpCommand.getDataObject(), dataItem);
+                onMailItemUpdate(command, command.getDataObject(), dataItem);
             } else {
                 // No data object and json strong of MockResponse
-                onMailItemUpdate(httpCommand, httpCommand.getDataObject(),
-                        ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, httpCommand.getDataModel()));
+                onMailItemUpdate(command, command.getDataObject(),
+                        ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, command.getDataModel()));
             }
         } else {
-            onMailItemUpdate(httpCommand, httpCommand.getDataObject(),
-                    ErrorCodeHandler.genErrorItem(ErrorCodeList.UNKNOWN_ERROR, httpCommand.getDataModel()));
+            onMailItemUpdate(command, command.getDataObject(),
+                    ErrorCodeHandler.genErrorItem(ErrorCodeList.UNKNOWN_ERROR, command.getDataModel()));
         }
     }
 

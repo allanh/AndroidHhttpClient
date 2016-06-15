@@ -7,20 +7,32 @@ import com.fuhu.middleware.contract.GSONUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * A response for making a mock response
+ */
 public class MockResponse implements IResponse {
     private String url;
     private Class<? extends AMailItem> dataModel;
     private AMailItem dataObject;
     private String body;
 
+    /**
+     * Default constructor
+     */
     public MockResponse() {
-        body = "{\"status\":\"0\"";
+        body = "{\"status\":\"0\"}";
     }
 
     public String getURL() {
         return url;
     }
 
+    /**
+     * Add a parameter to be sent in the multipart request
+     *
+     * @param url The url of the paramter
+     * @return The Multipart request for chaining calls
+     */
     public MockResponse setURL(String url) {
         this.url = url;
         return this;

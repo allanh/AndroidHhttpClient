@@ -76,19 +76,19 @@ public class GSONUtil {
         if (mailItem != null) {
             JsonElement element = mailItem.toJsonTree(getGson());
 
-            // check if element is JSONObject
+            /** check if element is JSONObject */
             if (element != null && element.isJsonObject()) {
                 JsonObject jObject = element.getAsJsonObject();
                 Set<Map.Entry<String, JsonElement>> entries = jObject.entrySet();
                 HashMap<String, JsonElement> elementHashMap = new HashMap<String, JsonElement>();
 
-                // put key and value to HashMap
+                /** put key and value to HashMap */
                 for (Map.Entry<String, JsonElement> entry : entries) {
                     Log.d(TAG, "key: " + entry.getKey() + " value: " + entry.getValue());
                     elementHashMap.put(entry.getKey(), entry.getValue());
                 }
 
-                // check if element map contains key and add to new JSONObject
+                /** check if element map contains key and add to new JSONObject */
                 for (String key : keys) {
                     if (elementHashMap.containsKey(key)) {
                         newJSONObject.add(key, elementHashMap.get(key));

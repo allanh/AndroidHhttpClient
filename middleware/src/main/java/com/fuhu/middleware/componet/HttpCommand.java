@@ -45,7 +45,7 @@ public class HttpCommand implements IHttpCommand {
 
     private Map<String, DataPart> mDataPartMap;
 
-    public HttpCommand(ICommandBuilder builder) {
+    public HttpCommand(HttpCommandBuilder builder) {
         this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis());
         this.mPriority = builder.getPriority();
         this.mUrl = builder.getURL();

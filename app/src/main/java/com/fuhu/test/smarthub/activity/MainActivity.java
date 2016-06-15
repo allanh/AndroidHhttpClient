@@ -123,6 +123,26 @@ public class MainActivity extends AppCompatActivity {
 //        if (MiddlewareConfig.enableWifiP2P) {
 //            WifiP2PHandler.getInstance(this).registerReceiver();
 //        }
+//        HttpCommand iftttCommand = new HttpCommandBuilder()
+//                .setURL("https://maker.ifttt.com/trigger/aws_test/with/key/bSFARZ-rJzNywhtItAh4IS")
+//                .setMethod(HttpCommand.Method.POST)
+//                .setDataModel(IFTTTItem.class)
+//                .useMockData(true)
+//                .build();
+//
+//        MailBox.getInstance().deliverMail(this, iftttCommand, new IFTTTCallback() {
+//            @Override
+//            public void onIftttReceived(IFTTTItem iftttItem) {
+//                Log.d(TAG, "ifttt value1: " + iftttItem.getValue1());
+//            }
+//
+//            @Override
+//            public void onFailed(String status, String message) {
+//                Log.d(TAG, "Status: " + status);
+//
+//            }
+//        });
+
 
         File file =new File(getExternalCacheDir(), "test.jpg");
         try {

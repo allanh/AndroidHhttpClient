@@ -23,7 +23,7 @@ public class MailBox {
     private static final String TAG = MailBox.class.getSimpleName();
     private static MailBox instance = null;
     private Map<MailTask, IMailReceiveCallback> mMailTaskList;
-    private Handler mReceiveHandler = null;
+    private static Handler mReceiveHandler;
     private final static int ReceiveIntent = 1;
 
     private BlockingQueue<Bundle> receiveQueue;
@@ -76,79 +76,66 @@ public class MailBox {
         return instance;
     }
 
+    /**
+     * Send command to server
+     * @param context
+     * @param command
+     * @param mailRecCallback
+     */
     public void deliverMail(Context context, ICommand command, IMailReceiveCallback mailRecCallback){
-        // Checks if MailReceiveCallback is null.
-        if (mailRecCallback == null) {
-//            Log.e(TAG, "callback is null");
+        AMailItem errorItem = null;
+
+        /** Null checks */
+        if (context == null || command == null || mailRecCallback == null) {
+            mailRecCallback.onMailReceive(ErrorCodeHandler.genErrorItem(ErrorCodeList.COMMAND_NULL));
             return;
         }
 
-        if (command != null) {
-            // Checks if HttpCommand is valid.
-            if (command instanceof IHttpCommand) {
-                IHttpCommand httpCommand = (IHttpCommand) command;
-                AMailItem errorItem = null;
+        /** Checks if the data model have been set up */
+        if (command.getDataModel() == null) {
+            errorItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.DATA_CLASS_NULL);
+        }
 
-                if (httpCommand.getDataModel() == null) {
-                    errorItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.DATA_CLASS_NULL, AMailItem.class);
-                } else if (httpCommand.getURL() == null) {
-                    errorItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.URL_NULL, AMailItem.class);
-                }
+        /** Checks if HttpCommand is valid */
+        if (command instanceof IHttpCommand) {
+            IHttpCommand httpCommand = (IHttpCommand) command;
 
-                if (errorItem != null) {
+            if (httpCommand.getURL() == null) {
+                errorItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.URL_NULL);
+            }
+        }
+
+        if (errorItem != null) {
 //                    Log.e(TAG, "error: " + errorItem.getStatus() + " message: " + errorItem.getMessage());
-                    mailRecCallback.onMailReceive(errorItem);
-                    return;
-                }
-            }
+            mailRecCallback.onMailReceive(errorItem);
+            return;
+        }
 
-            MailTask mMailTask=new MailTask();
-            mMailTask.setCommand(command);
+        /** Make a MailTask */
+        MailTask mMailTask=new MailTask();
+        mMailTask.setCommand(command);
 
-            String id = null;
-            if(command.getID() != null) {
-                id = command.getID();
-            } else {
-                id = String.valueOf(System.currentTimeMillis());
-            }
+        String id = null;
+        if(command.getID() != null) {
+            id = command.getID();
+        } else {
+            id = String.valueOf(System.currentTimeMillis());
+        }
 
 //            Log.d(TAG, "Command: " + command.getID());
-            mMailTask.setAddress(id);
-            mMailTask.setClassName(this.getClass().getName());
+        mMailTask.setAddress(id);
+        mMailTask.setClassName(this.getClass().getName());
 
-            // set up callback
-            mMailTaskList.put(mMailTask, mailRecCallback);
+        /** Add a MailTask with callback to MailTaskList */
+        mMailTaskList.put(mMailTask, mailRecCallback);
 
-            // send command list to server
-            PostOfficeProxy.getInstance().onMailRequest(context, mMailTask);
-        } else {
-//            Log.e(TAG, "command is null");
-            mailRecCallback.onMailReceive(ErrorCodeHandler.genErrorItem(ErrorCodeList.COMMAND_NULL, AMailItem.class));
-        }
+        PostOfficeProxy.getInstance().onMailRequest(context, mMailTask);
     }
-
-//    public void deliverMail(Context mContext, ICommand mCommand, IMailReceiveCallback mMailRecCallback, Object... parameters){
-//        MailTask mMailTask=new MailTask();
-//        mMailTask.setCommand(mCommand);
-//        String add=null;
-//        if(mCommand.getAddress()==null){
-//            add=String.valueOf(System.currentTimeMillis());
-//        }else{
-//            add=mCommand.getAddress();
-//        }
-//        Log.d("MailBox", "Command: " + mCommand.getID() + " addr: " + add);
-//        mMailTask.setAddress(add);
-//        mMailTask.setClassName(this.getClass().getName());
-//        mMailTaskList.put(mMailTask, mMailRecCallback);
-//
-//        PostOfficeProxy.getInstance().onMailRequest(mContext, (IMailItem)parameters[0], mMailTask, parameters);
-//    }
     
     public void receiveMail(Intent intent){
         MailTask mMailTask = (MailTask)intent.getExtras().getSerializable("mailTask");
         startTime = System.currentTimeMillis();
 //        Log.d(TAG, "receive mail: " + mMailTask.getCommand().getID());
-//		mReceiveHandler.removeMessages(ReceiveIntent);
         Message message = mReceiveHandler.obtainMessage(ReceiveIntent, intent);
 		mReceiveHandler.sendMessage(message);
 	}

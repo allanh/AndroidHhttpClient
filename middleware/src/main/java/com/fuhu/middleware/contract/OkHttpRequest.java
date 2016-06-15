@@ -2,18 +2,24 @@ package com.fuhu.middleware.contract;
 
 import android.content.Context;
 
+import com.fuhu.middleware.componet.DataPart;
+import com.fuhu.middleware.componet.IHttpCommand;
+import com.fuhu.middleware.componet.IHttpCommand.Method;
 import com.fuhu.middleware.componet.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -23,8 +29,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -35,61 +41,58 @@ public class OkHttpRequest {
     private static final String CHARSET_NAME = "UTF-8";
     private static final long SIZE_OF_CACHE = 10 * 1024 * 1024; // 10 MB
 
-    public final static int HTTP_ACTION_GET 	= 0;
-    public final static int HTTP_ACTION_PUT 	= 1;
-    public final static int HTTP_ACTION_POST 	= 2;
-    public final static int HTTP_ACTION_PATCH 	= 3;
-    public final static int HTTP_ACTION_DELETE  = 4;
-
     private static final long TIMEOUT_CONNECTION = 20000L;
     private static final long TIMEOUT_SOCKET = 30000L;
 
-    private static OkHttpClient runtimePoolInstance;
-    private static OkHttpClient sslInstance;
+    private static OkHttpRequest INSTANCE;
+    private static OkHttpClient mOkHttpClient;
+    private static Context mContext;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private long startTime;
 
-    public static OkHttpClient getRuntimePoolInstance(final Context context) {
-        if (runtimePoolInstance == null) {
-            synchronized(OkHttpRequest.class) {
-                if (runtimePoolInstance == null) {
-//                    Cache cache = new Cache(context.getCacheDir(), SIZE_OF_CACHE);
-                    // Instantiate the OkHttpClient.
-                    runtimePoolInstance = new OkHttpClient().newBuilder()
-//                            .cache(cache)
-                            .connectTimeout(TIMEOUT_CONNECTION, TimeUnit.SECONDS)
-                            .writeTimeout(TIMEOUT_SOCKET, TimeUnit.SECONDS)
-                            .build();
-                }
-            }
+    /*
+     * A private Constructor prevents any other
+     * class from instantiating.
+     */
+    private OkHttpRequest(Context context) {
+        if (mOkHttpClient == null) {
+//            Cache cache = new Cache(context.getCacheDir(), SIZE_OF_CACHE);
+            // Instantiate the OkHttpClient.
+            OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
+                    .connectTimeout(TIMEOUT_CONNECTION, TimeUnit.SECONDS)
+                    .writeTimeout(TIMEOUT_SOCKET, TimeUnit.SECONDS);
+
+            // Sets the socket factory used to secure HTTPS connections.
+//                    SSLContext sslContext = getSSLContext(context);
+//            SSLContext sslContext = getAllTrustSSLContext();
+//            if (sslContext != null) {
+//                builder.sslSocketFactory(sslContext.getSocketFactory());
+//            }
+
+            mOkHttpClient = builder.build();
         }
-        return runtimePoolInstance;
     }
 
-    public static OkHttpClient getSSLInstance(Context context) {
-        if (sslInstance == null) {
-//            Cache cache = new Cache(context.getCacheDir(), SIZE_OF_CACHE);
-            synchronized(OkHttpRequest.class) {
-                if (sslInstance == null) {
-                    // Instantiate the OkHttpClient.
-                    OkHttpClient.Builder builder = new OkHttpClient().newBuilder()
-                            .connectTimeout(TIMEOUT_CONNECTION, TimeUnit.SECONDS)
-                            .writeTimeout(TIMEOUT_SOCKET, TimeUnit.SECONDS);
+    public static OkHttpRequest getInstance(Context context) {
+        if (context != null) {
+            mContext = context.getApplicationContext();
 
-                    // Sets the socket factory used to secure HTTPS connections.
-//                    SSLContext sslContext = getSSLContext(context);
-                    SSLContext sslContext = getAllTrustSSLContext();
-                    if (sslContext != null) {
-                        builder.sslSocketFactory(sslContext.getSocketFactory());
+            if (INSTANCE == null) {
+                synchronized(OkHttpRequest.class) {
+                    if (INSTANCE == null) {
+                        INSTANCE = new OkHttpRequest(context);
                     }
-
-                    sslInstance = builder.build();
                 }
             }
         }
-        return sslInstance;
+
+        return INSTANCE;
+    }
+
+    public OkHttpClient getOkHttpClient() {
+        return mOkHttpClient;
     }
 
     /**
@@ -101,19 +104,7 @@ public class OkHttpRequest {
         try {
             sslContext = SSLContext.getInstance("TLS");
 
-            TrustManager tm = new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[]{tm}, null);
+            sslContext.init(null, new TrustManager[]{getTrustManager()}, new SecureRandom());
         } catch (NoSuchAlgorithmException nae) {
             nae.printStackTrace();
         } catch (KeyManagementException kme) {
@@ -123,6 +114,25 @@ public class OkHttpRequest {
         return sslContext;
     }
 
+    /**
+     * Default trust manager
+     * @return
+     */
+    private static X509TrustManager getTrustManager() {
+        X509TrustManager tm = new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        return tm;
+    }
 
 //    public static SSLContext getSSLContext(Context context) {
 //        try {
@@ -165,61 +175,25 @@ public class OkHttpRequest {
 //
 //        return null;
 //    }
-
-    /**
-     * Encodes string to UTF-8
-     * @param value
-     * @return
-     */
-    public static String encodeUTF8(String value) {
-        if (value != null) {
-            try {
-                return URLEncoder.encode(String.valueOf(value), CHARSET_NAME);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        return "";
-    }
-
-    /**
-     * Synchronous Get
-     * @param request
-     * @return
-     * @throws IOException
-     */
-    public Response execute (Request request) throws IOException {
-        return runtimePoolInstance.newCall(request).execute();
-    }
-
-    /**
-     * Asynchronous Get
-     * @param request
-     * @param responseCallback
-     */
-    public void enqueue (Request request, Callback responseCallback) {
-        runtimePoolInstance.newCall(request).enqueue(responseCallback);
-    }
-
-
-    public static JSONObject Request(Context mContext, JSONObject jsonObject, String URL, Map<String, String> headerPair, int Action, OkHttpClient okhttpClient) {
+    
+    public JSONObject Request(Context mContext, JSONObject jsonObject, String URL, Map<String, String> headerPair, int Action) {
         Log.i(TAG, "start OkHttp request URL:" + URL);
         String result = "";
         Response response = null;
 
         try {
             switch(Action){
-                case HTTP_ACTION_GET:
-                    response = okhttpClient.newCall(onHttpGet(URL, headerPair)).execute();
+                case Method.GET:
+                    response = mOkHttpClient.newCall(onHttpGet(URL, headerPair)).execute();
                     break;
-                case HTTP_ACTION_PUT:
-                    response = okhttpClient.newCall(onHttpPut(jsonObject, URL, headerPair)).execute();
+                case Method.PUT:
+                    response = mOkHttpClient.newCall(onHttpPut(jsonObject, URL, headerPair)).execute();
                     break;
-                case HTTP_ACTION_POST:
-                    response = okhttpClient.newCall(onHttpPost(jsonObject, URL, headerPair)).execute();
+                case Method.POST:
+                    response = mOkHttpClient.newCall(onHttpPost(jsonObject, URL, headerPair)).execute();
                     break;
-                case HTTP_ACTION_DELETE:
-                    response = okhttpClient.newCall(onHttpDelete(URL, headerPair)).execute();
+                case Method.DELETE:
+                    response = mOkHttpClient.newCall(onHttpDelete(URL, headerPair)).execute();
                     break;
                 default:
                     response = null;
@@ -270,7 +244,60 @@ public class OkHttpRequest {
         }
     }
 
-    protected static Request onHttpGet(String URL, Map<String, String> headerPair){
+
+    /**
+     * Upload file with OkHttp3
+     * @param command HttpCommand
+     */
+    public Response sendMultiPartRequest(IHttpCommand command) {
+        Map<String, DataPart> dataPartMap = command.getDataPartMap();
+        Map<String, String> mHeaderPair = command.getHeaders();
+
+        // Set the MIME type
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+
+
+        // Add the form data part to the body
+        for (String key: dataPartMap.keySet()) {
+            DataPart dataPart = dataPartMap.get(key);
+            File file = dataPart.getFile();
+            if (file != null && file.exists()) {
+                String mineType = (dataPart.getType() != null)? dataPart.getType() : getContentType(dataPart);
+                Log.d(TAG, "add: " + key + " file: " + dataPart.getFileName() + " type: " + dataPart.getType());
+
+                builder.addFormDataPart(key, file.getName(),
+                        RequestBody.create(MediaType.parse(mineType), file));
+            }
+        }
+
+        // Assemble the specified parts into a request body
+        MultipartBody requestBody = builder.build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(command.getURL())
+                .post(requestBody);
+
+        // Adds a header with name and value
+        for (String header : mHeaderPair.keySet()) {
+            requestBuilder.addHeader(header, mHeaderPair.get(header));
+        }
+
+        Request request = requestBuilder.build();
+
+        if (request != null) {
+            try {
+                okhttp3.Response response = mOkHttpClient.newCall(request).execute();
+                return response;
+            } catch (IOException ie) {
+                ie.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+
+    protected Request onHttpGet(String URL, Map<String, String> headerPair){
         Request.Builder builder = new Request.Builder().url(URL);
 
         // set http header
@@ -287,7 +314,7 @@ public class OkHttpRequest {
         return builder.build();
     }
 
-    protected static Request onHttpPost(JSONObject jsonObject, String URL, Map<String, String> headerPair) {
+    protected Request onHttpPost(JSONObject jsonObject, String URL, Map<String, String> headerPair) {
         Request.Builder builder = new Request.Builder().url(URL);
 
         // set http header
@@ -315,7 +342,7 @@ public class OkHttpRequest {
         return builder.build();
     }
 
-    protected static Request onHttpPut(JSONObject jsonObject,String URL, Map<String, String> headerPair){
+    protected Request onHttpPut(JSONObject jsonObject,String URL, Map<String, String> headerPair){
         Request.Builder builder = new Request.Builder().url(URL);
 
         // set http header
@@ -339,7 +366,7 @@ public class OkHttpRequest {
         return builder.build();
     }
 
-    protected static Request onHttpDelete(String URL, Map<String, String> headerPair){
+    protected Request onHttpDelete(String URL, Map<String, String> headerPair){
         Request.Builder builder = new Request.Builder()
                 .url(URL)
                 .delete();
@@ -356,5 +383,36 @@ public class OkHttpRequest {
             }
         }
         return builder.build();
+    }
+
+    /**
+     * Encodes string to UTF-8
+     * @param value
+     * @return
+     */
+    public static String encodeUTF8(String value) {
+        if (value != null) {
+            try {
+                return URLEncoder.encode(String.valueOf(value), CHARSET_NAME);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
+    /*
+     * Get the file's content URI from the incoming Intent, then
+     * get the file's MIME type
+     */
+    public static String getContentType(DataPart dataPart) {
+        String mimeType = "image/jpeg";
+        Log.d(TAG, "mime type: " + mimeType);
+        if (mimeType == null) {
+            mimeType = URLConnection.guessContentTypeFromName(dataPart.getFileName());
+            Log.d(TAG, "URL content type");
+        }
+
+        return mimeType;
     }
 }
