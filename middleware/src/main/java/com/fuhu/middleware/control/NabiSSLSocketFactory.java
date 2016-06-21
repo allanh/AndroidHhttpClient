@@ -1,4 +1,4 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.scheme.LayeredSocketFactory;

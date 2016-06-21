@@ -4,14 +4,20 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.fuhu.middleware.control.MailBox;
+import com.fuhu.middleware.control.PostOfficeProxy;
+
 public class MiddlewareApp {
     public static final String TAG = MiddlewareApp.class.getSimpleName();
-    private static Context mContext;
     private static MiddlewareApp INSTANCE;
-    private static String DATA_DIR_PATH;
+
+    private static Context mContext;
+    private String DATA_DIR_PATH;
 
     public MiddlewareApp(Context context) {
-        this.mContext = context;
+        if (context != null) {
+            this.mContext = context.getApplicationContext();
+        }
     }
 
     public static synchronized MiddlewareApp getInstance(Context context) {
@@ -30,10 +36,27 @@ public class MiddlewareApp {
         }
     }
 
-    public static String getDataDirPath() {
+    /**
+     * Clear
+     */
+    public void destroy() {
+        PostOfficeProxy.clear();
+        MailBox.clearMailBox();
+        INSTANCE = null;
+    }
+
+    /**
+     * Full path to a directory assigned to the package for its persistent
+     * data.
+     */
+    public String getDataDirPath() {
         return DATA_DIR_PATH;
     }
 
+    /**
+     * A string resource identifier (in the package's resources) of this
+     * component's label.
+     */
     public static String getApplicationName() {
         if (mContext != null) {
             int stringId = mContext.getApplicationInfo().labelRes;
@@ -43,7 +66,11 @@ public class MiddlewareApp {
         }
     }
 
-    public static Context getApplicationContext() {
+    /**
+     * Return the context of the single, global Application object of the
+     * current process.
+     */
+    public Context getApplicationContext() {
         if (mContext != null) {
             return mContext.getApplicationContext();
         }

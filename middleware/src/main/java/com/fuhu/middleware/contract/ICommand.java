@@ -1,6 +1,10 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
 
 import android.content.Context;
+
+import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.DataPart;
+import com.fuhu.middleware.componet.ErrorCodeList;
 
 import org.json.JSONObject;
 
@@ -48,6 +52,26 @@ public interface ICommand extends Serializable{
      * Gets the data part map of this request
      */
     public Map<String, DataPart> getDataPartMap();
+
+    /**
+     * Checking if the command is valid using ICommandVisitor
+     * @param iCommandVisitor
+     * @return
+     */
+    public boolean isValid(ICommandVisitor iCommandVisitor);
+
+    /**
+     * Gets the MD5 Key of this request
+     * @param imd5Visitor
+     * @return
+     */
+    public String getMD5Key(IMD5Visitor imd5Visitor);
+
+    /**
+     * Send this request to Server
+     * @param iPostOfficeVisitor
+     */
+    public void sendRequest(Context context, IPostOfficeVisitor iPostOfficeVisitor);
 
     public Object doAction(final Context mContext, final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj);
     public Object doNextAction(final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj);

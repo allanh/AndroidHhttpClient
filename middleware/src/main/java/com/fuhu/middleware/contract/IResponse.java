@@ -1,4 +1,6 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
+
+import com.fuhu.middleware.componet.AMailItem;
 
 import java.io.Serializable;
 

@@ -1,10 +1,11 @@
 package com.fuhu.middleware.service;
 
-import com.fuhu.middleware.componet.ICommand;
-import com.fuhu.middleware.componet.IHttpCommand;
-import com.fuhu.middleware.componet.IResponse;
-import com.fuhu.middleware.contract.MD5Util;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.control.MD5Visitor;
+import com.fuhu.middleware.contract.ICommand;
+import com.fuhu.middleware.contract.IMD5Visitor;
+import com.fuhu.middleware.contract.IResponse;
+import com.fuhu.middleware.contract.MD5Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ public class MockServer {
     private static final String TAG = MockServer.class.getSimpleName();
     private static MockServer INSTANCE = new MockServer();
     private static Map<String, IResponse> lookupTable = new HashMap<String, IResponse>();
+    private static IMD5Visitor md5Visitor = new MD5Visitor();
 
     public static MockServer getInstance() {
         return INSTANCE;
@@ -74,16 +76,12 @@ public class MockServer {
      * @return
      */
     public IResponse findResponse(ICommand command) {
-        String url = null;
-        if (command instanceof IHttpCommand) {
-            url = ((IHttpCommand) command).getURL();
-        }
+        String mockKey = command.getMD5Key(md5Visitor);
 
-
-        Log.d(TAG, "url: " + url);
-        if (url != null) {
-            String key = MD5Util.genMD5Key(url);
-            Log.d(TAG, "find url: " + url + " key: " + key);
+        Log.d(TAG, "Mock key: " + mockKey);
+        if (mockKey != null) {
+            String key = MD5Util.genMD5Key(mockKey);
+            Log.d(TAG, "find mock key: " + mockKey + " key: " + key);
             if (key != null) {
                 return lookupTable.get(key);
             }

@@ -1,4 +1,4 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,14 +6,12 @@ import android.os.Bundle;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.IBleCommand;
-import com.fuhu.middleware.componet.ICommand;
-import com.fuhu.middleware.componet.IHttpCommand;
-import com.fuhu.middleware.componet.IPostOfficeProxy;
-import com.fuhu.middleware.componet.IResponse;
-import com.fuhu.middleware.componet.IRtcCommand;
-import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
+import com.fuhu.middleware.contract.GSONUtil;
+import com.fuhu.middleware.contract.ICommand;
+import com.fuhu.middleware.contract.IPostOfficeProxy;
+import com.fuhu.middleware.contract.IPostOfficeVisitor;
+import com.fuhu.middleware.contract.IResponse;
 import com.fuhu.middleware.service.MockServer;
 
 import org.json.JSONException;
@@ -26,14 +24,17 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 	private static final String TAG = PostOfficeProxy.class.getSimpleName();
 	public static String ACTION_DATA_UPDATE = "ACTION_DATA_UPDATE";
     private static PostOfficeProxy instance = new PostOfficeProxy();
+
+    private IPostOfficeVisitor mPostOfficeVisitor;
     private Map<ICommand, MailTask> mMailTaskList;
-    
+
     private PostOfficeProxy(){
          this.mMailTaskList = new HashMap<ICommand, MailTask>();
+         this.mPostOfficeVisitor = new PostOfficeVisitor(this);
     }
 
     public static PostOfficeProxy getInstance(){
-        return instance; 
+        return instance;
     }
     
     @Override
@@ -67,25 +68,13 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         if (command.useMockData()) {
             handleMockData(command);
         } else {
-
-            // Send command using NabiVolley
-            if (command instanceof IHttpCommand) {
-                IHttpCommand httpCommand = (IHttpCommand) command;
-                new NabiVolleyActionProxy(mContext, this, httpCommand).execute();
-            } else if (command instanceof IRtcCommand) {
-                // TODO WebRTC
-            } else if (command instanceof IBleCommand) {
-                // TODO BLE
-            } else {
-                Log.d(TAG, "Command isn't HttpCommand.");
-//            PostOffice mPostOffice = PostOffice.lookup(command.getID());
-//            mPostOffice.doAction(mContext, queryItem, this, parameter);
-            }
+            // send request to server
+            command.sendRequest(mContext, mPostOfficeVisitor);
         }
     }
 
     /**
-     *
+     * Send request to MockServer
      * @param command
      */
     private void handleMockData(ICommand command) {
@@ -121,11 +110,18 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 
     @Override
     public void onMailDeliver(ICommand mCommand, boolean isForceDelivery, Object... parameter) {
-       
+
     }
 
 //    public void onMailRequest(ICommand mCommand, Context mContext, AMailItem queryItem, Object... parameter) {
 //        PostOffice mPostOffice = PostOffice.lookup(mCommand.getID());
 //        mPostOffice.doAction(mContext, queryItem, this, parameter);
 //    }
+
+    public static boolean clear() {
+        if (instance != null) {
+            instance = null;
+        }
+        return true;
+    }
 }

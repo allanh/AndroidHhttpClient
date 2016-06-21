@@ -1,11 +1,13 @@
 package com.fuhu.middleware.componet;
 
+import com.fuhu.middleware.contract.IErrorCodeList;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public enum ErrorCodeList implements IErrorCodeList{
+public enum ErrorCodeList implements IErrorCodeList {
     /**
-     * declare INSTANCE of the Enum
+     * declare INSTANCE of this Enum
      */
     INSTANCE,
 
@@ -24,6 +26,7 @@ public enum ErrorCodeList implements IErrorCodeList{
     URL_NULL("-11", "URL NULL"),
     DATA_CLASS_NULL("-12", "DATA CLASS NULL"),
     GSON_PARSE_ERROR("-13", "GSON PARSE NULL"),
+    INVALID_PARAMETER("-14", "Parameter Missing or Invalid"),
 
     /**
      * Volley

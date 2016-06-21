@@ -1,4 +1,4 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
 
 import java.io.Serializable;
 

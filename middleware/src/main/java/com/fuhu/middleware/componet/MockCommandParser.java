@@ -1,8 +1,6 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.componet;
 
 import android.util.Log;
-
-import com.fuhu.middleware.componet.CommandType;
 
 
 public class MockCommandParser {

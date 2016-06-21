@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.fuhu.middleware.componet.IManager;
+import com.fuhu.middleware.contract.IManager;
 import com.fuhu.test.smarthub.receiver.GoogleRecognizeReceiver;
 import com.fuhu.test.smarthub.service.GoogleRecognizeService;
 

@@ -1,10 +1,10 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import android.content.Context;
 
 import com.fuhu.middleware.componet.DataPart;
-import com.fuhu.middleware.componet.IHttpCommand;
-import com.fuhu.middleware.componet.IHttpCommand.Method;
+import com.fuhu.middleware.contract.IHttpCommand;
+import com.fuhu.middleware.contract.IHttpCommand.Method;
 import com.fuhu.middleware.componet.Log;
 
 import org.json.JSONArray;

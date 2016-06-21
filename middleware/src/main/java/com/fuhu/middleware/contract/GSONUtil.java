@@ -18,7 +18,7 @@ public class GSONUtil {
     private static Gson mGson;
 
     /**
-     * Get a Gson object
+     * Get a Gson object (Lazy initialization)
      * @return gson
      */
     public synchronized static Gson getGson() {

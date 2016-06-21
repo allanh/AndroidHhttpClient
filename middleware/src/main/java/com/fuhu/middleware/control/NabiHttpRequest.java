@@ -1,4 +1,4 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

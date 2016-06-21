@@ -1,12 +1,13 @@
 package com.fuhu.middleware.componet;
 
+import com.fuhu.middleware.contract.IMailItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class AMailItem implements IMailItem{
+public abstract class AMailItem implements IMailItem {
     public JsonElement toJsonTree(Gson gson) {
         return gson.toJsonTree(this);
     }

@@ -7,11 +7,11 @@ import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.HTTPHeader;
 import com.fuhu.middleware.componet.HttpCommand;
 import com.fuhu.middleware.componet.HttpCommandBuilder;
-import com.fuhu.middleware.componet.IMailReceiveCallback;
+import com.fuhu.middleware.contract.IMailReceiveCallback;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.contract.ErrorCodeHandler;
-import com.fuhu.middleware.contract.MailBox;
-import com.fuhu.middleware.contract.NabiHttpRequest;
+import com.fuhu.middleware.control.ErrorCodeHandler;
+import com.fuhu.middleware.control.MailBox;
+import com.fuhu.middleware.control.NabiHttpRequest;
 import com.fuhu.test.smarthub.componet.TrackItem;
 
 public abstract class TrackCallback implements IMailReceiveCallback {

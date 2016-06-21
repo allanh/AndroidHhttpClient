@@ -2,6 +2,13 @@ package com.fuhu.middleware.componet;
 
 import android.content.Context;
 
+import com.fuhu.middleware.contract.ICommandVisitor;
+import com.fuhu.middleware.contract.IHttpCommand;
+import com.fuhu.middleware.contract.IMD5Visitor;
+import com.fuhu.middleware.contract.IPostOfficeProxy;
+import com.fuhu.middleware.contract.IPostOfficeVisitor;
+import com.fuhu.middleware.contract.ISchedulingActionProxy;
+
 import org.json.JSONObject;
 
 import java.util.List;
@@ -117,6 +124,21 @@ public class HttpCommand implements IHttpCommand {
     @Override
     public Map<String, DataPart> getDataPartMap() {
         return mDataPartMap;
+    }
+
+    @Override
+    public boolean isValid(ICommandVisitor iCommandVisitor) {
+        return iCommandVisitor.isValid(this);
+    }
+
+    @Override
+    public String getMD5Key(IMD5Visitor imd5Visitor) {
+        return imd5Visitor.getKey(this);
+    }
+
+    @Override
+    public void sendRequest(Context context, IPostOfficeVisitor iPostOfficeVisitor) {
+        iPostOfficeVisitor.sendRequest(context, this);
     }
 
     @Override

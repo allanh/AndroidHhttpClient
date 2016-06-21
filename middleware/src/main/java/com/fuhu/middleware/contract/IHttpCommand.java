@@ -1,4 +1,6 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
+
+import com.fuhu.middleware.componet.Priority;
 
 import java.util.Map;
 
@@ -10,11 +12,6 @@ public interface IHttpCommand extends ICommand {
     public int getMethod();
 
     public Map<String, String> getHeaders();
-
-    /**
-     * Whether or not responses to this request should be cached
-     */
-    public boolean shouldCache();
 
     /**
      * Supported request methods.

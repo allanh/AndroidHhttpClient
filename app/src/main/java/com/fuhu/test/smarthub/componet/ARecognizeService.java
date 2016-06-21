@@ -4,8 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.fuhu.middleware.componet.IRecognizeService;
-import com.fuhu.middleware.contract.MockCommandParser;
+import com.fuhu.middleware.contract.IRecognizeService;
+import com.fuhu.middleware.componet.MockCommandParser;
 
 public abstract class ARecognizeService extends Service implements IRecognizeService {
     private static final String TAG = ARecognizeService.class.getSimpleName();

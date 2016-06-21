@@ -6,6 +6,8 @@
 
 package com.fuhu.middleware.componet;
 
+import com.fuhu.middleware.contract.ICommand;
+
 import java.io.Serializable;
 
 /**
@@ -20,7 +22,7 @@ public class MailTask implements Serializable{
 	
 	private String      strClassName;
     private String      address;
-    private ICommand    mCommand;
+    private ICommand mCommand;
     
 
     public void setClassName(final String strClassName){

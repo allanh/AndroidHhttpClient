@@ -1,8 +1,9 @@
 package com.fuhu.middleware.componet;
 
 
-import com.fuhu.middleware.contract.ErrorCodeHandler;
+import com.fuhu.middleware.control.ErrorCodeHandler;
 import com.fuhu.middleware.contract.GSONUtil;
+import com.fuhu.middleware.contract.IResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;

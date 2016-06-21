@@ -1,4 +1,4 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
 
 public interface ISchedulingActionProxy {
     

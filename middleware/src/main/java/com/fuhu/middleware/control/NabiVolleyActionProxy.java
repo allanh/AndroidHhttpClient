@@ -1,4 +1,4 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -16,11 +16,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.DataPart;
 import com.fuhu.middleware.componet.ErrorCodeList;
-import com.fuhu.middleware.componet.IHttpCommand;
-import com.fuhu.middleware.componet.IPostOfficeProxy;
-import com.fuhu.middleware.componet.ISchedulingActionProxy;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.Priority;
+import com.fuhu.middleware.contract.GSONUtil;
+import com.fuhu.middleware.contract.IHttpCommand;
+import com.fuhu.middleware.contract.IPostOfficeProxy;
+import com.fuhu.middleware.contract.ISchedulingActionProxy;
 
 import org.json.JSONException;
 import org.json.JSONObject;

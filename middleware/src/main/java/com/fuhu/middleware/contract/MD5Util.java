@@ -36,68 +36,77 @@ public class MD5Util {
     }
 
     public static String calculateMD5(File updateFile) {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "Exception while getting digest");
-            return null;
-        }
-
-        InputStream is;
-        try {
-            is = new FileInputStream(updateFile);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Exception while getting FileInputStream");
-            return null;
-        }
-
-        byte[] buffer = new byte[8192];
-        int read;
-        try {
-            while ((read = is.read(buffer)) > 0) {
-                digest.update(buffer, 0, read);
-            }
-            byte[] md5sum = digest.digest();
-            BigInteger bigInt = new BigInteger(1, md5sum);
-            String output = bigInt.toString(16);
-            // Fill to 32 chars
-            output = String.format("%32s", output).replace(' ', '0');
-            return output;
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to process file for MD5", e);
-        } finally {
+        if (updateFile != null && updateFile.exists()) {
+            MessageDigest digest;
             try {
-                is.close();
+                digest = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                Log.e(TAG, "Exception while getting digest");
+                return null;
+            }
+
+            InputStream is;
+            try {
+                is = new FileInputStream(updateFile);
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "Exception while getting FileInputStream");
+                return null;
+            }
+
+            byte[] buffer = new byte[8192];
+            int read;
+            try {
+                while ((read = is.read(buffer)) > 0) {
+                    digest.update(buffer, 0, read);
+                }
+                byte[] md5sum = digest.digest();
+                BigInteger bigInt = new BigInteger(1, md5sum);
+                String output = bigInt.toString(16);
+                // Fill to 32 chars
+                output = String.format("%32s", output).replace(' ', '0');
+                return output;
             } catch (IOException e) {
-                Log.e(TAG, "Exception on closing MD5 input stream");
+                throw new RuntimeException("Unable to process file for MD5", e);
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Exception on closing MD5 input stream");
+                }
             }
         }
+        return null;
     }
 
     /**
      * Convert the url to MD5 string
      */
     public static String genMD5Key(String url) {
-        String cacheKey;
-        try {
-            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(url.getBytes());
-            cacheKey = bytesToHexString(mDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            cacheKey = String.valueOf(url.hashCode());
+        String cacheKey = null;
+
+        if (url != null) {
+            try {
+                final MessageDigest mDigest = MessageDigest.getInstance("MD5");
+                mDigest.update(url.getBytes());
+                cacheKey = bytesToHexString(mDigest.digest());
+            } catch (NoSuchAlgorithmException e) {
+                cacheKey = String.valueOf(url.hashCode());
+            }
         }
         return cacheKey;
     }
 
     private static String bytesToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
-            String hex = Integer.toHexString(0xFF & bytes[i]);
-            if (hex.length() == 1) {
-                sb.append('0');
+
+        if (bytes != null) {
+            for (int i = 0; i < bytes.length; i++) {
+                String hex = Integer.toHexString(0xFF & bytes[i]);
+                if (hex.length() == 1) {
+                    sb.append('0');
+                }
+                sb.append(hex);
             }
-            sb.append(hex);
         }
         return sb.toString();
     }

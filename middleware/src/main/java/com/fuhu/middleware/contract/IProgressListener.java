@@ -1,4 +1,4 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
 
 /** Callback interface for delivering the progress of the responses. */
 public interface IProgressListener {

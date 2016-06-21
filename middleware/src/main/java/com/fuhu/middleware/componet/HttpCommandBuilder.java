@@ -1,6 +1,7 @@
 package com.fuhu.middleware.componet;
 
 import com.fuhu.middleware.contract.GSONUtil;
+import com.fuhu.middleware.contract.ICommandBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;

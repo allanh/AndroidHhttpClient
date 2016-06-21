@@ -1,4 +1,4 @@
-package com.fuhu.middleware.contract;
+package com.fuhu.middleware.control;
 
 import com.android.volley.toolbox.HurlStack;
 

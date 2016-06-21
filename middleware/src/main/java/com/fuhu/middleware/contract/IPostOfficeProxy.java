@@ -1,6 +1,9 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.middleware.contract;
 
 import android.content.Context;
+
+import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.MailTask;
 
 public interface IPostOfficeProxy {
     public void onMailItemUpdate(final ICommand myCommand, final AMailItem queryITem, final AMailItem result, final Object... parameters);
