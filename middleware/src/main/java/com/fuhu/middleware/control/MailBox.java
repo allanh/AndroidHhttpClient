@@ -50,7 +50,7 @@ public class MailBox {
     }
 
     /**
-     * Send command to server
+     * Sends command to server
      * @param context
      * @param command
      * @param mailRecCallback
@@ -81,7 +81,7 @@ public class MailBox {
             id = String.valueOf(System.currentTimeMillis());
         }
 
-//            Log.d(TAG, "Command: " + command.getID());
+//      Log.d(TAG, "Command: " + command.getID());
         mMailTask.setAddress(id);
         mMailTask.setClassName(this.getClass().getName());
 
@@ -90,7 +90,11 @@ public class MailBox {
 
         PostOfficeProxy.getInstance().onMailRequest(context, mMailTask);
     }
-    
+
+    /**
+     * Receives mail from PostOffice
+     * @param intent
+     */
     public void receiveMail(Intent intent){
         MailTask mMailTask = (MailTask)intent.getExtras().getSerializable("mailTask");
         startTime = System.currentTimeMillis();
@@ -134,7 +138,7 @@ public class MailBox {
                 // check if receiveMailTask is running
                 if (!running) {
                     running = true;
-//                        Log.d(TAG, "post : " + mMailTask.getCommand().getID());
+//                  Log.d(TAG, "post : " + mMailTask.getCommand().getID());
                     this.post(receiveMailTask);
                 }
             }
@@ -181,6 +185,9 @@ public class MailBox {
         }
     };
 
+    /**
+     * Clears static variable value
+     */
     private void clear() {
         running = false;
         commandVisitor = null;

@@ -27,6 +27,10 @@ public class MiddlewareApp {
         return INSTANCE;
     }
 
+    /**
+     * Initialize the MiddlewareApp.This will include reading the package info from the PackageManager
+     * and building up the necessary in-memory application information.
+     */
     public void initial() {
         try {
             PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);

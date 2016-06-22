@@ -85,7 +85,6 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         if (mockResponse != null) {
             AMailItem dataItem = mockResponse.getDataObject();
 
-            // Checks if data object is exist
             if (dataItem != null) {
                 onMailItemUpdate(command, command.getDataObject(), dataItem);
             } else if (mockResponse.getBody() != null) {

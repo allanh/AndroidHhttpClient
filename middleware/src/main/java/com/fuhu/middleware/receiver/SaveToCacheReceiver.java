@@ -7,7 +7,6 @@ import android.content.Intent;
 import com.fuhu.middleware.MediaItemCollection;
 import com.fuhu.middleware.componet.Log;
 
-
 public class SaveToCacheReceiver extends BroadcastReceiver {
     private static final String TAG = SaveToCacheReceiver.class.getSimpleName();
     public static final String ACTION_SAVE_TO_CACHE = "com.fuhu.middleware.action.saveYoCache";//use current Collection to save cache

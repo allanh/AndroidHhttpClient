@@ -54,7 +54,7 @@ public class MockServer {
     }
 
     /**
-     * Returns the response of the mapping with the specified key.
+     * Returns the response of the mapping with the specified url.
      * @param url the url of request
      * @return
      */
@@ -66,12 +66,11 @@ public class MockServer {
                 return lookupTable.get(key);
             }
         }
-
         return null;
     }
 
     /**
-     * Returns the response of the mapping with the specified key.
+     * Returns the response of the mapping with the specified command.
      * @param command the command of request
      * @return
      */
@@ -86,7 +85,6 @@ public class MockServer {
                 return lookupTable.get(key);
             }
         }
-
         return null;
     }
 }

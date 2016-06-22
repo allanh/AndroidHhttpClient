@@ -17,10 +17,6 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MediaItemCollection implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID  = 1L;
 	private static MediaItemCollection instance = null;
 	private static final String TAG				= MediaItemCollection.class.getSimpleName();
@@ -34,10 +30,11 @@ public class MediaItemCollection implements Serializable{
 
 	private static boolean isSaved = false;
 
-	private static final String UTF8 = "UTF-8";
-	private static final String LATIN1 = "ISO-8859-1";
-	private static final String BIG5 = "BIG5";
-
+    /**
+     * Load the cache from the filesystem.
+     * @param mContext
+     * @return
+     */
 	public static MediaItemCollection loadFromCache(Context mContext){
     	FileInputStream fis = null;
     	ObjectInputStream ois = null;
@@ -77,7 +74,15 @@ public class MediaItemCollection implements Serializable{
     	instance = mMediaItemCollection;
         return mMediaItemCollection;
     }
-	
+
+
+    /**
+     * Caches HTTP or HTTPS responses to the filesystem so they may be reused, saving time and
+     * bandwidth.
+     * @param mContext
+     * @param mMediaItemCollection
+     * @return
+     */
 	public static boolean saveToCache(final Context mContext, final MediaItemCollection mMediaItemCollection){
     	boolean isSuccess=true;
     	if(mThread==null){ 

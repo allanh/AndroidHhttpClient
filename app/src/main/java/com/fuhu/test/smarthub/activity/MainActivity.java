@@ -206,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 //        if (MiddlewareConfig.enableWifiP2P) {
 //            WifiP2PHandler.getInstance(this).stop();
 //        }
-
     }
 
     @Override

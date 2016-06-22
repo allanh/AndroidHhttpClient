@@ -34,4 +34,11 @@ public class Constants {
     public static final String STATUS_AVAILABLE = "Available";
     public static final String STATUS_OFFLINE   = "Offline";
     public static final String STATUS_BUSY      = "Busy";
+
+    /**
+     * Character encoding
+     */
+    public static final String UTF8 = "UTF-8";
+    public static final String LATIN1 = "ISO-8859-1";
+    public static final String BIG5 = "BIG5";
 }
