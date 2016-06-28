@@ -38,6 +38,8 @@ public class MiddlewareApp {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+        //TODO Silk SDK initial
     }
 
     /**

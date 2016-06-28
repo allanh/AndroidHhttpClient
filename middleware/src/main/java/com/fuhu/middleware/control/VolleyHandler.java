@@ -2,17 +2,12 @@ package com.fuhu.middleware.control;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.widget.ImageView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.componet.LruBitmapCache;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +24,7 @@ public class VolleyHandler {
     private static Context mContext;
 
     private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
+//    private ImageLoader mImageLoader;
 
     private long startTime;
     private static final int VOLLEY_SOCKET_TIMEOUT = 15000;
@@ -43,7 +38,7 @@ public class VolleyHandler {
             this.mContext = mContext.getApplicationContext();
         }
         this.mRequestQueue = getRequestQueue();
-        this.mImageLoader = getImageLoader();
+//        this.mImageLoader = getImageLoader();
     }
 
     public static VolleyHandler getInstance(Context mContext) {
@@ -77,12 +72,12 @@ public class VolleyHandler {
         return mRequestQueue;
     }
 
-    public ImageLoader getImageLoader() {
-        if (mImageLoader == null) {
-            mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache());
-        }
-        return mImageLoader;
-    }
+//    public ImageLoader getImageLoader() {
+//        if (mImageLoader == null) {
+//            mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache());
+//        }
+//        return mImageLoader;
+//    }
 
     /**
      * Adds the specified request to the global queue, if tag is specified
@@ -162,25 +157,25 @@ public class VolleyHandler {
      * @param height max height
      * @param scaleType scale type
      */
-    public void setImageView(final ImageView imageView, String url, int width, int height, ImageView.ScaleType scaleType) {
-        getImageLoader().get(url, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    imageView.setImageBitmap(response.getBitmap());
-                }
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Volley image Error");
-
-                if (error.getMessage() != null) {
-                    Log.d(TAG, "message: " + error.getMessage());
-                }
-            }
-        }, width, height, scaleType);
-    }
+//    public void setImageView(final ImageView imageView, String url, int width, int height, ImageView.ScaleType scaleType) {
+//        getImageLoader().get(url, new ImageLoader.ImageListener() {
+//            @Override
+//            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+//                if (response.getBitmap() != null) {
+//                    imageView.setImageBitmap(response.getBitmap());
+//                }
+//            }
+//
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d(TAG, "Volley image Error");
+//
+//                if (error.getMessage() != null) {
+//                    Log.d(TAG, "message: " + error.getMessage());
+//                }
+//            }
+//        }, width, height, scaleType);
+//    }
 
     /**
      * Set the background

@@ -8,6 +8,7 @@ import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockResponse;
 import com.fuhu.middleware.service.MockServer;
 import com.fuhu.test.smarthub.componet.IFTTTItem;
+import com.fuhu.test.smarthub.componet.TrackItem;
 
 public class SmartHubApp extends Application {
     public static final String TAG = SmartHubApp.class.getSimpleName();
@@ -50,7 +51,27 @@ public class SmartHubApp extends Application {
                 .setURL("https://maker.ifttt.com/trigger/aws_test/with/key/bSFARZ-rJzNywhtItAh4IS")
                 .setDataObject(iftttItem);
 
+
         // Sets the mock responses to MockServer
         MockServer.getInstance().addResponse(trackResponse, iftttResponse);
+
+
+        // RecipeList mock response ------------------------------------------------------
+        MockResponse recipeListResponse = new MockResponse()
+                .setURL("ReqRecipeList")
+                .setBody("{\"status\":\"0\"}");
+
+// fail mock response
+        TrackItem trackItem_RecipeItemList = new TrackItem();
+        trackItem_RecipeItemList.setStatus("-123");
+        trackItem_RecipeItemList.setMessage("Fail test");
+
+        MockResponse recipeListFailResponse = new MockResponse()
+                .setURL("ReqRecipeList.getFailedURL")
+                .setDataObject(trackItem_RecipeItemList);
+
+// Sets the mock responses to MockServer
+        MockServer.getInstance().addResponse(recipeListResponse, recipeListFailResponse);
+
     }
 }

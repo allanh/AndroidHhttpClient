@@ -1,6 +1,7 @@
 package com.fuhu.middleware.componet;
 
 import com.fuhu.middleware.contract.IMailItem;
+import com.fuhu.middleware.contract.SilkMessageType;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -42,4 +43,23 @@ public abstract class AMailItem implements IMailItem {
         this.message = message;
     }
 
+    /**
+     * Type
+     */
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public SilkMessageType getSilkType() {
+        if (type != null) {
+            return SilkMessageType.lookup(type);
+        }
+        return null;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

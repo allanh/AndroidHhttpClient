@@ -8,6 +8,8 @@ import com.fuhu.middleware.contract.IRtpCommand;
 import com.fuhu.middleware.contract.MD5Util;
 
 public class MD5Visitor implements IMD5Visitor {
+    private static final String TAG = MD5Visitor.class.getSimpleName();
+
     public String getKey(ICommand command) {
         return MD5Util.genMD5Key(command.getID());
     }

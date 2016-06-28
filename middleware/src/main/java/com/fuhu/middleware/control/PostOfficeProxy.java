@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
+import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
 import com.fuhu.middleware.contract.GSONUtil;
 import com.fuhu.middleware.contract.ICommand;
@@ -83,12 +84,16 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 
         // Checks if MockResponse is exist
         if (mockResponse != null) {
+            Log.d(TAG, "mock url: " + mockResponse.getURL());
+
             AMailItem dataItem = mockResponse.getDataObject();
 
             if (dataItem != null) {
+                Log.d(TAG, "dataItem status: " + dataItem.getStatus());
                 onMailItemUpdate(command, command.getDataObject(), dataItem);
             } else if (mockResponse.getBody() != null) {
                 // Parsing the json string of MockResponse to java object
+                Log.d(TAG, "body: " + mockResponse.getBody());
                 try {
                     dataItem = GSONUtil.fromJSON(mockResponse.getBody(), command.getDataModel());
                 } catch (JSONException je) {
@@ -97,11 +102,13 @@ public class PostOfficeProxy implements IPostOfficeProxy {
                 }
                 onMailItemUpdate(command, command.getDataObject(), dataItem);
             } else {
+                Log.w(TAG, "No data object and json strong of MockResponse");
                 // No data object and json strong of MockResponse
                 onMailItemUpdate(command, command.getDataObject(),
                         ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, command.getDataModel()));
             }
         } else {
+            Log.w(TAG, "UNKNOWN ERROR");
             onMailItemUpdate(command, command.getDataObject(),
                     ErrorCodeHandler.genErrorItem(ErrorCodeList.UNKNOWN_ERROR, command.getDataModel()));
         }

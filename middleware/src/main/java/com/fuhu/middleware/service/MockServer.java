@@ -77,14 +77,20 @@ public class MockServer {
     public IResponse findResponse(ICommand command) {
         String mockKey = command.getMD5Key(md5Visitor);
 
-        Log.d(TAG, "Mock key: " + mockKey);
+        Log.d(TAG, "Find Mock key: " + mockKey);
         if (mockKey != null) {
-            String key = MD5Util.genMD5Key(mockKey);
-            Log.d(TAG, "find mock key: " + mockKey + " key: " + key);
-            if (key != null) {
-                return lookupTable.get(key);
-            }
+//            printLookupTable();
+            return lookupTable.get(mockKey);
         }
         return null;
+    }
+
+    private void printLookupTable() {
+        if (lookupTable != null) {
+            for (String key: lookupTable.keySet()) {
+                IResponse response = lookupTable.get(key);
+                Log.d(TAG,"key: " + key + " url: " + response.getURL() + " body: " + response.getBody());
+            }
+        }
     }
 }

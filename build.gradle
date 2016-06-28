@@ -14,7 +14,22 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url "http://archiva.fuhu.tw:8080" }
+
+        maven {
+            url "http://archiva.fuhu.tw:8080/repository/internal"
+            credentials {
+                username "mike.wang"
+                password "fuhu123"
+            }
+        }
+
+        maven {
+            url "http://archiva.fuhu.tw:8080/repository/snapshots"
+            credentials {
+                username "mike.wang"
+                password "fuhu123"
+            }
+        }
     }
 }
 
