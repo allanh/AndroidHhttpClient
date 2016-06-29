@@ -23,7 +23,7 @@ public class VolleyHandler {
     private static VolleyHandler instance;
     private static Context mContext;
 
-    private RequestQueue mRequestQueue;
+    private static RequestQueue mRequestQueue;
 //    private ImageLoader mImageLoader;
 
     private long startTime;
@@ -140,7 +140,7 @@ public class VolleyHandler {
         }
     }
 
-    public void release() {
+    public static void release() {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(TAG);
             mRequestQueue = null;

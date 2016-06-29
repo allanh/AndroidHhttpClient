@@ -52,7 +52,7 @@ public abstract class AMailItem implements IMailItem {
         return type;
     }
 
-    public SilkMessageType getSilkType() {
+    public SilkMessageType getSilkMessageType() {
         if (type != null) {
             return SilkMessageType.lookup(type);
         }

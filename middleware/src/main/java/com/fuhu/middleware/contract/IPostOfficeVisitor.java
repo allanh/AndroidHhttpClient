@@ -15,7 +15,7 @@ public interface IPostOfficeVisitor {
      * Send request using WebRTC Data Channel
      * @param command
      */
-    public void sendRequest(Context context, IRtpCommand command);
+    public void sendRequest(Context context, IWebRtpCommand command);
 
     /**
      * Send request using Bluetooth

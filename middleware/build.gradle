@@ -86,4 +86,15 @@ dependencies {
     compile('com.squareup.okio:okio:1.8.0') {
         transitive = true
     }
+
+    // pubnub webrtc
+    compile('com.pubnub:pubnub-android:3.7.4') {
+        transitive = true
+    }
+    compile('io.pristine:libjingle:9694@aar') {
+        transitive = true
+    }
+    compile('me.kevingleason:pnwebrtc:1.0.6@aar') {
+        transitive = true
+    }
 }

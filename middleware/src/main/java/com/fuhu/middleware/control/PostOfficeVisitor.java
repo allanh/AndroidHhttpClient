@@ -7,7 +7,7 @@ import com.fuhu.middleware.contract.ICommand;
 import com.fuhu.middleware.contract.IHttpCommand;
 import com.fuhu.middleware.contract.IPostOfficeProxy;
 import com.fuhu.middleware.contract.IPostOfficeVisitor;
-import com.fuhu.middleware.contract.IRtpCommand;
+import com.fuhu.middleware.contract.IWebRtpCommand;
 
 public class PostOfficeVisitor implements IPostOfficeVisitor {
     private static IPostOfficeProxy mPostOfficeProxy;
@@ -32,8 +32,8 @@ public class PostOfficeVisitor implements IPostOfficeVisitor {
      * Send request using WebRTC Data Channel
      * @param command
      */
-    public void sendRequest(Context context, IRtpCommand command) {
-
+    public void sendRequest(Context context, IWebRtpCommand command) {
+        new PnWebRtcActionProxy(context, mPostOfficeProxy, command).execute();
     }
 
     /**

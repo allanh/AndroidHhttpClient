@@ -415,4 +415,9 @@ public class OkHttpRequest {
 
         return mimeType;
     }
+
+    public static void release() {
+        mContext = null;
+        INSTANCE = null;
+    }
 }

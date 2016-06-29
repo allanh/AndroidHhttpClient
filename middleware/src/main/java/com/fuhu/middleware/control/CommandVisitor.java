@@ -4,7 +4,7 @@ import com.fuhu.middleware.contract.IBleCommand;
 import com.fuhu.middleware.contract.ICommand;
 import com.fuhu.middleware.contract.ICommandVisitor;
 import com.fuhu.middleware.contract.IHttpCommand;
-import com.fuhu.middleware.contract.IRtpCommand;
+import com.fuhu.middleware.contract.IWebRtpCommand;
 
 public class CommandVisitor implements ICommandVisitor {
     /**
@@ -24,8 +24,8 @@ public class CommandVisitor implements ICommandVisitor {
     /**
      * Checks if the data model have been set up
      */
-    public boolean isValid(IRtpCommand iRtpCommand) {
-        return (iRtpCommand.getDataModel() != null);
+    public boolean isValid(IWebRtpCommand iRtpCommand) {
+        return (iRtpCommand.getSilkMessageType() != null && iRtpCommand.getDataModel() != null);
     }
 
     /**

@@ -1,5 +1,9 @@
 package com.fuhu.middleware.contract;
 
+import android.content.Context;
+
+import com.fuhu.middleware.componet.AMailItem;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,4 +95,9 @@ public enum SilkMessageType {
     public static SilkMessageType lookup(final String typeCode){
         return lookupTable.get(typeCode);
     }
+
+    public Object doAction(final Context mContext, final AMailItem queryItem, final IPostOfficeProxy mPostOfficeProxy, final Object... obj) {
+        return null;
+    }
+
 }
