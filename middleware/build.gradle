@@ -10,7 +10,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 7
-        versionName "1.4.1"
+        versionName "1.5.0630"
     }
 
     buildTypes {
@@ -52,7 +52,7 @@ publishing {
             artifacts {
                 groupId 'com.fuhu.pando'
                 artifactId 'middleware'
-                version '1.4.1'
+                version '1.5.0630'
                 artifact 'build/outputs/aar/middleware-release.aar'
 
                 pom.withXml {
@@ -74,6 +74,7 @@ publishing {
 dependencies {
     testCompile 'junit:junit:4.12'
 //    compile 'com.android.support:appcompat-v7:23.1.1'
+
     compile('com.android.volley:volley:1.0.0') {
         transitive = true
     }
@@ -84,17 +85,6 @@ dependencies {
         transitive = true
     }
     compile('com.squareup.okio:okio:1.8.0') {
-        transitive = true
-    }
-
-    // pubnub webrtc
-    compile('com.pubnub:pubnub-android:3.7.4') {
-        transitive = true
-    }
-    compile('io.pristine:libjingle:9694@aar') {
-        transitive = true
-    }
-    compile('me.kevingleason:pnwebrtc:1.0.6@aar') {
         transitive = true
     }
 }

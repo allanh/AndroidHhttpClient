@@ -81,16 +81,16 @@ public class MD5Util {
     /**
      * Convert the url to MD5 string
      */
-    public static String genMD5Key(String url) {
+    public static String genMD5Key(String key) {
         String cacheKey = null;
 
-        if (url != null) {
+        if (key != null) {
             try {
                 final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-                mDigest.update(url.getBytes());
+                mDigest.update(key.getBytes());
                 cacheKey = bytesToHexString(mDigest.digest());
             } catch (NoSuchAlgorithmException e) {
-                cacheKey = String.valueOf(url.hashCode());
+                cacheKey = String.valueOf(key.hashCode());
             }
         }
         return cacheKey;

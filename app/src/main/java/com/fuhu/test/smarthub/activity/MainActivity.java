@@ -10,13 +10,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
-import com.fuhu.middleware.componet.HttpCommand;
-import com.fuhu.middleware.componet.HttpCommandBuilder;
+import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.control.MailBox;
+import com.fuhu.middleware.contract.SilkMessageType;
 import com.fuhu.test.smarthub.R;
-import com.fuhu.test.smarthub.callback.IFTTTCallback;
-import com.fuhu.test.smarthub.componet.IFTTTItem;
+import com.fuhu.test.smarthub.callback.AppStatusCallback;
+import com.fuhu.test.smarthub.callback.DeviceMessageCallback;
+import com.fuhu.test.smarthub.callback.WebRtcInitCallback;
+import com.fuhu.test.smarthub.componet.AppStatus;
+import com.fuhu.test.smarthub.componet.DeviceMessage;
+import com.fuhu.test.smarthub.componet.InitItem;
 import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
 
@@ -106,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
                     TextToSpeechManager.getInstance(this), tv_response);
         }
 
+        initWebRtc();
+        getAppStatus();
+        sendDeviceMessage();
+
 //        if (MiddlewareConfig.enableGCM) {
 //            GCMManager.getInstance(this).startService();
 //            GCMManager.getInstance(this).registerReceiver();
@@ -114,26 +121,25 @@ public class MainActivity extends AppCompatActivity {
 //        if (MiddlewareConfig.enableWifiP2P) {
 //            WifiP2PHandler.getInstance(this).registerReceiver();
 //        }
-        HttpCommand iftttCommand = new HttpCommandBuilder()
-                .setURL("ReqRecipeList")
-                .setMethod(HttpCommand.Method.POST)
-                .setDataModel(IFTTTItem.class)
-                .useMockData(true)
-                .build();
-
-        MailBox.getInstance().deliverMail(this, iftttCommand, new IFTTTCallback() {
-            @Override
-            public void onIftttReceived(IFTTTItem iftttItem) {
-                Log.d(TAG, "ifttt value1: " + iftttItem.getValue1());
-            }
-
-            @Override
-            public void onFailed(String status, String message) {
-                Log.d(TAG, "Status: " + status);
-
-            }
-        });
-
+//        HttpCommand iftttCommand = new HttpCommandBuilder()
+//                .setURL("ReqRecipeList")
+//                .setMethod(HttpCommand.Method.POST)
+//                .setDataModel(IFTTTItem.class)
+//                .useMockData(true)
+//                .build();
+//
+//        MailBox.getInstance().deliverMail(this, iftttCommand, new IFTTTCallback() {
+//            @Override
+//            public void onIftttReceived(IFTTTItem iftttItem) {
+//                Log.d(TAG, "ifttt value1: " + iftttItem.getValue1());
+//            }
+//
+//            @Override
+//            public void onFailed(String status, String message) {
+//                Log.d(TAG, "Status: " + status);
+//
+//            }
+//        });
 
 //        File file =new File(getExternalCacheDir(), "test.jpg");
 //        try {
@@ -180,6 +186,79 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            });
 //        }
+    }
+
+    /**
+     * initializing Silk SDK
+     */
+    public void initWebRtc() {
+        InitItem initItem = new InitItem();
+        initItem.setType(SilkMessageType.INITIALIZED.toString());
+
+        WebRtcInitCallback.reqInitialize(this, new WebRtcInitCallback() {
+            @Override
+            public void onResultReceived(AMailItem mailItem) {
+                Log.d(TAG, "Silk SDK initialized");
+            }
+
+            @Override
+            public void onFailed(String status, String message) {
+                Log.d(TAG, "init fail");
+            }
+        }, initItem);
+    }
+
+    /**
+     * Gets the app about the status of the connection to the Silk cloud.
+     */
+    public void getAppStatus() {
+        AppStatus appStatus = new AppStatus();
+        appStatus.setType(SilkMessageType.APP_STATUS.toString());
+
+        AppStatusCallback.reqGetAppStatus(this, new AppStatusCallback() {
+            @Override
+            public void onResultReceived(AppStatus appStatus) {
+                Log.d(TAG, "app connection status: " + appStatus.getClientConnectionStatus());
+            }
+
+            @Override
+            public void onFailed(String status, String message) {
+                Log.d(TAG, "fail");
+            }
+        }, appStatus);
+    }
+
+    /**
+     * Sent message from the Pando app to the Silk SDK to communicate with the device.
+     */
+    public void sendDeviceMessage() {
+        DeviceMessage deviceMessage = new DeviceMessage();
+        deviceMessage.setType(SilkMessageType.DEVICE_MESSAGE.toString());
+        deviceMessage.setDeviceId("0fe09a0814465449f1c989478fcea4e6254060243b89b3c8f27b03269cbdd199");
+
+        // Sets a payload into the DeviceMessage object
+        DeviceMessage.Payload payload = new DeviceMessage.Payload();
+        payload.setScore("321");
+        payload.setTime(System.currentTimeMillis());
+        deviceMessage.setPayload(payload);
+
+        DeviceMessageCallback.reqSendMessage(this, new DeviceMessageCallback() {
+            @Override
+            public void onResultReceived(DeviceMessage deviceMessage) {
+                Log.d(TAG, "Receive message");
+
+                // Gets a payload from the receive message
+                if (deviceMessage != null && deviceMessage.getPayload() != null) {
+                    DeviceMessage.Payload payload = deviceMessage.getPayload();
+                    Log.d(TAG, "Score: " + payload.getScore() + " time: " + payload.getTime());
+                }
+            }
+
+            @Override
+            public void onFailed(String status, String message) {
+                Log.d(TAG, "send fail");
+            }
+        }, deviceMessage);
     }
 
     @Override

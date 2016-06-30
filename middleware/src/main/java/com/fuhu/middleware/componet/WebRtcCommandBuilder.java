@@ -99,7 +99,7 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
             }
 
             // Get message type for Silk SDK
-            SilkMessageType messageType = mailItem.getSilkMessageType();
+            SilkMessageType messageType = SilkMessageType.lookup(mailItem.getType());
             if (messageType != null) {
                 this.mSilkMessageType = messageType;
             }
@@ -190,6 +190,11 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
     @Override
     public Map<String, DataPart> getDataPartMap() {
         return dataPartMap;
+    }
+
+    public WebRtcCommandBuilder setSilkMessageType(SilkMessageType silkMessageType) {
+        this.mSilkMessageType = silkMessageType;
+        return this;
     }
 
     /**

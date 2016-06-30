@@ -79,38 +79,43 @@ public class PostOfficeProxy implements IPostOfficeProxy {
      * @param command
      */
     private void handleMockData(ICommand command) {
-        // Find a mock response from MockServer
+        // Finds a mock response from MockServer
         IResponse mockResponse = MockServer.getInstance().findResponse(command);
 
         // Checks if MockResponse is exist
-        if (mockResponse != null) {
-            Log.d(TAG, "mock url: " + mockResponse.getURL());
-
-            AMailItem dataItem = mockResponse.getDataObject();
-
-            if (dataItem != null) {
-                Log.d(TAG, "dataItem status: " + dataItem.getStatus());
-                onMailItemUpdate(command, command.getDataObject(), dataItem);
-            } else if (mockResponse.getBody() != null) {
-                // Parsing the json string of MockResponse to java object
-                Log.d(TAG, "body: " + mockResponse.getBody());
-                try {
-                    dataItem = GSONUtil.fromJSON(mockResponse.getBody(), command.getDataModel());
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                    dataItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
-                }
-                onMailItemUpdate(command, command.getDataObject(), dataItem);
-            } else {
-                Log.w(TAG, "No data object and json strong of MockResponse");
-                // No data object and json strong of MockResponse
-                onMailItemUpdate(command, command.getDataObject(),
-                        ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, command.getDataModel()));
-            }
-        } else {
-            Log.w(TAG, "UNKNOWN ERROR");
+        if (mockResponse == null) {
+            Log.w(TAG, "NO_MAILITEM_DATA");
             onMailItemUpdate(command, command.getDataObject(),
-                    ErrorCodeHandler.genErrorItem(ErrorCodeList.UNKNOWN_ERROR, command.getDataModel()));
+                    ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, command.getDataModel()));
+            return;
+        }
+
+        // Gets a data object of the response
+        AMailItem dataItem = mockResponse.getDataObject();
+        if (dataItem != null) {
+            Log.d(TAG, "dataItem status: " + dataItem.getStatus());
+            onMailItemUpdate(command, command.getDataObject(), dataItem);
+
+        } else if (mockResponse.getBody() != null) {
+            // Parsing the json string of MockResponse to java object
+            Log.d(TAG, "body: " + mockResponse.getBody());
+            try {
+                dataItem = GSONUtil.fromJSON(mockResponse.getBody(), command.getDataModel());
+                // Sets default status for this response
+                if (dataItem != null && dataItem.getStatus() == null) {
+                    dataItem.setStatus(ErrorCodeList.Success.getCode());
+                }
+            } catch (JSONException je) {
+                je.printStackTrace();
+                dataItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
+            }
+            onMailItemUpdate(command, command.getDataObject(), dataItem);
+        } else {
+            Log.w(TAG, "No data object and json strong of MockResponse");
+
+            // No data object and json strong of MockResponse
+            onMailItemUpdate(command, command.getDataObject(),
+                    ErrorCodeHandler.genErrorItem(ErrorCodeList.NO_MAILITEM_DATA, command.getDataModel()));
         }
     }
 
@@ -124,10 +129,7 @@ public class PostOfficeProxy implements IPostOfficeProxy {
 //        mPostOffice.doAction(mContext, queryItem, this, parameter);
 //    }
 
-    public static boolean clear() {
-        if (instance != null) {
-            instance = null;
-        }
-        return true;
+    public static void release() {
+        instance = null;
     }
 }

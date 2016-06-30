@@ -1,11 +1,10 @@
 package com.fuhu.middleware.service;
 
-import com.fuhu.middleware.componet.Log;
-import com.fuhu.middleware.control.MD5Visitor;
 import com.fuhu.middleware.contract.ICommand;
 import com.fuhu.middleware.contract.IMD5Visitor;
 import com.fuhu.middleware.contract.IResponse;
 import com.fuhu.middleware.contract.MD5Util;
+import com.fuhu.middleware.control.MD5Visitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,42 +27,56 @@ public class MockServer {
      * Removes all elements from this {@code Map}, leaving it empty.
      */
     public void clearResponseMap() {
-        lookupTable.clear();
+        if (lookupTable != null) {
+            lookupTable.clear();
+        }
+    }
+
+    public static void release() {
+        INSTANCE = null;
+        if (lookupTable != null) {
+            lookupTable.clear();
+        }
+        lookupTable = null;
+        md5Visitor = null;
     }
 
     /**
      * Add the response to ResponseMap
      */
     public void addResponse(IResponse... responses) {
-        if (responses != null && responses.length > 0) {
-            for (IResponse response: responses) {
-                // Checks if response id isn't null
-                if (response != null && response.getURL() != null) {
+        if (responses == null || responses.length == 0) {
+            return;
+        }
 
-                    String key = MD5Util.genMD5Key(response.getURL());
-                    Log.d(TAG, "Url: " + response.getURL());
-                    if (lookupTable.get(key) != null) {
-                        lookupTable.remove(key);
+        for (IResponse response: responses) {
+            if (response != null) {
+                // Generates MD5 key for this response
+                String mockKey = response.genMD5Key(md5Visitor);
+
+//                Log.d(TAG, "add response key: " + mockKey);
+                if (mockKey != null) {
+                    if (lookupTable.get(mockKey) != null) {
+                        lookupTable.remove(mockKey);
                     }
 
-                    Log.d(TAG, "add response key: " + key);
-                    lookupTable.put(key, response);
+                    lookupTable.put(mockKey, response);
                 }
             }
         }
     }
 
     /**
-     * Returns the response of the mapping with the specified url.
-     * @param url the url of request
+     * Returns the response of the mapping with the specified key.
+     * @param key the key of request
      * @return
      */
-    public IResponse findResponse(String url) {
-        if (url != null) {
-            String key = MD5Util.genMD5Key(url);
-            Log.d(TAG, "find url: " + url + " key: " + key);
-            if (key != null) {
-                return lookupTable.get(key);
+    public IResponse findResponse(String key) {
+        if (key != null) {
+            String md5key = MD5Util.genMD5Key(key);
+//            Log.d(TAG, "find key: " + key + " MD5 key: " + md5key);
+            if (md5key != null) {
+                return lookupTable.get(md5key);
             }
         }
         return null;
@@ -77,20 +90,11 @@ public class MockServer {
     public IResponse findResponse(ICommand command) {
         String mockKey = command.getMD5Key(md5Visitor);
 
-        Log.d(TAG, "Find Mock key: " + mockKey);
+//        Log.d(TAG, "Find Mock key: " + mockKey);
         if (mockKey != null) {
 //            printLookupTable();
             return lookupTable.get(mockKey);
         }
         return null;
-    }
-
-    private void printLookupTable() {
-        if (lookupTable != null) {
-            for (String key: lookupTable.keySet()) {
-                IResponse response = lookupTable.get(key);
-                Log.d(TAG,"key: " + key + " url: " + response.getURL() + " body: " + response.getBody());
-            }
-        }
     }
 }

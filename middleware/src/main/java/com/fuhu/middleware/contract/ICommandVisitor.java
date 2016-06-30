@@ -14,7 +14,7 @@ public interface ICommandVisitor {
     /**
      * Checks if the data model have been set up
      */
-    public boolean isValid(IWebRtpCommand iRtpCommand);
+    public boolean isValid(IWebRtcCommand iRtpCommand);
 
     /**
      * Checks if the data model have been set up

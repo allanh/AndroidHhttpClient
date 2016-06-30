@@ -1,5 +1,7 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
+import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.Constants;
 
 import org.json.JSONArray;

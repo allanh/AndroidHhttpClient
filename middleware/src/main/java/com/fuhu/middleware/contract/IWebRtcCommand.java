@@ -1,5 +1,5 @@
 package com.fuhu.middleware.contract;
 
-public interface IWebRtpCommand extends ICommand {
+public interface IWebRtcCommand extends ICommand {
     public SilkMessageType getSilkMessageType();
 }

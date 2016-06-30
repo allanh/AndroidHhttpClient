@@ -1,4 +1,4 @@
-package com.fuhu.middleware.componet;
+package com.fuhu.test.smarthub.componet;
 
 public class ChatMessage {
     private String sender;

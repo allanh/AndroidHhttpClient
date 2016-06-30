@@ -2,14 +2,16 @@ package com.fuhu.middleware.control;
 
 import android.content.Context;
 
+import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.IBleCommand;
 import com.fuhu.middleware.contract.ICommand;
 import com.fuhu.middleware.contract.IHttpCommand;
 import com.fuhu.middleware.contract.IPostOfficeProxy;
 import com.fuhu.middleware.contract.IPostOfficeVisitor;
-import com.fuhu.middleware.contract.IWebRtpCommand;
+import com.fuhu.middleware.contract.IWebRtcCommand;
 
 public class PostOfficeVisitor implements IPostOfficeVisitor {
+    private static final String TAG = PostOfficeVisitor.class.getSimpleName();
     private static IPostOfficeProxy mPostOfficeProxy;
 
     public PostOfficeVisitor(IPostOfficeProxy iPostOfficeProxy) {
@@ -32,8 +34,9 @@ public class PostOfficeVisitor implements IPostOfficeVisitor {
      * Send request using WebRTC Data Channel
      * @param command
      */
-    public void sendRequest(Context context, IWebRtpCommand command) {
-        new PnWebRtcActionProxy(context, mPostOfficeProxy, command).execute();
+    public void sendRequest(Context context, IWebRtcCommand command) {
+        Log.d(TAG, "send request using WebRTC");
+        new MockWebRtcActionProxy(context, mPostOfficeProxy, command).execute();
     }
 
     /**

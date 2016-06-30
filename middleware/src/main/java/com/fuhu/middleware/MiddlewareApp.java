@@ -7,8 +7,8 @@ import android.content.pm.PackageManager;
 import com.fuhu.middleware.control.MailBox;
 import com.fuhu.middleware.control.OkHttpRequest;
 import com.fuhu.middleware.control.PostOfficeProxy;
-import com.fuhu.middleware.control.PubNubHandler;
 import com.fuhu.middleware.control.VolleyHandler;
+import com.fuhu.middleware.service.MockServer;
 
 public class MiddlewareApp {
     public static final String TAG = MiddlewareApp.class.getSimpleName();
@@ -46,14 +46,14 @@ public class MiddlewareApp {
     }
 
     /**
-     * Clear
+     * Releases the Middleware module
      */
     public void destroy() {
-        PostOfficeProxy.clear();
+        PostOfficeProxy.release();
         MailBox.clearMailBox();
         VolleyHandler.release();
-        PubNubHandler.release();
         OkHttpRequest.release();
+        MockServer.release();
         INSTANCE = null;
     }
 

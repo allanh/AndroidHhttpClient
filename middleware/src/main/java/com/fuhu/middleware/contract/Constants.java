@@ -9,6 +9,9 @@ public class Constants {
     /**
      * WebRTC
      */
+    public static final String RECEIVE_WEBRTC_CALL_IN = "com.fuhu.middleware.receiveWebRtcCallIn";
+    public static final String RECEIVE_GET_APP_STATUS = "com.fuhu.middleware.receiveGetAppStatus";
+
     public static final String SHARED_PREFS = "com.fuhu.middleware.SHARED_PREFS";
     public static final String USER_NAME    = "com.fuhu.middleware.SHARED_PREFS.USER_NAME";
     public static final String CALL_USER    = "com.fuhu.middleware.SHARED_PREFS.CALL_USER";

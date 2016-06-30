@@ -6,7 +6,7 @@ import com.fuhu.middleware.contract.ICommandVisitor;
 import com.fuhu.middleware.contract.IMD5Visitor;
 import com.fuhu.middleware.contract.IPostOfficeProxy;
 import com.fuhu.middleware.contract.IPostOfficeVisitor;
-import com.fuhu.middleware.contract.IWebRtpCommand;
+import com.fuhu.middleware.contract.IWebRtcCommand;
 import com.fuhu.middleware.contract.ISchedulingActionProxy;
 import com.fuhu.middleware.contract.SilkMessageType;
 
@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
 
-public class WebRtcCommand implements IWebRtpCommand {
+public class WebRtcCommand implements IWebRtcCommand {
     /** The unique identifier of the request */
     private String mId;
 

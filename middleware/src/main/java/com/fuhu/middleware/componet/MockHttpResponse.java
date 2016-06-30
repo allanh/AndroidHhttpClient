@@ -1,17 +1,13 @@
 package com.fuhu.middleware.componet;
 
 
-import com.fuhu.middleware.control.ErrorCodeHandler;
-import com.fuhu.middleware.contract.GSONUtil;
-import com.fuhu.middleware.contract.IResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fuhu.middleware.contract.IHttpResponse;
+import com.fuhu.middleware.contract.IMD5Visitor;
 
 /**
  * A response for making a mock response
  */
-public class MockResponse implements IResponse {
+public class MockHttpResponse implements IHttpResponse {
     private String url;
     private Class<? extends AMailItem> dataModel;
     private AMailItem dataObject;
@@ -20,7 +16,7 @@ public class MockResponse implements IResponse {
     /**
      * Default constructor
      */
-    public MockResponse() {
+    public MockHttpResponse() {
         body = "{\"status\":\"0\"}";
     }
 
@@ -34,7 +30,7 @@ public class MockResponse implements IResponse {
      * @param url The url of the paramter
      * @return The Multipart request for chaining calls
      */
-    public MockResponse setURL(String url) {
+    public MockHttpResponse setURL(String url) {
         this.url = url;
         return this;
     }
@@ -44,20 +40,10 @@ public class MockResponse implements IResponse {
     }
 
     public AMailItem getDataObject() {
-        if (dataObject != null) {
-            return dataObject;
-        } else if (dataModel != null && body != null) {
-            try {
-                return GSONUtil.fromJSON(new JSONObject(body), dataModel);
-            } catch (JSONException je) {
-                je.printStackTrace();
-                return ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
-            }
-        }
-        return null;
+        return dataObject;
     }
 
-    public MockResponse setDataObject(AMailItem dataObject) {
+    public MockHttpResponse setDataObject(AMailItem dataObject) {
         this.dataObject = dataObject;
         return this;
     }
@@ -68,14 +54,18 @@ public class MockResponse implements IResponse {
 
     /** @deprecated */
     @Deprecated
-    public MockResponse setBody(Class<? extends AMailItem> dataModel, String body) {
+    public MockHttpResponse setBody(Class<? extends AMailItem> dataModel, String body) {
         this.dataModel = dataModel;
         this.body = body;
         return this;
     }
 
-    public MockResponse setBody(String body) {
+    public MockHttpResponse setBody(String body) {
         this.body = body;
         return this;
+    }
+
+    public String genMD5Key(IMD5Visitor imd5Visitor) {
+        return imd5Visitor.genKey(this);
     }
 }

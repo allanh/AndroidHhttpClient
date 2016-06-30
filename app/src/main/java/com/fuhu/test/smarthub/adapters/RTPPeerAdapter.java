@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.fuhu.test.smarthub.R;
-import com.fuhu.middleware.componet.ChannelItem.RtpChannel;
+import com.fuhu.test.smarthub.componet.ChannelItem.RtpChannel;
 
 import java.util.List;
 

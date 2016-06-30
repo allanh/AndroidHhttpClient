@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.fuhu.test.smarthub.R;
-import com.fuhu.middleware.componet.ChatMessage;
+import com.fuhu.test.smarthub.componet.ChatMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

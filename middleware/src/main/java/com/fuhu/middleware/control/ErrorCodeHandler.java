@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
+import com.fuhu.middleware.componet.MailItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,7 +60,7 @@ public class ErrorCodeHandler {
      * Generate error item
      */
     public static AMailItem genErrorItem(ErrorCodeList errorCodeList) {
-        return genErrorItem(errorCodeList, AMailItem.class);
+        return genErrorItem(errorCodeList, MailItem.class);
     }
 
     /**
@@ -68,7 +69,7 @@ public class ErrorCodeHandler {
     public static AMailItem genErrorItem(ErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
         try {
             Object object = (classOfT != null) ? classOfT.newInstance()
-                                            : AMailItem.class.newInstance();
+                                            : MailItem.class.newInstance();
 
             /** Invoking method with a string to set status */
             Method setStatusMethod = AMailItem.class.getDeclaredMethod("setStatus", String.class);

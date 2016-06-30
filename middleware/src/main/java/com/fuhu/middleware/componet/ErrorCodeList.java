@@ -36,6 +36,11 @@ public enum ErrorCodeList implements IErrorCodeList {
     VOLLEY_SERVER_ERROR("-9002", "VOLLEY SERVER ERROR"),
     VOLLEY_NETWORK_ERROR("-9003", "VOLLEY NETWORK ERROR"),
     VOLLEY_PARSE_ERROR("-9004", "VOLLEY PARSE ERROR"),
+
+    /**
+     * PubNub
+     */
+    PUBNUB_ERROR("-9010", "PubnubError"),
     ;
 
     private String 	errorCode		 = null;
