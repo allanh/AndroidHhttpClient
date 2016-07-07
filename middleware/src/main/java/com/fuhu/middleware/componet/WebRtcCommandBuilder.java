@@ -1,5 +1,6 @@
 package com.fuhu.middleware.componet;
 
+import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.GSONUtil;
 import com.fuhu.middleware.contract.ICommandBuilder;
 import com.fuhu.middleware.contract.SilkMessageType;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebRtcCommandBuilder implements ICommandBuilder {
+    private static final String TAG = WebRtcCommandBuilder.class.getSimpleName();
     private String id;
     private Class<? extends AMailItem> dataModel;
     private AMailItem dataObject;
@@ -19,6 +21,8 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
     private boolean shouldCache;
     private Map<String, DataPart> dataPartMap;
     private SilkMessageType mSilkMessageType;
+    private PayloadType mPayloadType;
+    private Class<? extends AMailItem> mPayloadModel;
 
     public WebRtcCommandBuilder() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -35,6 +39,8 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
         this.shouldCache = webRtpCommand.shouldCache();
         this.dataPartMap = webRtpCommand.getDataPartMap();
         this.mSilkMessageType = webRtpCommand.getSilkMessageType();
+        this.mPayloadType = webRtpCommand.getPayloadType();
+        this.mPayloadModel = webRtpCommand.getPayloadModel();
     }
 
     /**
@@ -54,7 +60,7 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
     }
 
     /**
-     * Sets the class of the dataObject
+     * Sets the data model of the dataObject
      */
     @Override
     public WebRtcCommandBuilder setDataModel(Class<? extends AMailItem> dataModel) {
@@ -74,16 +80,24 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
     public WebRtcCommandBuilder setDataObject(AMailItem mailItem, String... keys) {
         this.dataObject = mailItem;
         if (mailItem != null) {
+            // Get message type for Silk SDK
+            SilkMessageType messageType = SilkMessageType.lookup(mailItem.getType());
+            if (messageType != null) {
+                this.mSilkMessageType = messageType;
+            }
+
+            // Checks if the message type is {@link SilkMessageType#DEVICE_MESSAGE}
+            if (SilkMessageType.DEVICE_MESSAGE.equals(messageType)) {
+                return setDataObject(mailItem);
+            }
+
             try {
-                if (keys != null && keys.length > 0) {
-                    this.jsonObject = GSONUtil.toJSON(mailItem, keys);
-                } else {
-                    // convert all key-value pairs
-                    this.jsonObject = GSONUtil.toJSON(mailItem);
-                }
+                this.jsonObject = GSONUtil.toJSON(mailItem, keys);
             } catch (JSONException je) {
                 je.printStackTrace();
             }
+
+            Log.d(TAG, "json: " + this.jsonObject.toString());
         }
         return this;
     }
@@ -91,17 +105,27 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
     public WebRtcCommandBuilder setDataObject(AMailItem mailItem) {
         this.dataObject = mailItem;
         if (mailItem != null) {
+            // Get message type for Silk SDK
+            SilkMessageType messageType = SilkMessageType.lookup(mailItem.getType());
+            if (messageType != null) {
+                this.mSilkMessageType = messageType;
+            }
+
+            /**
+             * Checks if the message type is {@link SilkMessageType#DEVICE_MESSAGE}
+             * to set the payload type and data model of payload
+             */
+            if (SilkMessageType.DEVICE_MESSAGE.equals(messageType)) {
+                MessageItem messageItem = (MessageItem) mailItem;
+                setPayloadType(messageItem.getPayloadId());
+                setPayloadModel(messageItem.getPayloadModel());
+            }
+
             // convert all key-value pairs
             try {
                 this.jsonObject = GSONUtil.toJSON(mailItem);
             } catch (JSONException je) {
                 je.printStackTrace();
-            }
-
-            // Get message type for Silk SDK
-            SilkMessageType messageType = SilkMessageType.lookup(mailItem.getType());
-            if (messageType != null) {
-                this.mSilkMessageType = messageType;
             }
         }
         return this;
@@ -192,21 +216,69 @@ public class WebRtcCommandBuilder implements ICommandBuilder {
         return dataPartMap;
     }
 
+    /**
+     * Gets the silk message type of the command
+     */
+    public SilkMessageType getSilkMessageType() {
+        return  mSilkMessageType;
+    }
+
+    /**
+     * Sets the silk message type of the command
+     */
     public WebRtcCommandBuilder setSilkMessageType(SilkMessageType silkMessageType) {
         this.mSilkMessageType = silkMessageType;
         return this;
     }
 
     /**
-     * Gets the silk message type of the dataObject
+     * Gets the payload type of the command
      */
-    public SilkMessageType getSilkMessageType() {
-        return  mSilkMessageType;
+    public PayloadType getPayloadType() {
+        return mPayloadType;
+    }
+
+    /**
+     * Sets the payload type of the command
+     * @param payloadId payload string
+     */
+    public WebRtcCommandBuilder setPayloadType(String payloadId) {
+        this.mPayloadType = PayloadType.lookup(payloadId);
+        return this;
+    }
+
+    /**
+     * Sets the payload type of the command
+     * @param payloadType payload object
+     */
+    public WebRtcCommandBuilder setPayloadType(PayloadType payloadType) {
+        this.mPayloadType = payloadType;
+        return this;
+    }
+
+    /**
+     * Gets the data model of the payload data
+     */
+    public Class<? extends AMailItem> getPayloadModel() {
+        return mPayloadModel;
+    }
+
+    /**
+     * Sets the data model of the payload data
+     */
+    public WebRtcCommandBuilder setPayloadModel(Class<? extends AMailItem> payloadModel) {
+        this.mPayloadModel = payloadModel;
+        return this;
     }
 
     public WebRtcCommand build() {
         if (mSilkMessageType == null) throw new IllegalStateException("Invalid message type");
         if (dataModel ==null) throw new IllegalStateException("dataModel == null");
+        if (SilkMessageType.DEVICE_MESSAGE.equals(mSilkMessageType)
+                && (mPayloadType == null || mPayloadModel == null)) {
+            throw new IllegalStateException("Invalid Payload parameters");
+        }
         return new WebRtcCommand(this);
     }
+
 }

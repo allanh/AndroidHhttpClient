@@ -8,14 +8,12 @@ import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MailTask;
-import com.fuhu.middleware.contract.GSONUtil;
 import com.fuhu.middleware.contract.ICommand;
+import com.fuhu.middleware.contract.IJsonVisitor;
 import com.fuhu.middleware.contract.IPostOfficeProxy;
 import com.fuhu.middleware.contract.IPostOfficeVisitor;
 import com.fuhu.middleware.contract.IResponse;
 import com.fuhu.middleware.service.MockServer;
-
-import org.json.JSONException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,11 +25,13 @@ public class PostOfficeProxy implements IPostOfficeProxy {
     private static PostOfficeProxy instance = new PostOfficeProxy();
 
     private IPostOfficeVisitor mPostOfficeVisitor;
+    private IJsonVisitor mJsonVisitor;
     private Map<ICommand, MailTask> mMailTaskList;
 
     private PostOfficeProxy(){
-         this.mMailTaskList = new HashMap<ICommand, MailTask>();
-         this.mPostOfficeVisitor = new PostOfficeVisitor(this);
+        this.mMailTaskList = new HashMap<ICommand, MailTask>();
+        this.mPostOfficeVisitor = new PostOfficeVisitor(this);
+        this.mJsonVisitor = new JsonVisitor();
     }
 
     public static PostOfficeProxy getInstance(){
@@ -91,25 +91,23 @@ public class PostOfficeProxy implements IPostOfficeProxy {
         }
 
         // Gets a data object of the response
-        AMailItem dataItem = mockResponse.getDataObject();
-        if (dataItem != null) {
-            Log.d(TAG, "dataItem status: " + dataItem.getStatus());
-            onMailItemUpdate(command, command.getDataObject(), dataItem);
+        AMailItem resultItem = mockResponse.getDataObject();
+        if (resultItem != null) {
+            Log.d(TAG, "resultItem status: " + resultItem.getStatus());
+            onMailItemUpdate(command, command.getDataObject(), resultItem);
 
         } else if (mockResponse.getBody() != null) {
-            // Parsing the json string of MockResponse to java object
             Log.d(TAG, "body: " + mockResponse.getBody());
-            try {
-                dataItem = GSONUtil.fromJSON(mockResponse.getBody(), command.getDataModel());
-                // Sets default status for this response
-                if (dataItem != null && dataItem.getStatus() == null) {
-                    dataItem.setStatus(ErrorCodeList.Success.getCode());
-                }
-            } catch (JSONException je) {
-                je.printStackTrace();
-                dataItem = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
+
+            // Parsing the json string of MockResponse to java object
+            resultItem = mockResponse.parseJson(mJsonVisitor, command);
+
+            // Sets default status for this response
+            if (resultItem != null && resultItem.getStatus() == null) {
+                resultItem.setStatus(ErrorCodeList.Success.getCode());
             }
-            onMailItemUpdate(command, command.getDataObject(), dataItem);
+
+            onMailItemUpdate(command, command.getDataObject(), resultItem);
         } else {
             Log.w(TAG, "No data object and json strong of MockResponse");
 

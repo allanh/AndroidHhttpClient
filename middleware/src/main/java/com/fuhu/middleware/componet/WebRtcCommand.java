@@ -2,6 +2,7 @@ package com.fuhu.middleware.componet;
 
 import android.content.Context;
 
+import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.ICommandVisitor;
 import com.fuhu.middleware.contract.IMD5Visitor;
 import com.fuhu.middleware.contract.IPostOfficeProxy;
@@ -40,6 +41,10 @@ public class WebRtcCommand implements IWebRtcCommand {
     /** The message type of the request */
     private SilkMessageType mSilkMessageType;
 
+    private PayloadType mPayloadType;
+
+    private Class<? extends AMailItem> mPayloadModel;
+
     public WebRtcCommand(WebRtcCommandBuilder builder) {
         this.mId = builder.getID() != null ? builder.getID() : String.valueOf(System.currentTimeMillis());
         this.mDataModel = builder.getDataModel();
@@ -49,6 +54,8 @@ public class WebRtcCommand implements IWebRtcCommand {
         this.shouldCache = builder.shouldCache();
         this.mDataPartMap = builder.getDataPartMap();
         this.mSilkMessageType = builder.getSilkMessageType();
+        this.mPayloadType = builder.getPayloadType();
+        this.mPayloadModel = builder.getPayloadModel();
     }
 
     @Override
@@ -94,6 +101,16 @@ public class WebRtcCommand implements IWebRtcCommand {
     @Override
     public SilkMessageType getSilkMessageType() {
         return mSilkMessageType;
+    }
+
+    @Override
+    public PayloadType getPayloadType() {
+        return mPayloadType;
+    }
+
+    @Override
+    public Class<? extends AMailItem> getPayloadModel() {
+        return mPayloadModel;
     }
 
     @Override

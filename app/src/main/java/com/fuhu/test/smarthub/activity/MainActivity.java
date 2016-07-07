@@ -12,13 +12,15 @@ import android.widget.TextView;
 import com.fuhu.middleware.MiddlewareConfig;
 import com.fuhu.middleware.componet.AMailItem;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.SilkMessageType;
 import com.fuhu.test.smarthub.R;
 import com.fuhu.test.smarthub.callback.AppStatusCallback;
 import com.fuhu.test.smarthub.callback.DeviceMessageCallback;
 import com.fuhu.test.smarthub.callback.WebRtcInitCallback;
 import com.fuhu.test.smarthub.componet.AppStatus;
-import com.fuhu.test.smarthub.componet.DeviceMessage;
+import com.fuhu.test.smarthub.componet.DeviceInfoItem;
+import com.fuhu.middleware.componet.MessageItem;
 import com.fuhu.test.smarthub.componet.InitItem;
 import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
@@ -103,11 +105,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (MiddlewareConfig.isRecognizingSpeech) {
-            SpeechRecognizeManager.getInstance(this).startService();
-            SpeechRecognizeManager.getInstance(this).registerReceiver(
-                    TextToSpeechManager.getInstance(this), tv_response);
-        }
+//        if (MiddlewareConfig.isRecognizingSpeech) {
+//            SpeechRecognizeManager.getInstance(this).startService();
+//            SpeechRecognizeManager.getInstance(this).registerReceiver(
+//                    TextToSpeechManager.getInstance(this), tv_response);
+//        }
 
         initWebRtc();
         getAppStatus();
@@ -232,25 +234,41 @@ public class MainActivity extends AppCompatActivity {
      * Sent message from the Pando app to the Silk SDK to communicate with the device.
      */
     public void sendDeviceMessage() {
-        DeviceMessage deviceMessage = new DeviceMessage();
+        MessageItem deviceMessage = new MessageItem();
         deviceMessage.setType(SilkMessageType.DEVICE_MESSAGE.toString());
         deviceMessage.setDeviceId("0fe09a0814465449f1c989478fcea4e6254060243b89b3c8f27b03269cbdd199");
 
-        // Sets a payload into the DeviceMessage object
-        DeviceMessage.Payload payload = new DeviceMessage.Payload();
-        payload.setScore("321");
-        payload.setTime(System.currentTimeMillis());
-        deviceMessage.setPayload(payload);
+        // Creates a DeviceInfoItem object for the payload
+        DeviceInfoItem deviceInfoItem = new DeviceInfoItem();
+        DeviceInfoItem.DeviceInfo deviceInfo = new DeviceInfoItem.DeviceInfo();
+        deviceInfo.setId("111");
+        deviceInfo.setName("testtttt");
+        deviceInfoItem.setDeviceInfo(deviceInfo);
+
+        // Sets a payload and payloadId to the MessageItem object
+        deviceMessage.setPayloadId(PayloadType.PushCheckDeviceInfo.getId());
+        deviceMessage.setPayload(deviceInfoItem);
 
         DeviceMessageCallback.reqSendMessage(this, new DeviceMessageCallback() {
             @Override
-            public void onResultReceived(DeviceMessage deviceMessage) {
+            public void onResultReceived(MessageItem deviceMessage) {
                 Log.d(TAG, "Receive message");
 
-                // Gets a payload from the receive message
-                if (deviceMessage != null && deviceMessage.getPayload() != null) {
-                    DeviceMessage.Payload payload = deviceMessage.getPayload();
-                    Log.d(TAG, "Score: " + payload.getScore() + " time: " + payload.getTime());
+                if (deviceMessage != null) {
+                    Log.d(TAG, "deviceId: " + deviceMessage.getDeviceId());
+
+                    if (deviceMessage.getPayload() != null) {
+                        Log.d(TAG, "payload isn't null");
+
+                        DeviceInfoItem infoItem = (DeviceInfoItem) deviceMessage.getPayload();
+                        if (infoItem != null) {
+                            Log.d(TAG, "info item isn't null");
+                            DeviceInfoItem.DeviceInfo deviceInfo = infoItem.getDeviceInfo();
+                            if (deviceInfo != null) {
+                                Log.d(TAG, "id: " + deviceInfo.getId() + " name: " + deviceInfo.getName());
+                            }
+                        }
+                    }
                 }
             }
 

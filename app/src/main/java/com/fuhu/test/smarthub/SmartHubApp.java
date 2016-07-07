@@ -6,6 +6,7 @@ import com.fuhu.middleware.MiddlewareApp;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockWebRtcResponse;
+import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.SilkMessageType;
 import com.fuhu.middleware.service.MockServer;
 import com.fuhu.test.smarthub.componet.AppStatus;
@@ -80,7 +81,7 @@ public class SmartHubApp extends Application {
         initItem.setType(SilkMessageType.INITIALIZED.toString());
 
         MockWebRtcResponse initResponse = new MockWebRtcResponse()
-                .setType(SilkMessageType.INITIALIZED.toString())
+                .setType(SilkMessageType.INITIALIZED)
                 .setDataObject(initItem);
 
         /** App status */
@@ -91,21 +92,36 @@ public class SmartHubApp extends Application {
         appStatus.setBleStatus("BLUETOOTH_DISABLED");
 
         MockWebRtcResponse appStatusResponse = new MockWebRtcResponse()
-                .setType(SilkMessageType.APP_STATUS.toString())
+                .setType(SilkMessageType.APP_STATUS)
                 .setDataObject(appStatus);
 
 
         /**
          * Device Message, The payload field may contain any arbitrary data structure.
+         * Get hub info
          */
         String deviceMessage = "{\"type\": \"DEVICE_MESSAGE\", " +
                 "\"deviceId\": \"0fe09a0814465449f1c989478fcea4e6254060243b89b3c8f27b03269cbdd199\"," +
                 "\"payload\": {\"score\": \"12345\", \"time\":1234567890 }}";
 
         MockWebRtcResponse deviceMessageResponse = new MockWebRtcResponse()
-                .setType(SilkMessageType.DEVICE_MESSAGE.toString())
+                .setType(SilkMessageType.DEVICE_MESSAGE)
+                .setPayloadType(PayloadType.GetHubInfo)
                 .setBody(deviceMessage);
 
-        MockServer.getInstance().addResponse(initResponse, appStatusResponse, deviceMessageResponse);
+        /**
+         * Check device info
+         */
+        String deviceInfo = "{\"type\": \"DEVICE_MESSAGE\", " +
+                "\"deviceId\": \"0fe09a0814465449f1c989478fcea4e6254060243b89b3c8f27b03269cbdd199\"," +
+                "\"payload\": {\"device_info\": {\"id\": \"41j\", \"name\": \"apple\"} }}";
+
+        MockWebRtcResponse deviceInfoResponse = new MockWebRtcResponse()
+                .setType(SilkMessageType.DEVICE_MESSAGE)
+                .setPayloadType(PayloadType.PushCheckDeviceInfo)
+                .setBody(deviceInfo);
+
+        MockServer.getInstance().addResponse(initResponse, appStatusResponse,
+                deviceMessageResponse, deviceInfoResponse);
     }
 }

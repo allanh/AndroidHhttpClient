@@ -58,6 +58,8 @@ public class GSONUtil {
     public static JSONObject toJSON(AMailItem mailItem) throws JSONException{
         if (mailItem != null) {
             return mailItem.toJSONObject(getGson());
+        } else {
+            Log.d(TAG, "mailItem is null");
         }
         return new JSONObject();
     }
@@ -70,7 +72,7 @@ public class GSONUtil {
      */
     public static JSONObject toJSON(AMailItem mailItem, String... keys) throws JSONException {
         JsonObject newJSONObject = new JsonObject();
-        if (keys == null)
+        if (keys == null || keys.length == 0)
             return toJSON(mailItem);
 
         if (mailItem != null) {

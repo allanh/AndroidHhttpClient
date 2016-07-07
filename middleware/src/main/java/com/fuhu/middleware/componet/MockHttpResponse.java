@@ -1,7 +1,9 @@
 package com.fuhu.middleware.componet;
 
 
+import com.fuhu.middleware.contract.ICommand;
 import com.fuhu.middleware.contract.IHttpResponse;
+import com.fuhu.middleware.contract.IJsonVisitor;
 import com.fuhu.middleware.contract.IMD5Visitor;
 
 /**
@@ -65,7 +67,13 @@ public class MockHttpResponse implements IHttpResponse {
         return this;
     }
 
+    @Override
     public String genMD5Key(IMD5Visitor imd5Visitor) {
         return imd5Visitor.genKey(this);
+    }
+
+    @Override
+    public AMailItem parseJson(IJsonVisitor iJsonVisitor, ICommand command) {
+        return iJsonVisitor.parse(this, command);
     }
 }

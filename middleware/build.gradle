@@ -34,10 +34,6 @@ android {
     }
 }
 
-task sourceJar(type: Jar) {
-    classifier "source"
-}
-
 publishing {
     publications {
         repositories.maven {

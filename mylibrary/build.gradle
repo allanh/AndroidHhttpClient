@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+//publishing {
+//    publications {
+//        repositories.maven {
+//            url 'http://archiva.fuhu.tw:8080/repository/internal/'
+//            credentials {
+//                username "observer"
+//                password "fuhu123"
+//            }
+//        }
+//        maven(MavenPublication) {
+//            artifacts {
+//                groupId 'com.fuhu.pando'
+//                artifactId 'mylibrary'
+//                version '1.0'
+//                artifact 'build/outputs/aar/mylibrary-release.aar'
+//                pom.withXml {
+//                    def dependenciesNode = asNode().appendNode('dependencies')
+//                    //Iterate over the compile dependencies
+//                    configurations.compile.allDependencies.each {
+//                        def dependencyNode = dependenciesNode.appendNode('dependency')
+//                        dependencyNode.appendNode('groupId', it.group)
+//                        dependencyNode.appendNode('artifactId', it.name)
+//                        dependencyNode.appendNode('version', it.version)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+
+dependencies {
+//    compile fileTree(dir: 'libs', include: ['*.jar'])
+//    testCompile 'junit:junit:4.12'
+//    compile 'com.android.support:appcompat-v7:23.3.0'
+}

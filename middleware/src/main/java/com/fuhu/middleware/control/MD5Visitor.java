@@ -10,6 +10,7 @@ import com.fuhu.middleware.contract.IResponse;
 import com.fuhu.middleware.contract.IWebRtcCommand;
 import com.fuhu.middleware.contract.IWebRtcResponse;
 import com.fuhu.middleware.contract.MD5Util;
+import com.fuhu.middleware.contract.SilkMessageType;
 
 public class MD5Visitor implements IMD5Visitor {
     private static final String TAG = MD5Visitor.class.getSimpleName();
@@ -26,7 +27,14 @@ public class MD5Visitor implements IMD5Visitor {
     }
 
     public String getKey(IWebRtcCommand command) {
-        return MD5Util.genMD5Key(command.getSilkMessageType().toString());
+        String key = command.getSilkMessageType().toString();
+
+        // Appends payload id
+        if (command.getSilkMessageType().equals(SilkMessageType.DEVICE_MESSAGE)) {
+            key += command.getPayloadType().getId();
+        }
+//        Log.d(TAG, "key: " + key);
+        return MD5Util.genMD5Key(key);
     }
 
     public String getKey(IBleCommand command) {
@@ -44,7 +52,13 @@ public class MD5Visitor implements IMD5Visitor {
         return  MD5Util.genMD5Key(response.getURL());
     }
     public String genKey(IWebRtcResponse response) {
-        return MD5Util.genMD5Key(response.getType());
+        String key = response.getType();
+
+        if (response.getType().equals(SilkMessageType.DEVICE_MESSAGE.toString())) {
+            key += response.getPayloadType().getId();
+        }
+
+        return MD5Util.genMD5Key(key);
     }
     public String genKey(IBleResponse response) {
         return null;

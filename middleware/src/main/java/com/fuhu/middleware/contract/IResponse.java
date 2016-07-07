@@ -10,9 +10,16 @@ public interface IResponse  extends Serializable {
     public String getBody();
 
     /**
-     * Gets the MD5 Key of this request
+     * Gets the MD5 Key of this response
      * @param imd5Visitor
      * @return
      */
     public String genMD5Key(IMD5Visitor imd5Visitor);
+
+    /**
+     * Parses the json string from the response
+     * @param iJsonVisitor
+     * @return
+     */
+    public AMailItem parseJson(IJsonVisitor iJsonVisitor, ICommand command);
 }
