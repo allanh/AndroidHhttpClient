@@ -40,7 +40,7 @@ public class SmartHubApp extends Application {
 
     private void initMockData() {
         // Tracking mock response
-//        MockResponse trackResponse = new MockResponse()
+//        MockHttpResponse trackResponse = new MockHttpResponse()
 //                .setURL("http://ec2-54-201-90-113.us-west-2.compute.amazonaws.com:8080/IITService/tracking/voicetracking")
 //                .setBody("{\"status\":\"0\"}");
 //
@@ -49,7 +49,7 @@ public class SmartHubApp extends Application {
 //        iftttItem.setStatus(ErrorCodeList.Success.getCode());
 //        iftttItem.setValue1("ifttt test");
 //
-//        MockResponse iftttResponse = new MockResponse()
+//        MockHttpResponse iftttResponse = new MockHttpResponse()
 //                .setURL("https://maker.ifttt.com/trigger/aws_test/with/key/bSFARZ-rJzNywhtItAh4IS")
 //                .setDataObject(iftttItem);
 //
@@ -120,6 +120,17 @@ public class SmartHubApp extends Application {
                 .setType(SilkMessageType.DEVICE_MESSAGE)
                 .setPayloadType(PayloadType.PushCheckDeviceInfo)
                 .setBody(deviceInfo);
+
+//        try {
+//            Bundle bundle = GSONUtil.toBundle(new JSONObject(deviceInfo));
+//            Log.d(TAG, "json to bundle: " + bundle.toString());
+//
+//            JSONObject jsonObject = GSONUtil.toJSON(bundle);
+//            Log.d(TAG, "bundle to json: " + jsonObject.toString());
+//        } catch (JSONException je) {
+//            je.printStackTrace();
+//        }
+//        MockData.testMockData();
 
         MockServer.getInstance().addResponse(initResponse, appStatusResponse,
                 deviceMessageResponse, deviceInfoResponse);

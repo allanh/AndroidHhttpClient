@@ -1,8 +1,7 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-def VERSION = "1.5.0711"
+def VERSION = "1.6.0805"
 
 android {
     compileSdkVersion 23
@@ -11,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 8
+        versionCode 9
         versionName VERSION
     }
 
@@ -71,7 +70,7 @@ publishing {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-//    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
 
     compile('com.android.volley:volley:1.0.0') {
         transitive = true

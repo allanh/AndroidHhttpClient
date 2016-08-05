@@ -11,16 +11,19 @@ import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
 import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.Log;
+import com.fuhu.middleware.componet.MessageItem;
 import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.SilkMessageType;
 import com.fuhu.test.smarthub.R;
 import com.fuhu.test.smarthub.callback.AppStatusCallback;
 import com.fuhu.test.smarthub.callback.DeviceMessageCallback;
+import com.fuhu.test.smarthub.callback.IFTTTCallback;
 import com.fuhu.test.smarthub.callback.WebRtcInitCallback;
 import com.fuhu.test.smarthub.componet.AppStatus;
 import com.fuhu.test.smarthub.componet.DeviceInfoItem;
-import com.fuhu.middleware.componet.MessageItem;
+import com.fuhu.test.smarthub.componet.IFTTTItem;
 import com.fuhu.test.smarthub.componet.InitItem;
 import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
@@ -105,15 +108,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+//        testIfttt();
+
 //        if (MiddlewareConfig.isRecognizingSpeech) {
 //            SpeechRecognizeManager.getInstance(this).startService();
 //            SpeechRecognizeManager.getInstance(this).registerReceiver(
 //                    TextToSpeechManager.getInstance(this), tv_response);
 //        }
 
-        initWebRtc();
-        getAppStatus();
-        sendDeviceMessage();
+//        initWebRtc();
+//        getAppStatus();
+//        sendDeviceMessage();
 
 //        if (MiddlewareConfig.enableGCM) {
 //            GCMManager.getInstance(this).startService();
@@ -188,6 +193,23 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            });
 //        }
+    }
+
+    private void testIfttt() {
+        IFTTTItem iftttItem = new IFTTTItem();
+        iftttItem.setStatus(ErrorCodeList.Success.getCode());
+        iftttItem.setValue1("ifttt test");
+
+        IFTTTCallback.reqSend(this, new IFTTTCallback() {
+            @Override
+            public void onIftttReceived(IFTTTItem iftttItem) {
+            }
+
+            @Override
+            public void onFailed(String status, String message) {
+
+            }
+        }, iftttItem);
     }
 
     /**

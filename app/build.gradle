@@ -38,4 +38,5 @@ dependencies {
     //    compile('me.kevingleason:pnwebrtc:1.0.6@aar');
     //    compile 'com.fuhu.pando:middleware:1.4.1'
     compile project(':middleware')
+//    compile project(':mylibrary')
 }

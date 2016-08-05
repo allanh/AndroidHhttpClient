@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -53,6 +54,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     private boolean shouldCache;
 
     private static int retry_count = 0;
+    private int mStatusCode;
 
     private static Executor executorGeneral = Executors.newFixedThreadPool(10);
     private static OkHttpClient okHttpClient = new OkHttpClient();
@@ -70,6 +72,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
         this.shouldCache = command.shouldCache();
         this.mHeaderPair = command.getHeaders();
         this.mDataPartMap = command.getDataPartMap();
+        mStatusCode = -1;
     }
 
     public void execute() {
@@ -100,16 +103,23 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             okhttp3.Response response = OkHttpRequest.getInstance(mContext).sendMultiPartRequest(mCurrentCommand);
 
             if (response != null) {
-                try {
-                    parseJsonObject(response.body().string());
-                } catch (IOException ie) {
-                    ie.printStackTrace();
-                    onCommandFailed(ErrorCodeList.VOLLEY_NETWORK_ERROR, mCurrentCommand.getDataModel());
+                if (response.body() != null) {
+                    try {
+                        parseJsonObject(response.body().string());
+                    } catch (IOException ie) {
+                        ie.printStackTrace();
+                        onCommandFailed(ErrorCodeList.VOLLEY_NETWORK_ERROR, mCurrentCommand.getDataModel());
+                    }
+                // Check if the HTTP status code is Ok
+                } else if (response.code() != HttpURLConnection.HTTP_OK) {
+                    mObtainItem = ErrorCodeHandler.genSuccessItem(mCurrentCommand.getDataModel());
+                    onCommandComplete();
+                } else {
+                    onCommandFailed(ErrorCodeList.UNKNOWN_ERROR, mCurrentCommand.getDataModel());
                 }
             } else {
                 onCommandFailed(ErrorCodeList.UNKNOWN_ERROR, mCurrentCommand.getDataModel());
             }
-
         } else {
             if (mHeaderPair != null) {
                 for (String key : mHeaderPair.keySet()) {
@@ -123,18 +133,19 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                     return (mHeaderPair != null) ? mHeaderPair : super.getHeaders();
                 }
 
-            /*
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                Map<String, String> responseHeaders = response.headers;
-                for (String key : responseHeaders.keySet()) {
-                    Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
+                @Override
+                protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                    /*
+                    Map<String, String> responseHeaders = response.headers;
+                    for (String key : responseHeaders.keySet()) {
+                        Log.d(TAG, "cache key: " + key + " value: " + responseHeaders.get(key));
+                    }
+                    */
+                    Log.d(TAG, "response code: " + response.statusCode);
+                    mStatusCode = response.statusCode;
+                    return super.parseNetworkResponse(response);
                 }
-                return super.parseNetworkResponse(response);
-            }
-            */
             };
-
 
             if (mId != null) {
                 jsonObjectRequest.setTag(mId);
@@ -192,7 +203,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     }
 
     private void parseJsonObject(JSONObject jsonObject) {
-        if (jsonObject != null && mCurrentCommand != null && mCurrentCommand.getDataModel() != null) {
+        if (jsonObject != null) {
             Object object = null;
 
             // Parsing json object to data object
@@ -203,8 +214,10 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
                 object = ErrorCodeHandler.genErrorItem(ErrorCodeList.GSON_PARSE_ERROR);
             }
 
+            // Set the original json object into ObtainItem
             if (object != null) {
                 mObtainItem = (AMailItem) object;
+                mObtainItem.setOriginalJSONObject(jsonObject);
             } else {
                 mObtainItem = null;
             }
@@ -243,6 +256,14 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             } else if (volleyError instanceof ParseError) {
                 Log.e(TAG, "Parse Error");
                 errorCodeList = ErrorCodeList.VOLLEY_PARSE_ERROR;
+                ParseError parseError = (ParseError) volleyError;
+
+                // Check if the HTTP status code is Ok
+                if (mStatusCode == HttpURLConnection.HTTP_OK) {
+                    mObtainItem = ErrorCodeHandler.genSuccessItem(mCurrentCommand.getDataModel());
+                    onCommandComplete();
+                    return;
+                }
             }
 
             NetworkResponse response = volleyError.networkResponse;

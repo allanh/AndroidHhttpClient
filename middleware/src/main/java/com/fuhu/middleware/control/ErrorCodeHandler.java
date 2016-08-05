@@ -64,6 +64,13 @@ public class ErrorCodeHandler {
     }
 
     /**
+     * Generate Success item
+     */
+    public static AMailItem genSuccessItem(Class<? extends AMailItem> classOfT) {
+        return genErrorItem(ErrorCodeList.Success, classOfT);
+    }
+
+    /**
      * Generate error item with class type
      */
     public static AMailItem genErrorItem(ErrorCodeList errorCodeList, Class<? extends AMailItem> classOfT) {
