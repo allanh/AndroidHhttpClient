@@ -3,6 +3,7 @@ package com.fuhu.test.smarthub;
 import android.app.Application;
 
 import com.fuhu.middleware.MiddlewareApp;
+import com.fuhu.middleware.MiddlewareConfig;
 import com.fuhu.middleware.componet.ErrorCodeList;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MockWebRtcResponse;
@@ -134,5 +135,7 @@ public class SmartHubApp extends Application {
 
         MockServer.getInstance().addResponse(initResponse, appStatusResponse,
                 deviceMessageResponse, deviceInfoResponse);
+
+        MiddlewareConfig.enableDebugMode(true);
     }
 }

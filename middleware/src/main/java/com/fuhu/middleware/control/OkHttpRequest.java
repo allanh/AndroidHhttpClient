@@ -176,7 +176,7 @@ public class OkHttpRequest {
 //        return null;
 //    }
     
-    public JSONObject Request(Context mContext, JSONObject jsonObject, String URL, Map<String, String> headerPair, int Action) {
+    public JSONObject Request(JSONObject jsonObject, String URL, Map<String, String> headerPair, int Action) {
         Log.i(TAG, "start OkHttp request URL:" + URL);
         String result = "";
         Response response = null;

@@ -3,9 +3,9 @@ package com.fuhu.test.smarthub.manager;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.TextView;
 
+import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.contract.IManager;
 import com.fuhu.test.smarthub.receiver.GoogleRecognizeReceiver;
 import com.fuhu.test.smarthub.service.GoogleRecognizeService;

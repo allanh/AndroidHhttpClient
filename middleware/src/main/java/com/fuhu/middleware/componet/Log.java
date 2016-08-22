@@ -1,6 +1,7 @@
 package com.fuhu.middleware.componet;
 
 import com.fuhu.middleware.BuildConfig;
+import com.fuhu.middleware.MiddlewareConfig;
 
 public class Log {
 	public static int ENABLE_VERBOSE 	= 4;
@@ -12,9 +13,8 @@ public class Log {
 	
 	public final static int sLogLevel = ENABLE_ALL;
 	private final static String TAG = "middleware_" + BuildConfig.VERSION_NAME;
-	
 	public static void v(String tag, String msg){
-		if(sLogLevel < ENABLE_VERBOSE)
+		if(!MiddlewareConfig.isDebuggingMode() || sLogLevel < ENABLE_VERBOSE)
 			return;
 
 		StringBuilder builder = new StringBuilder(tag)
@@ -24,7 +24,7 @@ public class Log {
     }
 	
 	public static void d(String tag, String msg){
-		if(sLogLevel < ENABLE_DEBUG)
+		if(!MiddlewareConfig.isDebuggingMode() || sLogLevel < ENABLE_DEBUG)
 			return;
 		StringBuilder builder = new StringBuilder(tag)
 				.append(": ").append(msg);
@@ -33,7 +33,7 @@ public class Log {
     }
 	
 	public static void i(String tag, String msg){
-		if(sLogLevel < ENABLE_INFO)
+		if(!MiddlewareConfig.isDebuggingMode() || sLogLevel < ENABLE_INFO)
 			return;
 		StringBuilder builder = new StringBuilder(tag)
 				.append(": ").append(msg);
@@ -42,7 +42,7 @@ public class Log {
     }
 	
 	public static void w(String tag, String msg){
-		if(sLogLevel < ENABLE_WARN)
+		if(!MiddlewareConfig.isDebuggingMode() || sLogLevel < ENABLE_WARN)
 			return;
 		StringBuilder builder = new StringBuilder(tag)
 				.append(": ").append(msg);
@@ -51,7 +51,7 @@ public class Log {
     }
 	
 	public static void e(String tag, String msg){
-		if(sLogLevel <= ENABLE_ERROR)
+		if(!MiddlewareConfig.isDebuggingMode() || sLogLevel <= ENABLE_ERROR)
 			return;
 		StringBuilder builder = new StringBuilder(tag)
 				.append(": ").append(msg);

@@ -11,22 +11,36 @@ import android.widget.TextView;
 
 import com.fuhu.middleware.MiddlewareConfig;
 import com.fuhu.middleware.componet.AMailItem;
+import com.fuhu.middleware.componet.DataPart;
 import com.fuhu.middleware.componet.ErrorCodeList;
+import com.fuhu.middleware.componet.HTTPHeader;
+import com.fuhu.middleware.componet.HttpCommand;
+import com.fuhu.middleware.componet.HttpCommandBuilder;
 import com.fuhu.middleware.componet.Log;
 import com.fuhu.middleware.componet.MessageItem;
 import com.fuhu.middleware.contract.PayloadType;
 import com.fuhu.middleware.contract.SilkMessageType;
+import com.fuhu.middleware.control.MailBox;
+import com.fuhu.middleware.control.NabiHttpRequest;
 import com.fuhu.test.smarthub.R;
 import com.fuhu.test.smarthub.callback.AppStatusCallback;
 import com.fuhu.test.smarthub.callback.DeviceMessageCallback;
 import com.fuhu.test.smarthub.callback.IFTTTCallback;
+import com.fuhu.test.smarthub.callback.TrackCallback;
 import com.fuhu.test.smarthub.callback.WebRtcInitCallback;
 import com.fuhu.test.smarthub.componet.AppStatus;
 import com.fuhu.test.smarthub.componet.DeviceInfoItem;
 import com.fuhu.test.smarthub.componet.IFTTTItem;
 import com.fuhu.test.smarthub.componet.InitItem;
+import com.fuhu.test.smarthub.componet.TrackItem;
 import com.fuhu.test.smarthub.manager.SpeechRecognizeManager;
 import com.fuhu.test.smarthub.manager.TextToSpeechManager;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -148,51 +162,52 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-//        File file =new File(getExternalCacheDir(), "test.jpg");
-//        try {
-//            InputStream inputStream = getResources().openRawResource(R.raw.pet802);
-//            OutputStream out=new FileOutputStream(file);
-//            byte buf[]=new byte[1024];
-//            int len;
-//            while((len=inputStream.read(buf))>0)
-//                out.write(buf,0,len);
-//            out.close();
-//            inputStream.close();
-//        } catch (IOException e){
-//            e.printStackTrace();
-//        }
-//
-//
-//        DataPart dataPart = null;
-//        if (file != null) {
-//            dataPart = new DataPart(file, "image/jpeg");
-//
-//            Log.d(TAG, "file: " + dataPart.getFileName());
-//
-//            HttpCommand trackCommand = new HttpCommandBuilder()
-//                .setID("4")
-////                .setURL("http://192.168.30.34:8080/IITService/tracking/upload/photo")
-//                .setURL(NabiHttpRequest.getAPI_UploadPhoto())
-//                .setMethod(HttpCommand.Method.POST)
-//                .setHeaders(HTTPHeader.getTrackingHeader(this))
-//                .addHeader("Content-Length", String.valueOf(dataPart.getFile().length()))
-//                .addHeader("Content-Type", "multipart/form-data; boundary=" + NabiHttpRequest.BOUNDARY)
-//                .setDataModel(TrackItem.class)
-//                .addDataPart("file", dataPart)
-//                .build();
-//
-//            MailBox.getInstance().deliverMail(this, trackCommand, new TrackCallback() {
-//                @Override
-//                public void onResultReceived(TrackItem trackItem) {
-//                    Log.d(TAG, "trackItem");
-//                }
-//
-//                @Override
-//                public void onFailed(String status, String message) {
-//                    Log.d(TAG, "Status: " + status);
-//                }
-//            });
-//        }
+        File file =new File(getExternalCacheDir(), "test.jpg");
+        try {
+            InputStream inputStream = getResources().openRawResource(R.raw.pet802);
+            OutputStream out=new FileOutputStream(file);
+            byte buf[]=new byte[1024];
+            int len;
+            while((len=inputStream.read(buf))>0)
+                out.write(buf,0,len);
+            out.close();
+            inputStream.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        DataPart dataPart = null;
+        Log.d(TAG, "file is exist: " + file.exists());
+        if (file != null) {
+            dataPart = new DataPart(file, "image/jpeg");
+
+            Log.d(TAG, "file: " + dataPart.getFileName());
+
+            HttpCommand trackCommand = new HttpCommandBuilder()
+                .setID("4")
+//                .setURL("http://192.168.30.34:8080/IITService/tracking/upload/photo")
+                .setURL(NabiHttpRequest.getAPI_UploadPhoto())
+                .setMethod(HttpCommand.Method.POST)
+                .setHeaders(HTTPHeader.getTrackingHeader(this))
+                .addHeader("Content-Length", String.valueOf(dataPart.getFile().length()))
+                .addHeader("Content-Type", "multipart/form-data; boundary=" + NabiHttpRequest.BOUNDARY)
+                .setDataModel(TrackItem.class)
+                .addDataPart("file", dataPart)
+                .build();
+
+            MailBox.getInstance().deliverMail(this, trackCommand, new TrackCallback() {
+                @Override
+                public void onResultReceived(TrackItem trackItem) {
+                    Log.d(TAG, "trackItem");
+                }
+
+                @Override
+                public void onFailed(String status, String message) {
+                    Log.d(TAG, "Status: " + status);
+                }
+            });
+        }
     }
 
     private void testIfttt() {

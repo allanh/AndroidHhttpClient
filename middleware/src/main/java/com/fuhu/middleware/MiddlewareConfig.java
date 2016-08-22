@@ -3,7 +3,7 @@ package com.fuhu.middleware;
 public class MiddlewareConfig {
 
     // display additional info via Wings button for server team
-    public static final boolean isDebuggingMode = false;
+    private static boolean isDebuggingMode = true;
 
     // is turn on tracking function or not
     public static final boolean isNeedToTrack = true;
@@ -16,4 +16,20 @@ public class MiddlewareConfig {
 
     // is turn on Wifi peer to peer function or not
 //    public static final boolean enableWifiP2P = false;
+
+    /**
+     * Is turn on debug mode or not
+     * @param enable
+     */
+    public static void enableDebugMode(final boolean enable) {
+        isDebuggingMode = enable;
+    }
+
+    /**
+     * Get debugging mode
+     * @return
+     */
+    public static boolean isDebuggingMode() {
+        return isDebuggingMode;
+    }
 }

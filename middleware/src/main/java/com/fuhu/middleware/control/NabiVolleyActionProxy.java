@@ -103,6 +103,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             okhttp3.Response response = OkHttpRequest.getInstance(mContext).sendMultiPartRequest(mCurrentCommand);
 
             if (response != null) {
+                Log.d(TAG, "response code: " + response.code());
                 if (response.body() != null) {
                     try {
                         parseJsonObject(response.body().string());
@@ -188,7 +189,6 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
     Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
-            Log.d(TAG, "response: " + jsonObject);
             parseJsonObject(jsonObject);
         }
     };
@@ -204,6 +204,7 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
 
     private void parseJsonObject(JSONObject jsonObject) {
         if (jsonObject != null) {
+            Log.d(TAG, "response: " + jsonObject);
             Object object = null;
 
             // Parsing json object to data object
@@ -221,6 +222,8 @@ public class NabiVolleyActionProxy implements ISchedulingActionProxy, Runnable{
             } else {
                 mObtainItem = null;
             }
+        } else {
+            Log.d(TAG, "response is null");
         }
 
         if(mObtainItem!=null){

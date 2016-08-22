@@ -66,6 +66,7 @@ public abstract class AMailItem implements IMailItem {
     }
     
     public void setOriginalJSONObject(final JSONObject jsonObject){
+        Log.d("AMailItem", "set original jsonObject" + ((jsonObject != null) ? jsonObject.toString() : null));
         if (jsonObject != null) {
             originalJSONObject = jsonObject;
         }
