@@ -38,10 +38,10 @@ android {
 publishing {
     publications {
         repositories.maven {
-            url 'http://archiva.fuhu.tw:8080/repository/internal/'
+            url 'MAVEN REPOSITORIES'
             credentials {
-                username "mike.wang"
-                password "fuhu123"
+                username "USER NAME"
+                password "PASSWORD"
             }
         }
 
